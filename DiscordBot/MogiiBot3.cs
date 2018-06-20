@@ -26,10 +26,6 @@ namespace DiscordBot
 {
     public class MogiiBot3
     {
-/*
-        protected static readonly string BotToken = Configuration.Load().BotToken;
-*/
-
         public static DiscordSocketClient Bot;
         public static CommandService CommandService;
         public static IServiceProvider ServiceProvider;
