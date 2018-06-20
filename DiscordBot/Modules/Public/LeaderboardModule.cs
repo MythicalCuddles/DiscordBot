@@ -53,7 +53,7 @@ namespace DiscordBot.Modules.Public
                         }
                     }
                 }
-                else
+                else if (!isGuild)
                 {
                     foreach (SocketGuildUser u in g.Users)
                     {
