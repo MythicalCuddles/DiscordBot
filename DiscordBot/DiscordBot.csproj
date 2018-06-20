@@ -96,6 +96,9 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\RiderProjects\MelissaNet\MelissaNet\bin\Debug\MelissaNet.dll</HintPath>
     </Reference>
+    <Reference Include="MelissaNet, Version=1.2.0.36151, Culture=neutral, PublicKeyToken=null">
+      <HintPath>..\..\MelissaNet\MelissaNet\bin\Debug\MelissaNet.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.Extensions.DependencyInjection, Version=1.1.1.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.Extensions.DependencyInjection.1.1.1\lib\netstandard1.1\Microsoft.Extensions.DependencyInjection.dll</HintPath>
     </Reference>
@@ -244,7 +247,6 @@
   <ItemGroup>
     <None Include="App.config" />
     <None Include="CHANGELOG.md" />
-    <None Include="README.md" />
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
