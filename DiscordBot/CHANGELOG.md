@@ -3,6 +3,11 @@
 
 ## Version 2.10.1.0
 
+### Fixed
+    - Fixed an issue with the guild leaderboard.
+
+## Version 2.10.1.0
+
 ### Changed
     - Changed the die command confirmation embed.
     - Changed the leaderboard command to default to the guild leaderboard.
