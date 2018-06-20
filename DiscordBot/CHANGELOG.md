@@ -3,9 +3,6 @@
 
 ## Version 2.10.1.0
 
-### Added
-    - 
-
 ### Changed
     - Changed the die command confirmation embed.
     - Changed the leaderboard command to default to the guild leaderboard.
@@ -14,11 +11,9 @@
 
 ### Fixed
     - Fixed a spelling mistake in global leaderboard.
-    - 
-
+    
 ### Removed
     - Removed unused code in MogiiBot3.cs.
-    - 
     
 ### Other
     Code Style
