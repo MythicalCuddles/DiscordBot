@@ -1,6 +1,6 @@
 # Changelog
 
-## Version 2.
+## Version 2.10.1.0
 
 ### Added
     - 
@@ -14,7 +14,8 @@
     - 
 
 ### Removed
-    -
+    - Removed unused code in MogiiBot3.cs.
+    - 
     
 ### Other
     Code Style
