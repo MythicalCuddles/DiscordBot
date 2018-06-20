@@ -1,4 +1,5 @@
-# Changelog
+| CHANGELOG.md  |
+| ------------- |
 
 ## Version 2.10.1.0
 
