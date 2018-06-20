@@ -9,6 +9,8 @@
 ### Changed
     - Changed the die command confirmation embed.
     - Changed the leaderboard command to default to the guild leaderboard.
+    - Changed MogiiBot3.cs to DiscordBot.cs
+    - Updated all instances of MogiiBot3 to DiscordBot.
 
 ### Fixed
     - Fixed a spelling mistake in global leaderboard.

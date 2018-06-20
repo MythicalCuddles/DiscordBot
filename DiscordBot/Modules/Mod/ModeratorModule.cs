@@ -24,7 +24,7 @@ namespace DiscordBot.Modules.Mod
             int totalUserCount = 0, totalChannelCount = 0, totalTextChannelCount = 0, totalCoins = 0;
             int totalGuildUserCount = 0, totalGuildChannelCount = 0, totalGuildTextChannelCount = 0, totalGuildCoins = 0;
 
-            foreach (SocketGuild g in MogiiBot3.Bot.Guilds)
+            foreach (SocketGuild g in DiscordBot.Bot.Guilds)
             {
                 foreach (SocketGuildChannel c in g.Channels)
                 {
@@ -58,25 +58,25 @@ namespace DiscordBot.Modules.Mod
             }
 
             EmbedAuthorBuilder eab = new EmbedAuthorBuilder()
-                .WithName(MogiiBot3.Bot.CurrentUser.Username + " Version " + ProgramVersion.Major + "." + ProgramVersion.Minor + "." + ProgramVersion.Build + "." + ProgramVersion.Revision);
+                .WithName(DiscordBot.Bot.CurrentUser.Username + " Version " + ProgramVersion.Major + "." + ProgramVersion.Minor + "." + ProgramVersion.Build + "." + ProgramVersion.Revision);
             EmbedFooterBuilder efb = new EmbedFooterBuilder()
                 .WithText("MelissaNet Version " + MelissaNet.VersionInfo.Version);
             EmbedBuilder eb = new EmbedBuilder()
                 .WithAuthor(eab)
 
                 .AddField("Bot Information", 
-                    "**Name:** " + MogiiBot3.Bot.CurrentUser.Username + "\n" +
-                    "**Discriminator:** #" + MogiiBot3.Bot.CurrentUser.Discriminator + "\n" +
-                    "**Id:** " + MogiiBot3.Bot.CurrentUser.Id)
+                    "**Name:** " + DiscordBot.Bot.CurrentUser.Username + "\n" +
+                    "**Discriminator:** #" + DiscordBot.Bot.CurrentUser.Discriminator + "\n" +
+                    "**Id:** " + DiscordBot.Bot.CurrentUser.Id)
                 .AddField("Developer Information", 
                     "**Name:** " + MelissaNet.Discord.GetMelissaId().GetUser().Username + "\n" +
                     "**Discriminator:** #" + MelissaNet.Discord.GetMelissaId().GetUser().Discriminator + "\n" +
                     "**Id:** " + MelissaNet.Discord.GetMelissaId())
                 .AddField("Bot Statistics", 
                     "**Active for:** " + CalculateUptime() + "\n" +
-                    "**Latency:** " + MogiiBot3.Bot.Latency + "ms" + "\n" +
+                    "**Latency:** " + DiscordBot.Bot.Latency + "ms" + "\n" +
                     "**Server Time:** " + DateTime.Now.ToString("h:mm:ss tt") + "\n" +
-                    "**Guild Count:** " + MogiiBot3.Bot.Guilds.Count + "\n" +
+                    "**Guild Count:** " + DiscordBot.Bot.Guilds.Count + "\n" +
                     "**User Count:** " + totalUserCount + "\n" +
                     "**Channel Count:** " + totalChannelCount + " (T:" + totalTextChannelCount + "/V:" + (totalChannelCount - totalTextChannelCount) + ")" + "\n" +
                     "**Overall Coins:** " + totalCoins + "\n")
@@ -89,7 +89,7 @@ namespace DiscordBot.Modules.Mod
                     "**Coins:** " + totalGuildCoins)
 
                 .WithFooter(efb)
-                .WithThumbnailUrl(MogiiBot3.Bot.CurrentUser.GetAvatarUrl())
+                .WithThumbnailUrl(DiscordBot.Bot.CurrentUser.GetAvatarUrl())
                 .WithColor(new Color(255, 116, 140));
 
             await ReplyAsync("", false, eb.Build());

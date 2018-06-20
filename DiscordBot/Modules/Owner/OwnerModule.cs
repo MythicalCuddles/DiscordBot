@@ -119,11 +119,11 @@ namespace DiscordBot.Modules.Owner
 
             if(User.Load(user.Id).IsBotIgnoringUser)
             {
-                await ReplyAsync(Context.User.Mention + ", " + MogiiBot3.Bot.CurrentUser.Username + " will start ignoring " + user.Mention);
+                await ReplyAsync(Context.User.Mention + ", " + DiscordBot.Bot.CurrentUser.Username + " will start ignoring " + user.Mention);
             }
             else
             {
-                await ReplyAsync(Context.User.Mention + ", " + MogiiBot3.Bot.CurrentUser.Username + " will start to listen to " + user.Mention);
+                await ReplyAsync(Context.User.Mention + ", " + DiscordBot.Bot.CurrentUser.Username + " will start to listen to " + user.Mention);
             }
         }
 
@@ -176,7 +176,7 @@ namespace DiscordBot.Modules.Owner
                 Description = message
             }.WithCurrentTimestamp();
 
-            foreach (SocketGuild g in MogiiBot3.Bot.Guilds)
+            foreach (SocketGuild g in DiscordBot.Bot.Guilds)
             {
                 await GuildConfiguration.Load(g.Id).LogChannelId.GetTextChannel().SendMessageAsync("", false, eb.Build());
             }
@@ -210,7 +210,7 @@ namespace DiscordBot.Modules.Owner
 
                 await ReplyAsync("", false, eb.Build());
 
-                await MogiiBot3.Bot.LogoutAsync();
+                await DiscordBot.Bot.LogoutAsync();
                 Environment.Exit(0);
             }
             else

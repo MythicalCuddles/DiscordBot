@@ -137,7 +137,7 @@ namespace DiscordBot.Modules.Public
                 User.UpdateUser(Context.User.Id, customPrefix: prefix);
                 User.UpdateUser(Context.User.Id, coins: (User.Load(Context.User.Id).Coins - Configuration.Load().PrefixCost));
                 TransactionLogger.AddTransaction(Context.User.Username + " [" + Context.User.Id + "] paid " + Configuration.Load().PrefixCost + " for a custom prefix.");
-                await ReplyAsync(Context.User.Mention + ", you have set `" + prefix + "` as a custom prefix for yourself. Please do take note that the following prefixes will work for you:\n```KEY: [Prefix][Command]\n" + prefix + " - User Set Prefix\n" + GuildConfiguration.Load(Context.Guild.Id).Prefix + " - Guild Set Prefix\n@" + MogiiBot3.Bot.CurrentUser.Username + " - Global Prefix```");
+                await ReplyAsync(Context.User.Mention + ", you have set `" + prefix + "` as a custom prefix for yourself. Please do take note that the following prefixes will work for you:\n```KEY: [Prefix][Command]\n" + prefix + " - User Set Prefix\n" + GuildConfiguration.Load(Context.Guild.Id).Prefix + " - Guild Set Prefix\n@" + DiscordBot.Bot.CurrentUser.Username + " - Global Prefix```");
             }
             else
             {

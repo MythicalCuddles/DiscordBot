@@ -233,7 +233,7 @@
     <Compile Include="Modules\Public\LeaderboardModule.cs" />
     <Compile Include="Modules\Public\PublicModule.cs" />
     <Compile Include="Modules\SOwner\ServerOwnerModule.cs" />
-    <Compile Include="MogiiBot3.cs" />
+    <Compile Include="DiscordBot.cs" />
     <Compile Include="Other\QuoteHandler.cs" />
     <Compile Include="Other\VoteLinkHandler.cs" />
     <Compile Include="Program.cs" />

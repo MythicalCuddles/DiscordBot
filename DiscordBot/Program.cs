@@ -66,7 +66,7 @@ namespace DiscordBot
 
             try
             {
-                new MogiiBot3().RunBotAsync().GetAwaiter().GetResult();
+                new DiscordBot().RunBotAsync().GetAwaiter().GetResult();
             }
             catch(Exception exception)
             {

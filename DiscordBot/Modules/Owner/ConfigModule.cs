@@ -55,15 +55,15 @@ namespace DiscordBot.Modules.Owner
 
                 if (activityType == -1)
                 {
-                    await MogiiBot3.Bot.SetGameAsync(activityMessage);
+                    await DiscordBot.Bot.SetGameAsync(activityMessage);
                 }
                 else
                 {
-                    await MogiiBot3.Bot.SetGameAsync(activityMessage, activityLink, (ActivityType)activityType);
+                    await DiscordBot.Bot.SetGameAsync(activityMessage, activityLink, (ActivityType)activityType);
                 }
 
                 var eb = new EmbedBuilder()
-                    .WithDescription(Context.User.Username + " updated " + MogiiBot3.Bot.CurrentUser.Mention + "'s activity message.")
+                    .WithDescription(Context.User.Username + " updated " + DiscordBot.Bot.CurrentUser.Mention + "'s activity message.")
                     .WithColor(Color.DarkGreen);
 
                 await ReplyAsync("", false, eb.Build());
@@ -77,7 +77,7 @@ namespace DiscordBot.Modules.Owner
                 public async Task SetOnline()
                 {
                     Configuration.UpdateConfiguration(status: UserStatus.Online);
-                    await MogiiBot3.Bot.SetStatusAsync(UserStatus.Online);
+                    await DiscordBot.Bot.SetStatusAsync(UserStatus.Online);
                     await ReplyAsync("Status updated to Online, " + Context.User.Mention);
                 }
 
@@ -86,7 +86,7 @@ namespace DiscordBot.Modules.Owner
                 public async Task SetBusy()
                 {
                     Configuration.UpdateConfiguration(status: UserStatus.DoNotDisturb);
-                    await MogiiBot3.Bot.SetStatusAsync(UserStatus.DoNotDisturb);
+                    await DiscordBot.Bot.SetStatusAsync(UserStatus.DoNotDisturb);
                     await ReplyAsync("Status updated to Do Not Disturb, " + Context.User.Mention);
                 }
 
@@ -95,7 +95,7 @@ namespace DiscordBot.Modules.Owner
                 public async Task SetIdle()
                 {
                     Configuration.UpdateConfiguration(status: UserStatus.AFK);
-                    await MogiiBot3.Bot.SetStatusAsync(UserStatus.AFK);
+                    await DiscordBot.Bot.SetStatusAsync(UserStatus.AFK);
                     await ReplyAsync("Status updated to Idle, " + Context.User.Mention);
                 }
 
@@ -104,7 +104,7 @@ namespace DiscordBot.Modules.Owner
                 public async Task SetInvisible()
                 {
                     Configuration.UpdateConfiguration(status: UserStatus.Invisible);
-                    await MogiiBot3.Bot.SetStatusAsync(UserStatus.Invisible);
+                    await DiscordBot.Bot.SetStatusAsync(UserStatus.Invisible);
                     await ReplyAsync("Status updated to Invisible, " + Context.User.Mention);
                 }
             }

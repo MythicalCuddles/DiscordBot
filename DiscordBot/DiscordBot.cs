@@ -24,7 +24,7 @@ using MelissaNet;
 
 namespace DiscordBot
 {
-    public class MogiiBot3
+    public class DiscordBot
     {
         public static DiscordSocketClient Bot;
         public static CommandService CommandService;
@@ -117,7 +117,7 @@ namespace DiscordBot
             Console.ReadLine();
             Console.Clear();
 
-            new MogiiBot3().RunBotAsync().GetAwaiter().GetResult();
+            new DiscordBot().RunBotAsync().GetAwaiter().GetResult();
         }
 
         private static Task Log(LogMessage logMessage)

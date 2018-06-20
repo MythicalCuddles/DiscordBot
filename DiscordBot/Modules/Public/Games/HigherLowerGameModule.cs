@@ -45,8 +45,8 @@ namespace DiscordBot.Modules.Public.Games
 
             EmbedBuilder eb = new EmbedBuilder()
                 .WithTitle("Dice Game")
-                .WithDescription(Context.User.Username + " placed a bet that they would roll a higher total than " + MogiiBot3.Bot.CurrentUser.Username)
-                .AddField(MogiiBot3.Bot.CurrentUser.Username + "'s Roll", MogiiBot3.Bot.CurrentUser.Mention + " rolled **" + botOne + "** and **" + botTwo + "** giving a total of **" + botTotal + "**", true)
+                .WithDescription(Context.User.Username + " placed a bet that they would roll a higher total than " + DiscordBot.Bot.CurrentUser.Username)
+                .AddField(DiscordBot.Bot.CurrentUser.Username + "'s Roll", DiscordBot.Bot.CurrentUser.Mention + " rolled **" + botOne + "** and **" + botTwo + "** giving a total of **" + botTotal + "**", true)
                 .AddField(Context.User.Username + "'s Roll", Context.User.Mention + " has rolled **" + userOne + "** and **" + userTwo + "** giving a total of **" + userTotal + "**", true);
             
             eb.WithColor(User.Load(Context.User.Id).AboutR, User.Load(Context.User.Id).AboutG,
@@ -56,12 +56,12 @@ namespace DiscordBot.Modules.Public.Games
 
             if (botTotal > userTotal)
             {
-                eb.AddField(MogiiBot3.Bot.CurrentUser.Username + " Won!", Context.User.Username + " bet " + coinsBet + " coin(s) and lost.");
+                eb.AddField(DiscordBot.Bot.CurrentUser.Username + " Won!", Context.User.Username + " bet " + coinsBet + " coin(s) and lost.");
                 TransactionLogger.AddTransaction(Context.User.Username + " [" + Context.User.Id + "] bet " + coinsBet + " on higher and lost.");
             }
             else if (botTotal == userTotal)
             {
-                eb.AddField("No-one Won!", Context.User.Username + " bet " + coinsBet + " coin(s) and drew with " + MogiiBot3.Bot.CurrentUser.Username + ".");
+                eb.AddField("No-one Won!", Context.User.Username + " bet " + coinsBet + " coin(s) and drew with " + DiscordBot.Bot.CurrentUser.Username + ".");
                 TransactionLogger.AddTransaction(Context.User.Username + " [" + Context.User.Id + "] bet " + coinsBet + " on higher and didn't win nor lose.");
                 User.UpdateUser(Context.User.Id, coins: (userCoins + coinsBet));
             }
@@ -91,8 +91,8 @@ namespace DiscordBot.Modules.Public.Games
             
             EmbedBuilder eb = new EmbedBuilder()
                 .WithTitle("Dice Game")
-                .WithDescription(Context.User.Username + " placed a bet that they would roll a lower total than " + MogiiBot3.Bot.CurrentUser.Username)
-                .AddField(MogiiBot3.Bot.CurrentUser.Username + "'s Roll", MogiiBot3.Bot.CurrentUser.Mention + " rolled **" + botOne + "** and **" + botTwo + "** giving a total of **" + botTotal + "**")
+                .WithDescription(Context.User.Username + " placed a bet that they would roll a lower total than " + DiscordBot.Bot.CurrentUser.Username)
+                .AddField(DiscordBot.Bot.CurrentUser.Username + "'s Roll", DiscordBot.Bot.CurrentUser.Mention + " rolled **" + botOne + "** and **" + botTwo + "** giving a total of **" + botTotal + "**")
                 .AddField(Context.User.Username + "'s Roll", Context.User.Mention + " has rolled **" + userOne + "** and **" + userTwo + "** giving a total of **" + userTotal + "**");
 
             eb.WithColor(User.Load(Context.User.Id).AboutR, User.Load(Context.User.Id).AboutG,
@@ -102,12 +102,12 @@ namespace DiscordBot.Modules.Public.Games
 
             if (botTotal < userTotal)
             {
-                eb.AddField(MogiiBot3.Bot.CurrentUser.Username + " Won!", Context.User.Username + " bet " + coinsBet + " coin(s) and lost.");
+                eb.AddField(DiscordBot.Bot.CurrentUser.Username + " Won!", Context.User.Username + " bet " + coinsBet + " coin(s) and lost.");
                 TransactionLogger.AddTransaction(Context.User.Username + " [" + Context.User.Id + "] bet " + coinsBet + " on lower and lost.");
             }
             else if (botTotal == userTotal)
             {
-                eb.AddField("No-one Won!", Context.User.Username + " bet " + coinsBet + " coin(s) and drew with " + MogiiBot3.Bot.CurrentUser.Username + ".");
+                eb.AddField("No-one Won!", Context.User.Username + " bet " + coinsBet + " coin(s) and drew with " + DiscordBot.Bot.CurrentUser.Username + ".");
                 TransactionLogger.AddTransaction(Context.User.Username + " [" + Context.User.Id + "] bet " + coinsBet + " on lower and didn't win nor lose.");
                 User.UpdateUser(Context.User.Id, coins: (userCoins + coinsBet));
             }

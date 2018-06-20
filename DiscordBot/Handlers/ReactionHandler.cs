@@ -38,7 +38,7 @@ namespace DiscordBot.Handlers
             }
 
             //todo: add togglable
-            MogiiBot3.AwardCoinsToPlayer(message.Value.Author);
+            DiscordBot.AwardCoinsToPlayer(message.Value.Author);
         }
 
         private static async Task HandleQuoteReactions(Cacheable<IUserMessage, ulong> message, ISocketMessageChannel channel, SocketReaction reaction)

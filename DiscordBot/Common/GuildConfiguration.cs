@@ -40,8 +40,8 @@ namespace DiscordBot.Common
 
 
                 EmbedBuilder eb = new EmbedBuilder()
-                .WithTitle("Thank you for adding " + MogiiBot3.Bot.CurrentUser.Username + " to your guild!")
-                .WithDescription("Congratulations on adding " + MogiiBot3.Bot.CurrentUser.Username + " to " + guildId.GetGuild().Name + "! Please follow the steps below to configure me!" +
+                .WithTitle("Thank you for adding " + DiscordBot.Bot.CurrentUser.Username + " to your guild!")
+                .WithDescription("Congratulations on adding " + DiscordBot.Bot.CurrentUser.Username + " to " + guildId.GetGuild().Name + "! Please follow the steps below to configure me!" +
                                  "```INI\n" +
                                  "[1] Prefix: You can change the default prefix by typing \"" + Load(guildId).Prefix + "guildprefix [prefix]\"\n" +
                                  "[2] Welcome Message: Type \"" + Load(guildId).Prefix + "setwelcomemessage\" to view flags and see how to set up the welcome message.\n" +
@@ -53,7 +53,7 @@ namespace DiscordBot.Common
                                  "\n[More] If you're interested in setting up NSFW commands and changing other settings, please visit the wiki.\n" +
                                  "```")
                 .WithFooter("Warning: Server Owner's may only change the configuration for the guild.")
-                .WithThumbnailUrl(MogiiBot3.Bot.CurrentUser.GetAvatarUrl())
+                .WithThumbnailUrl(DiscordBot.Bot.CurrentUser.GetAvatarUrl())
                 .WithColor(56, 226, 40);
                 guildId.GetGuild().DefaultChannel.SendMessageAsync("", false, eb.Build());
 

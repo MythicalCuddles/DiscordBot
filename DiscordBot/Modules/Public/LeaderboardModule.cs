@@ -41,7 +41,7 @@ namespace DiscordBot.Modules.Public
             int listAmount = Configuration.Load().LeaderboardAmount;
             List<Tuple<int, SocketGuildUser>> userList = new List<Tuple<int, SocketGuildUser>>();
 
-            foreach (SocketGuild g in MogiiBot3.Bot.Guilds)
+            foreach (SocketGuild g in DiscordBot.Bot.Guilds)
             {
                 if (isGuild && g.Id == context.Guild.Id)
                 {

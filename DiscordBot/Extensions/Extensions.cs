@@ -311,7 +311,7 @@ namespace DiscordBot.Extensions
         #region SocketUser Gets
         public static SocketUser GetUser(this ulong id)
         {
-            if (!(MogiiBot3.Bot.GetUser(id) is SocketUser user)) return null;
+            if (!(DiscordBot.Bot.GetUser(id) is SocketUser user)) return null;
             return user;
         }
         #endregion
@@ -321,7 +321,7 @@ namespace DiscordBot.Extensions
         {
             try
             {
-                if (!(MogiiBot3.Bot.GetChannel(id) is SocketTextChannel channel)) return null;
+                if (!(DiscordBot.Bot.GetChannel(id) is SocketTextChannel channel)) return null;
                 return channel;
             }
             catch (Exception)
@@ -331,7 +331,7 @@ namespace DiscordBot.Extensions
         }
         public static SocketVoiceChannel GetVoiceChannel(this ulong id)
         {
-            if (!(MogiiBot3.Bot.GetChannel(id) is SocketVoiceChannel channel)) return null;
+            if (!(DiscordBot.Bot.GetChannel(id) is SocketVoiceChannel channel)) return null;
             return channel;
         }
         #endregion
@@ -339,12 +339,12 @@ namespace DiscordBot.Extensions
         #region SocketGuild Gets
         public static SocketGuild GetGuild(this ulong id)
         {
-            if (!(MogiiBot3.Bot.GetGuild(id) is SocketGuild guild)) return null;
+            if (!(DiscordBot.Bot.GetGuild(id) is SocketGuild guild)) return null;
             return guild;
         }
         public static SocketGuild GetGuild(this ISocketMessageChannel textChannel)
         {
-            foreach (SocketGuild g in MogiiBot3.Bot.Guilds)
+            foreach (SocketGuild g in DiscordBot.Bot.Guilds)
             {
                 foreach (SocketTextChannel tc in g.TextChannels)
                 {
@@ -359,7 +359,7 @@ namespace DiscordBot.Extensions
         }
         public static SocketGuild GetGuild(this SocketChannel channel)
         {
-            foreach (SocketGuild g in MogiiBot3.Bot.Guilds)
+            foreach (SocketGuild g in DiscordBot.Bot.Guilds)
             {
                 foreach (SocketTextChannel t in g.TextChannels)
                 {
