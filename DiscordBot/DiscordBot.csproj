@@ -213,6 +213,7 @@
       <DependentUpon>frmAuth.cs</DependentUpon>
     </Compile>
     <Compile Include="Handlers\ChannelHandler.cs" />
+    <Compile Include="Handlers\GuildHandler.cs" />
     <Compile Include="Handlers\ReactionHandler.cs" />
     <Compile Include="Handlers\UserHandler.cs" />
     <Compile Include="Logging\TransactionLogger.cs" />

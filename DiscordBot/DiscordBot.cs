@@ -52,7 +52,7 @@ namespace DiscordBot
             Bot.UserLeft += UserHandler.UserLeft;
             Bot.ChannelCreated += ChannelHandler.ChannelCreated;
             Bot.ChannelDestroyed += ChannelHandler.ChannelDestroyed;
-            Bot.JoinedGuild += BotOnJoinedGuild;
+            Bot.JoinedGuild += GuildHandler.BotOnJoinedGuild;
             Bot.ReactionAdded += ReactionHandler.ReactionAdded;
             Bot.MessageReceived += MessageReceived;
             Bot.Ready += Ready;
@@ -238,16 +238,6 @@ namespace DiscordBot
                     await Configuration.Load().LogChannelId.GetTextChannel().SendMessageAsync("[ALERT] While " + Bot.CurrentUser.Username + " was offline, " + tupleList.Item1.Mention + " (" + tupleList.Item1.Id + ") joined " + tupleList.Item2.Name + ". They have been added to the database.");
                 }
             }
-        }
-
-        private static async Task BotOnJoinedGuild(SocketGuild socketGuild)
-        {
-            GuildConfiguration.EnsureExists(socketGuild.Id);
-
-            foreach (SocketGuildChannel c in socketGuild.Channels)
-                Channel.EnsureExists(c.Id);
-
-            await Configuration.Load().LogChannelId.GetTextChannel().SendMessageAsync(socketGuild.Name + " has been added to MogiiBot's guild list. \n" + socketGuild.Owner.Username + " is the owner (" + socketGuild.Owner.Id + ")");
         }
 
         private static Task Disconnected(Exception exception)
