@@ -1,3 +1,6 @@
+| LICENSE.md  |
+| ----------- |
+
 MIT License
 
 Copyright (c) 2017 - 2018 Melissa Brennan
