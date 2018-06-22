@@ -1,5 +1,5 @@
-| README.md  |
-| ---------- |
+| [README.md](https://github.com/MythicalCuddles/DiscordBot/blob/master/README.md)  | [CHANGELOG.md](https://github.com/MythicalCuddles/DiscordBot/blob/master/DiscordBot/CHANGELOG.md) | [CODE_OF_CONDUCT.md](https://github.com/MythicalCuddles/DiscordBot/blob/master/CODE_OF_CONDUCT.md) | [LICENSE.md](https://github.com/MythicalCuddles/DiscordBot/blob/master/LICENSE.md) |
+| ---------- | ---------- | ---------- | ---------- |
 
 [![Build Status](https://travis-ci.org/MythicalCuddles/DiscordBot.svg?branch=master)](https://travis-ci.org/MythicalCuddles/DiscordBot)
 [![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.me/mythicalcuddles)
