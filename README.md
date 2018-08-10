@@ -1,4 +1,4 @@
-| README.md  |
+| [README.md](https://github.com/MythicalCuddles/DiscordBot/blob/master/README.md) |
 | ---------- |
 
 [![Build Status](https://travis-ci.org/MythicalCuddles/DiscordBot.svg?branch=master)](https://travis-ci.org/MythicalCuddles/DiscordBot)
@@ -11,6 +11,9 @@
 ﻿[![discordbot2](http://imgserv.mythicalcuddles.xyz/DiscordBot/Commands.png)](https://github.com/MythicalCuddles/DiscordBot/wiki/Commands)
 ﻿[![discordbot3](http://imgserv.mythicalcuddles.xyz/DiscordBot/Issues.png)](https://github.com/MythicalCuddles/DiscordBot/issues)
 ﻿[![discordbot4](http://imgserv.mythicalcuddles.xyz/DiscordBot/Wiki.png)](https://github.com/MythicalCuddles/DiscordBot/wiki)
+
+| [CHANGELOG.md](https://github.com/MythicalCuddles/DiscordBot/blob/master/DiscordBot/CHANGELOG.md) | [CODE_OF_CONDUCT.md](https://github.com/MythicalCuddles/DiscordBot/blob/master/CODE_OF_CONDUCT.md) | [LICENSE.md](https://github.com/MythicalCuddles/DiscordBot/blob/master/LICENSE.md) |
+| ---------- | ---------- | ---------- |
 
 ---
 
