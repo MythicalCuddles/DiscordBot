@@ -19,21 +19,23 @@ namespace DiscordBot.Modules.Admin
         public async Task Force()
         {
             await ReplyAsync("**Syntax:** " +
-                GuildConfiguration.Load(Context.Guild.Id).Prefix + "force [variable] [user mention / id] [value]\n```" +
-                "Available Commands\n" +
-                "------------------\n" +
-                "-> force about [mention/id] [value]\n" +
-                "-> force name [mention/id] [value]\n" +
-                "-> force gender [mention/id] [value]\n" +
-                "-> force pronouns [mention/id] [value]\n" +
-                "-> force coins [mention/id] [value]\n" +
-                "-> force mythicaltokens [mention/id] [value]\n" +
-                "-> force minecraftusername [mention/id] [value]\n" +
-                "-> force snapchat [mention/id] [value]\n" +
-                "-> force prefix [mention/id] [value]\n" +
-                "-> force websitename [mention/id] [value]\n" +
-                "-> force websiteurl [mention/id] [value]\n" +
-                "```");
+                GuildConfiguration.Load(Context.Guild.Id).Prefix + "force [command] [user mention / id] [value]\n```INI\n" +
+                             "Available Commands\n" +
+                             "------------------\n" +
+                             "[ 1] force about [mention/id] [value]\n" +
+                             "[ 2] force name [mention/id] [value]\n" +
+                             "[ 3] force gender [mention/id] [value]\n" +
+                             "[ 4] force pronouns [mention/id] [value]\n" +
+                             "[ 5] force coins [mention/id] [value]\n" +
+                             "[ 6] force mythicaltokens [mention/id] [value]\n" +
+                             "[ 7] force minecraftusername [mention/id] [value]\n" +
+                             "[ 8] force instagram [mention/id] [value]\n" +
+                             "[ 9] force snapchat [mention/id] [value]\n" +
+                             "[10] force github [mention/id] [value]\n" +
+                             "[11] force prefix [mention/id] [value]\n" +
+                             "[12] force websitename [mention/id] [value]\n" +
+                             "[13] force websiteurl [mention/id] [value]\n" +
+                             "```");
         }
 
         [Command("about"), Summary("Force set the about message for the specified user.")]
@@ -175,6 +177,25 @@ namespace DiscordBot.Modules.Admin
             }
         }
 
+        [Command("instagram"), Summary("")]
+        public async Task ForceInstagramUsername(IUser user, [Remainder]string username)
+        {
+            if (Context.User.HasHigherPermissionLevel(user))
+            {
+                User.UpdateUser(user.Id, instagram:username);
+
+                var eb = new EmbedBuilder()
+                    .WithDescription(Context.User.Username + " changed " + user.Mention + "'s Instagram username text successfully.")
+                    .WithColor(Color.DarkGreen);
+
+                await ReplyAsync("", false, eb.Build());
+            }
+            else
+            {
+                await ReplyAsync(Context.User.Mention + ", you don't have a high enough permission level to do this to that user!");
+            }
+        }
+
         [Command("snapchat"), Summary("")]
         public async Task ForceSnapchatUsername(IUser user, [Remainder]string username)
         {
@@ -184,6 +205,25 @@ namespace DiscordBot.Modules.Admin
 
                 var eb = new EmbedBuilder()
                     .WithDescription(Context.User.Username + " changed " + user.Mention + "'s Snapchat username text successfully.")
+                    .WithColor(Color.DarkGreen);
+
+                await ReplyAsync("", false, eb.Build());
+            }
+            else
+            {
+                await ReplyAsync(Context.User.Mention + ", you don't have a high enough permission level to do this to that user!");
+            }
+        }
+
+        [Command("github"), Summary("")]
+        public async Task ForceGithubUsername(IUser user, [Remainder]string username)
+        {
+            if (Context.User.HasHigherPermissionLevel(user))
+            {
+                User.UpdateUser(user.Id, github:username);
+
+                var eb = new EmbedBuilder()
+                    .WithDescription(Context.User.Username + " changed " + user.Mention + "'s GitHub username text successfully.")
                     .WithColor(Color.DarkGreen);
 
                 await ReplyAsync("", false, eb.Build());

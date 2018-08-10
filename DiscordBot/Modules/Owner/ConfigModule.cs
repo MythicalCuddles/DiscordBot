@@ -7,6 +7,7 @@ using Discord.WebSocket;
 using DiscordBot.Common.Preconditions;
 using DiscordBot.Common;
 using DiscordBot.Extensions;
+using MelissaNet;
 
 namespace DiscordBot.Modules.Owner
 {
@@ -21,21 +22,26 @@ namespace DiscordBot.Modules.Owner
             public async Task SendSyntax()
             {
                 await ReplyAsync("**Syntax:** " +
-                                 GuildConfiguration.Load(Context.Guild.Id).Prefix + "editconfig [variable] [command syntax]\n```" +
+                                 GuildConfiguration.Load(Context.Guild.Id).Prefix + "editconfig [command] [command syntax]\n```INI\n" +
                                  "Available Commands\n" +
                                  "-----------------------------\n" +
-                                 "-> editconfig activity [activity type no] [activity message] [activity link]\n" +
-                                 "• activity type no: -1 - Disabled, 0 - Playing, 1 - Streaming, 2 - Listening, 3 - Watching\n" +
-                                 "-> editconfig status [status]\n" +
-                                 "• status: online, donotdisturb, idle, invisible\n" +
-                                 "-> editconfig toggleunknowncommand\n" +
-                                 "-> editconfig leaderboardamount [number of users to display]\n" +
-                                 "-> editconfig quoteprice [price to add quote]\n" +
-                                 "-> editconfig prefixprice [price to change custom prefix]\n" +
-                                 "-> editconfig senpaichance [number 1-100]\n" +
-                                 "-> editconfig globallogchannel [channel mention / channel id]\n" +
-                                 "-> editconfig rule34 [max number for random to use]\n" +
-                                 "-> editconfig minlengthforcoins [string length for coins]\n" +
+                                 "[ 1] activity [activity type no] [activity message] [activity link]\n" +
+                                 "[a.] [activity type no] - [-1 Disabled] [0 Playing] [1 Streaming] [2 Listening] [3 Watching]\n" +
+                                 "[ 2] status [status]\n" +
+                                 "[a.] [status] - [online] [donotdisturb] [idle] [invisible]\n" +
+                                 "[ 3] toggleunknowncommand\n" +
+                                 "[ 4] leaderboardamount [number of users to display]\n" +
+                                 "[ 5] quoteprice [price to add quote]\n" +
+                                 "[ 6] prefixprice [price to change custom prefix]\n" +
+                                 "[ 7] rgbprice [price to change custom RGB]\n" +
+                                 "[ 8] senpaichance [number 1-100]\n" +
+                                 "[ 9] globallogchannel [channel mention / channel id]\n" +
+                                 "[10] rule34 [max number for random to use]\n" +
+                                 "[11] minlengthforcoins [string length for coins]\n" +
+                                 "[12] leaderboardtrophyurl [link]\n" +
+                                 "[13] leaderboardembedcolor [uint id]\n" +
+                                 "[14] toggleawardingcoins\n" +
+                                 "[15] toggleawardingtokens\n" +
                                  "```");
             }
 
@@ -113,7 +119,7 @@ namespace DiscordBot.Modules.Owner
             public async Task ToggleUc()
             {
                 Configuration.UpdateConfiguration(unknownCommandEnabled: !Configuration.Load().UnknownCommandEnabled);
-                await Configuration.Load().LogChannelId.GetTextChannel().SendMessageAsync("UnknownCommand has been toggled by " + Context.User.Mention + " (enabled: " + Configuration.Load().UnknownCommandEnabled + ")");
+                await Configuration.Load().LogChannelId.GetTextChannel().SendMessageAsync("UnknownCommand has been toggled by " + Context.User.Mention + " (enabled: " + Configuration.Load().UnknownCommandEnabled.ToYesNo() + ")");
             }
 
             [Command("leaderboardamount"), Summary("Set the amount of users who show up in the leaderboards.")]
@@ -125,7 +131,6 @@ namespace DiscordBot.Modules.Owner
             }
 
             [Command("quoteprice"), Summary("")]
-            [Alias("changequoteprice", "updatequoteprice")]
             public async Task ChangeQuotePrice(int price)
             {
                 int oldPrice = Configuration.Load().QuoteCost;
@@ -134,12 +139,19 @@ namespace DiscordBot.Modules.Owner
             }
 
             [Command("prefixprice"), Summary("")]
-            [Alias("changeprefixprice", "updateprefixprice")]
             public async Task ChangePrefixPrice(int price)
             {
                 int oldPrice = Configuration.Load().PrefixCost;
                 Configuration.UpdateConfiguration(prefixCost: price);
                 await Configuration.Load().LogChannelId.GetTextChannel().SendMessageAsync("**" + Context.User.Mention + "** has updated the prefix cost to **" + price + "** coins. (Was: **" + oldPrice + "** coins)");
+            }
+
+            [Command("rgbprice"), Summary("")]
+            public async Task ChangeRGBPrice(int price)
+            {
+                int oldPrice = Configuration.Load().RGBCost;
+                Configuration.UpdateConfiguration(rgbCost: price);
+                await Configuration.Load().LogChannelId.GetTextChannel().SendMessageAsync("**" + Context.User.Mention + "** has updated the RGB cost to **" + price + "** coins. (Was: **" + oldPrice + "** coins)");
             }
 
             [Command("senpaichance"), Summary("")]
@@ -172,6 +184,36 @@ namespace DiscordBot.Modules.Owner
                 Configuration.UpdateConfiguration(minLengthForCoin: value);
 
                 await Configuration.Load().LogChannelId.GetTextChannel().SendMessageAsync(Context.User.Mention + " has updated the MinLengthForCoin amount to: " + value + " (was: " + oldValue + ")");
+            }
+
+            [Command("toggleawardingcoins"), Summary("Toggles if users receive coins.")]
+            public async Task ToggleAwardingCoins()
+            {
+                Configuration.UpdateConfiguration(awardingCoinsEnabled: !Configuration.Load().AwardingCoinsEnabled);
+                await Configuration.Load().LogChannelId.GetTextChannel().SendMessageAsync("Awarding Coins has been toggled by " + Context.User.Mention + " (enabled: " + Configuration.Load().AwardingCoinsEnabled.ToYesNo() + ")");
+            }
+
+            [Command("toggleawardingtokens"), Summary("Toggles if users receive tokens.")]
+            public async Task ToggleAwardingTokens()
+            {
+                Configuration.UpdateConfiguration(awardingTokensEnabled: !Configuration.Load().AwardingTokensEnabled);
+                await Configuration.Load().LogChannelId.GetTextChannel().SendMessageAsync("Awarding Tokens has been toggled by " + Context.User.Mention + " (enabled: " + Configuration.Load().AwardingTokensEnabled.ToYesNo() + ")");
+            }
+
+            [Command("leaderboardtrophyurl"), Summary("")]
+            public async Task SetLeaderboardTrophyUrl(string link)
+            {
+                string oldValue = Configuration.Load().LeaderboardTrophyUrl;
+                Configuration.UpdateConfiguration(leaderboardTrophyUrl: link);
+                await Configuration.Load().LogChannelId.GetTextChannel().SendMessageAsync(Context.User.Mention + " has updated the Leaderboard Trophy URL to: " + link + " (was: " + oldValue + ")");
+            }
+
+            [Command("leaderboardembedcolor"), Summary("")]
+            public async Task SetLeaderboardEmbedColor(uint colorId)
+            {
+                uint oldValue = Configuration.Load().LeaderboardEmbedColor;
+                Configuration.UpdateConfiguration(leaderboardEmbedColor: colorId);
+                await Configuration.Load().LogChannelId.GetTextChannel().SendMessageAsync(Context.User.Mention + " has updated the Leaderboard Embed Color ID to: " + colorId + " (was: " + oldValue + ")");
             }
         }
 

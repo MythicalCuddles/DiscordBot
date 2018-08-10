@@ -62,11 +62,13 @@
     <Reference Include="Discord.Addons.Interactive, Version=1.0.1.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Discord.Addons.Interactive.1.0.1\lib\netstandard1.1\Discord.Addons.Interactive.dll</HintPath>
     </Reference>
-    <Reference Include="Discord.Net.Commands, Version=2.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Discord.Net.Commands.2.0.0-beta2-00964\lib\net46\Discord.Net.Commands.dll</HintPath>
+    <Reference Include="Discord.Net.Commands, Version=2.0.0.0, Culture=neutral, PublicKeyToken=null">
+      <HintPath>..\packages\Discord.Net.Commands.2.0.0-beta2-00974\lib\net46\Discord.Net.Commands.dll</HintPath>
+      <Private>True</Private>
     </Reference>
-    <Reference Include="Discord.Net.Core, Version=2.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Discord.Net.Core.2.0.0-beta2-00964\lib\net46\Discord.Net.Core.dll</HintPath>
+    <Reference Include="Discord.Net.Core, Version=2.0.0.0, Culture=neutral, PublicKeyToken=null">
+      <HintPath>..\packages\Discord.Net.Core.2.0.0-beta2-00974\lib\net46\Discord.Net.Core.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="Discord.Net.Providers.UDPClient, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Discord.Net.Providers.UDPClient.1.0.0-rc2-00712\lib\net45\Discord.Net.Providers.UDPClient.dll</HintPath>
@@ -74,17 +76,20 @@
     <Reference Include="Discord.Net.Providers.WS4Net, Version=2.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Discord.Net.Providers.WS4Net.2.0.0-beta2-00964\lib\netstandard1.3\Discord.Net.Providers.WS4Net.dll</HintPath>
     </Reference>
-    <Reference Include="Discord.Net.Rest, Version=2.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Discord.Net.Rest.2.0.0-beta2-00964\lib\net46\Discord.Net.Rest.dll</HintPath>
+    <Reference Include="Discord.Net.Rest, Version=2.0.0.0, Culture=neutral, PublicKeyToken=null">
+      <HintPath>..\packages\Discord.Net.Rest.2.0.0-beta2-00974\lib\net46\Discord.Net.Rest.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="Discord.Net.Rpc, Version=2.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Discord.Net.Rpc.2.0.0-beta-00860\lib\net45\Discord.Net.Rpc.dll</HintPath>
     </Reference>
-    <Reference Include="Discord.Net.Webhook, Version=2.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Discord.Net.Webhook.2.0.0-beta2-00964\lib\netstandard1.3\Discord.Net.Webhook.dll</HintPath>
+    <Reference Include="Discord.Net.Webhook, Version=2.0.0.0, Culture=neutral, PublicKeyToken=null">
+      <HintPath>..\packages\Discord.Net.Webhook.2.0.0-beta2-00974\lib\netstandard1.3\Discord.Net.Webhook.dll</HintPath>
+      <Private>True</Private>
     </Reference>
-    <Reference Include="Discord.Net.WebSocket, Version=2.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Discord.Net.WebSocket.2.0.0-beta2-00964\lib\net46\Discord.Net.WebSocket.dll</HintPath>
+    <Reference Include="Discord.Net.WebSocket, Version=2.0.0.0, Culture=neutral, PublicKeyToken=null">
+      <HintPath>..\packages\Discord.Net.WebSocket.2.0.0-beta2-00974\lib\net46\Discord.Net.WebSocket.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="Google.Authenticator, Version=1.2.1.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\GoogleAuthenticator.1.2.1\lib\net45\Google.Authenticator.dll</HintPath>
@@ -92,11 +97,10 @@
     <Reference Include="HtmlAgilityPack, Version=1.8.4.0, Culture=neutral, PublicKeyToken=bd319b19eaf3b43a, processorArchitecture=MSIL">
       <HintPath>..\packages\HtmlAgilityPack.1.8.4\lib\Net45\HtmlAgilityPack.dll</HintPath>
     </Reference>
-    <Reference Include="MelissaNet, Version=1.2.0.36151, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\RiderProjects\MelissaNet\MelissaNet\bin\Debug\MelissaNet.dll</HintPath>
-    </Reference>
     <Reference Include="MelissaNet, Version=1.2.0.36151, Culture=neutral, PublicKeyToken=null">
+      <HintPath>..\..\MelissaNet\MelissaNet\bin\Debug\MelissaNet.dll</HintPath>
+    </Reference>
+    <Reference Include="MelissaNet, Version=1.3.0.65341, Culture=neutral, PublicKeyToken=null">
       <HintPath>..\..\MelissaNet\MelissaNet\bin\Debug\MelissaNet.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.Extensions.DependencyInjection, Version=1.1.1.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
@@ -201,6 +205,7 @@
     <Compile Include="Common\GuildConfiguration.cs" />
     <Compile Include="Common\PermissionLevel.cs" />
     <Compile Include="Common\Preconditions\MinPermissionsAttribute.cs" />
+    <Compile Include="Common\Preconditions\RequireGuildAttribute.cs" />
     <Compile Include="Common\StringConfiguration.cs" />
     <Compile Include="Common\User.cs" />
     <Compile Include="Extensions\Extensions.cs" />
@@ -228,13 +233,16 @@
     <Compile Include="Modules\Owner\OwnerModule.cs" />
     <Compile Include="Modules\Public\FunModule.cs" />
     <Compile Include="Modules\Public\Games\HigherLowerGameModule.cs" />
+    <Compile Include="Modules\Public\Games\RaidGamemodeModule.cs" />
     <Compile Include="Modules\Public\Games\SlotsGameModule.cs" />
     <Compile Include="Modules\Public\HelpModule.cs" />
     <Compile Include="Modules\Public\InfoModule.cs" />
     <Compile Include="Modules\Public\LeaderboardModule.cs" />
+    <Compile Include="Modules\Public\ProfileModule.cs" />
     <Compile Include="Modules\Public\PublicModule.cs" />
     <Compile Include="Modules\SOwner\ServerOwnerModule.cs" />
     <Compile Include="DiscordBot.cs" />
+    <Compile Include="Modules\TeamMember\TeamMemberModule.cs" />
     <Compile Include="Other\QuoteHandler.cs" />
     <Compile Include="Other\VoteLinkHandler.cs" />
     <Compile Include="Program.cs" />

@@ -22,32 +22,26 @@ namespace DiscordBot
 
         public static void StartBot()
         {
-            Console.Write(@"MogiiBot 3: [");
+            Console.Write(@"DiscordBot: [");
             Console.ForegroundColor = ConsoleColor.Yellow;
             Console.Write(@"Version " + ProgramVersion.Major + @"." + ProgramVersion.Minor + @"." + ProgramVersion.Build + @"." + ProgramVersion.Revision);
             Console.ResetColor();
             Console.WriteLine(@"]    ");
-
-            Console.WriteLine(@"A Discord.Net Bot");
-            Console.WriteLine(@"-----------------------------------------------------------------");
 
             Console.Write(@"Developed by Melissa Brennan (");
             Console.ForegroundColor = ConsoleColor.Magenta;
             Console.Write(@"@MythicalCuddles");
             Console.ResetColor();
             Console.WriteLine(@")");
-
-            Console.Write(@"MelissaNet: [");
-            Console.ForegroundColor = ConsoleColor.Yellow;
-            Console.Write(@"Version " + VersionInfo.Version);
-            Console.ResetColor();
-            Console.WriteLine(@"]    ");
-
+            
             Console.WriteLine(@"Web: www.mythicalcuddles.xyz");
             Console.WriteLine(@"Project: mogiibot.mythicalcuddles.xyz");
-            Console.WriteLine(@"Contact: melissa@mythicalcuddles.xyz");
-            Console.WriteLine(Environment.NewLine);
+            Console.WriteLine(@"Contact: staff@mythicalcuddles.xyz");
+            
             Console.WriteLine(@"Copyright 2017 - 2018 Melissa Brennan | Licensed under the MIT License.");
+            Console.WriteLine(@"-----------------------------------------------------------------");
+            
+            MelissaNet.MelissaNet.Initialize();
             Console.WriteLine(@"-----------------------------------------------------------------");
 
             Configuration.EnsureExists();
@@ -60,24 +54,12 @@ namespace DiscordBot
             if (Configuration.Load().SecretKey == null)
             {
                 Console.WriteLine(@"Two Factor Authentication Running - Please save the QR Code in your authenticator app!");
+                Console.WriteLine(@"This is used as a safety to issue more serious commands! This is the only time you'll get to save this!");
                 Console.WriteLine(@"-----------------------------------------------------------------");
                 Application.Run(new frmAuth());
             }
-
-            try
-            {
-                new DiscordBot().RunBotAsync().GetAwaiter().GetResult();
-            }
-            catch(Exception exception)
-            {
-                Console.WriteLine(exception.ToString());
-                Console.WriteLine(Environment.NewLine + Environment.NewLine);
-
-                Task.Delay(1000);
-
-                StartBot();
-            }
-
+            
+            new DiscordBot().RunBotAsync().GetAwaiter().GetResult();
         }
     }
 }

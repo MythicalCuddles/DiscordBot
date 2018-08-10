@@ -37,8 +37,11 @@ namespace DiscordBot.Handlers
                 return;
             }
 
-            //todo: add togglable
-            DiscordBot.AwardCoinsToPlayer(message.Value.Author);
+            if (Configuration.Load().AwardingTokensEnabled)
+            {
+                message.Value.Author.AwardTokensToUser(); 
+                reaction.User.Value.AwardTokensToUser();
+            }
         }
 
         private static async Task HandleQuoteReactions(Cacheable<IUserMessage, ulong> message, ISocketMessageChannel channel, SocketReaction reaction)

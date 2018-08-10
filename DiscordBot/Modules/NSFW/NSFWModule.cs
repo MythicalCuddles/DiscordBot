@@ -8,7 +8,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Net;
-
+using Discord;
 using Discord.Commands;
 using Discord.WebSocket;
 
@@ -85,15 +85,26 @@ namespace DiscordBot.Modules.NSFW
 						    }
 						}
 
-                        // 2.6 Fix for Link Issue
                         string link = images[3].FindAndReplaceFirstInstance("//", "temp");
                         link = link.FindAndReplaceFirstInstance("//", "/");
                         link = link.FindAndReplaceFirstInstance("temp", "//");
                         Console.WriteLine(@"[Final] " + link);
 
-                        //message.ModifyAfter(Context.User.Mention + ", congratulations, you won the following image: \n" + images[2].ToString(), 1);
-                        await ReplyAsync(Context.User.Mention + ", congratulations, you won the following image: \n" + link);
-					}
+                        
+                        EmbedBuilder eb = new EmbedBuilder()
+                        {
+                            Title = "Congratulations! You won the following image.",
+                            ImageUrl = link,
+                            Color = Context.User.GetCustomRGB(),
+                            Footer = new EmbedFooterBuilder()
+                            {
+                                Text = "ID: " + _id
+                            }
+                        };
+                        
+                        //await ReplyAsync(Context.User.Mention + ", congratulations, you won the following image: \n" + link);
+                        await ReplyAsync("", false, eb.Build());
+                    }
                     catch (Exception ex)
                     {
                         Console.Write(@"[");

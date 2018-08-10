@@ -20,11 +20,11 @@ namespace DiscordBot.Logging
             string file = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), FileName);
             TransactionsList = File.ReadAllLines(file).ToList();
 
-            Console.Write("status: [");
+            Console.Write(@"status: [");
             Console.ForegroundColor = ConsoleColor.DarkGreen;
-            Console.Write("ok");
+            Console.Write(@"ok");
             Console.ResetColor();
-            Console.WriteLine("]    " + FileName + ": loaded.");
+            Console.WriteLine(@"]    " + FileName + @": loaded.");
         }
 
         public static void EnsureExists()
@@ -38,11 +38,11 @@ namespace DiscordBot.Logging
 
                 SaveTransactionsToFile();
 
-                Console.Write("status: [");
+                Console.Write(@"status: [");
                 Console.ForegroundColor = ConsoleColor.DarkGreen;
-                Console.Write("ok");
+                Console.Write(@"ok");
                 Console.ResetColor();
-                Console.WriteLine("]    " + FileName + ": created.");
+                Console.WriteLine(@"]    " + FileName + @": created.");
             }
             LoadTransactions();
         }

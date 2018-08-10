@@ -36,6 +36,7 @@ namespace DiscordBot.Modules.Public
         }
 
         [Group("mogiicraft")]
+        [RequireGuild(221250721046069249)]
         public class MogiiCraftCommands : ModuleBase
         { 
             [Command("poll"), Summary("Sends a link to the poll for the minecraft server.")]

@@ -21,7 +21,7 @@ namespace DiscordBot
 
         private void Form1_Load(object sender, EventArgs e)
         {
-            txtAccountTitle.Text = @"MogiiBot3";
+            txtAccountTitle.Text = @"MythicalCuddlesXYZ DiscordBot";
             string key = Guid.NewGuid().ToString().Replace("-", "");
             txtSecretKey.Text = key;
             Configuration.UpdateConfiguration(secretKey: Cryptography.EncryptString(key));

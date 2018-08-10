@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-
+using Discord;
 using Discord.Commands;
 using Discord.WebSocket;
 
@@ -38,14 +38,14 @@ namespace DiscordBot.Modules.Public
 
         private async Task ShowLeaderboard(ICommandContext context, bool isGuild = false)
         {
-            int listAmount = Configuration.Load().LeaderboardAmount;
-            List<Tuple<int, SocketGuildUser>> userList = new List<Tuple<int, SocketGuildUser>>();
+            var listAmount = Configuration.Load().LeaderboardAmount;
+            var userList = new List<Tuple<int, SocketGuildUser>>();
 
-            foreach (SocketGuild g in DiscordBot.Bot.Guilds)
+            foreach (var g in DiscordBot.Bot.Guilds)
             {
                 if (isGuild && g.Id == context.Guild.Id)
                 {
-                    foreach (SocketGuildUser u in g.Users)
+                    foreach (var u in g.Users)
                     {
                         if (userList.All(i => i.Item2.Id != u.Id) && !u.IsBot)
                         {
@@ -55,7 +55,7 @@ namespace DiscordBot.Modules.Public
                 }
                 else if (!isGuild)
                 {
-                    foreach (SocketGuildUser u in g.Users)
+                    foreach (var u in g.Users)
                     {
                         if (userList.All(i => i.Item2.Id != u.Id) && !u.IsBot)
                         {
@@ -65,43 +65,50 @@ namespace DiscordBot.Modules.Public
                 }
             }
 
-            List<Tuple<int, SocketGuildUser>> sortedList =
+            var sortedList =
                 userList.OrderByDescending(intTuple => intTuple.Item1).ToList();
 
             if (sortedList.Count < listAmount)
                 listAmount = sortedList.Count;
 
-            StringBuilder sb = new StringBuilder();
+            var eb = new EmbedBuilder()
+            {
+                Color = new Color(Configuration.Load().LeaderboardEmbedColor),
+                ThumbnailUrl = Configuration.Load().LeaderboardTrophyUrl
+            }.WithCurrentTimestamp();
 
             if (isGuild)
             {
-                sb.Append("**Guild Leaderboard - Top " + listAmount + "**\n```");
+                eb.WithAuthor("Guild Leaderboard - Top " + listAmount + "");
+                eb.WithFooter("Did you know? You can do \"" + GuildConfiguration.Load(context.Guild.Id).Prefix + "leaderboard global\" to see the global leaderboard!");
             }
             else
             {
-                sb.Append("**Global Leaderboard - Top " + listAmount + "**\n```");
+                eb.WithAuthor("Global Leaderboard - Top " + listAmount + "");
+                eb.WithFooter("Did you know? You can do \"" + GuildConfiguration.Load(context.Guild.Id).Prefix + "leaderboard guild\" to see the guild leaderboard!");
             }
 
-            List<Tuple<int, SocketGuildUser>> shownList = new List<Tuple<int, SocketGuildUser>>();
-            for (int i = 0; i < listAmount; i++)
+            var sb = new StringBuilder().Append("```INI\n");
+            var shownList = new List<Tuple<int, SocketGuildUser>>();
+            for (var i = 0; i < listAmount; i++)
             {
-                sb.Append((i + 1) + ". @" + sortedList[i].Item2.Username + ": " + sortedList[i].Item1 + " coin(s)\n");
+                sb.Append("[" + (i + 1) + "] @" + sortedList[i].Item2.Username + ": " + sortedList[i].Item1 + " coin(s)\n");
                 shownList.Add(new Tuple<int, SocketGuildUser>(sortedList[i].Item1, sortedList[i].Item2));
             }
 
             if (shownList.All(i => i.Item2.Id != context.User.Id))
             {
                 sb.Append("...\n");
-                int pos = sortedList.FindIndex(t => t.Item2.Id == context.User.Id);
+                var pos = sortedList.FindIndex(t => t.Item2.Id == context.User.Id);
 
-                sb.Append((pos) + ". @" + sortedList[pos - 1].Item2.Username + ": " + sortedList[pos - 1].Item1 + " coin(s)\n");
-                sb.Append((pos + 1) + ". @" + sortedList[pos].Item2.Username + ": " + sortedList[pos].Item1 + " coin(s)\n"); // Shown for User
-                sb.Append((pos + 2) + ". @" + sortedList[pos + 1].Item2.Username + ": " + sortedList[pos + 2].Item1 + " coin(s)\n");
+                sb.Append("[" + (pos) + "] @" + sortedList[pos - 1].Item2.Username + ": " + sortedList[pos - 1].Item1 + " coin(s)\n");
+                sb.Append("[" + (pos + 1) + "] @" + sortedList[pos].Item2.Username + ": " + sortedList[pos].Item1 + " coin(s)\n"); // Shown for User
+                sb.Append("[" + (pos + 2) + "] @" + sortedList[pos + 1].Item2.Username + ": " + sortedList[pos + 2].Item1 + " coin(s)\n");
             }
-
-
             sb.Append("```");
-            await ReplyAsync(sb.ToString());
+            
+            eb.WithDescription(sb.ToString());
+            await ReplyAsync("", false, eb.Build());
         }
     }
 }

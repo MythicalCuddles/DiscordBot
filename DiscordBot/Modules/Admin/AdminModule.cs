@@ -2,7 +2,7 @@
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-
+using System.Windows.Forms;
 using Discord.Addons.Interactive;
 using Discord;
 using Discord.Commands;
@@ -106,7 +106,6 @@ namespace DiscordBot.Modules.Admin
         public async Task AddQuote([Remainder]string quote)
         {
             QuoteHandler.AddAndUpdateQuotes(quote);
-            //await ReplyAsync("Quote successfully added to the list, " + Context.User.Mention);
 			
 			EmbedBuilder eb = new EmbedBuilder()
 				.WithDescription(Context.User.Mention + " Quote Added")
@@ -245,8 +244,6 @@ namespace DiscordBot.Modules.Admin
 				.WithColor(33, 210, 47);
 
 			await ReplyAsync("", false, eb.Build());
-
-			//await ReplyAsync("Link successfully added to the list, " + Context.User.Mention);
         }
 
         [Command("listvotelinks"), Summary("Sends a list of all the voting links.")]

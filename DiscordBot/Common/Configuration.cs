@@ -25,15 +25,28 @@ namespace DiscordBot.Common
         public UserStatus Status { get; set; } = UserStatus.Online;
         
         public bool UnknownCommandEnabled { get; set; } = true;
+        public bool AwardingCoinsEnabled { get; set; } = true;
+        public bool AwardingTokensEnabled { get; set; } = true;
+        
         public int LeaderboardAmount { get; set; } = 5;
         public int QuoteCost { get; set; } = 250;
         public int PrefixCost { get; set; } = 2500;
+        public int RGBCost { get; set; } = 5000;
         public int SenpaiChanceRate { get; set; } = 5;
-
+        
+        // Raid Gamemode Settings //todo: coming as part of the raiding system. These variables need to be added to be made configurable.
+        public bool RaidsEnabled { get; set; } = true;
+        public bool RefundOnRaidLeave { get; set; } = true;
+        public int RaidCooldownInSeconds { get; set; } = 1800;
+        public int RaidChanceRate { get; set; } = 5;
+        
         public ulong LogChannelId { get; set; } = 447769497344933900;
 
-        public int Respects { get; set; } = 0;
-        public int MinLengthForCoin { get; set; } = 0;
+        public int Respects { get; set; }
+        public int MinLengthForCoin { get; set; }
+
+        public string LeaderboardTrophyUrl { get; set; } = "https://i.imgur.com/Fancl1L.png";
+        public uint LeaderboardEmbedColor { get; set; } = 16766287;
 
         /// NSFW Variables
         public int MaxRuleXGamble { get; set; } = 2353312;
@@ -48,7 +61,6 @@ namespace DiscordBot.Common
 
                 var config = new Configuration();
 
-                //TODO: Clean Up
                 Console.WriteLine(@"No configuration file was found. Lets set one up now!");
 
                 Console.Write(@"Please enter the Bot Token: ");
@@ -69,7 +81,6 @@ namespace DiscordBot.Common
                 Console.WriteLine(@"]    " + FileName + @": created.");
             }
 
-            //TODO: Clean Up
             if (Load().BotToken.IsNullOrEmpty() || Load().BotToken.IsNullOrWhiteSpace())
             {
                 var config = new Configuration();
@@ -86,6 +97,8 @@ namespace DiscordBot.Common
                 Console.Clear();
 
                 config.SaveJson();
+                
+                
             }
 
             Console.Write(@"status: [");
@@ -109,8 +122,9 @@ namespace DiscordBot.Common
             => JsonConvert.SerializeObject(this, Formatting.Indented);
         
         public static void UpdateConfiguration(string botToken = null, string secretKey = null, ulong? developer = null, string statusText = null, string statusLink = null,
-            int? statusActivity = null, UserStatus? status = null, bool? unknownCommandEnabled = null,
-            int? leaderboardAmount = null, int? quoteCost = null, int? prefixCost = null, int? senpaiChanceRate = null,
+            int? statusActivity = null, UserStatus? status = null, bool? unknownCommandEnabled = null, bool? awardingCoinsEnabled = null, bool? awardingTokensEnabled = null,
+            int? leaderboardAmount = null, string leaderboardTrophyUrl = null, uint? leaderboardEmbedColor = null,
+            int? quoteCost = null, int? prefixCost = null, int? senpaiChanceRate = null, int? rgbCost = null,
             ulong? logChannelId = null, int? respects = null, int? minLengthForCoin = null, int? maxRuleXGamble = null)
         {
             var config = new Configuration()
@@ -125,9 +139,16 @@ namespace DiscordBot.Common
                 Status = status ?? Load().Status,
 
                 UnknownCommandEnabled = unknownCommandEnabled ?? Load().UnknownCommandEnabled,
+                AwardingCoinsEnabled = awardingCoinsEnabled ?? Load().AwardingCoinsEnabled,
+                AwardingTokensEnabled = awardingTokensEnabled ?? Load().AwardingTokensEnabled,
+                
                 LeaderboardAmount = leaderboardAmount ?? Load().LeaderboardAmount,
+                LeaderboardTrophyUrl = leaderboardTrophyUrl ?? Load().LeaderboardTrophyUrl,
+                LeaderboardEmbedColor = leaderboardEmbedColor ?? Load().LeaderboardEmbedColor,
+                
                 QuoteCost = quoteCost ?? Load().QuoteCost,
                 PrefixCost = prefixCost ?? Load().PrefixCost,
+                RGBCost = rgbCost ?? Load().RGBCost,
                 SenpaiChanceRate = senpaiChanceRate ?? Load().SenpaiChanceRate,
 
                 LogChannelId = logChannelId ?? Load().LogChannelId,

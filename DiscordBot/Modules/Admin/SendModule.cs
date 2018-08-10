@@ -19,25 +19,25 @@ namespace DiscordBot.Modules.Admin
         public async Task Send()
         {
             await ReplyAsync("**Syntax:** " +
-                GuildConfiguration.Load(Context.Guild.Id).Prefix + "send [type] [mention/id] [message]\n```" +
+                GuildConfiguration.Load(Context.Guild.Id).Prefix + "send [type] [mention/id] [message]\n```INI\n" +
                 "Available Commands\n" +
                 "-----------------------------\n" +
-                "Channel Message\n" +
-                "-> send channelmessage [mention/id] [message]\n" +
-                "-> send cmessage [mention/id] [message]\n" +
-                "-> send channelmsg [mention/id] [message]\n" +
+                "[ 1] Channel Message\n" +
+                "[1a] send channelmessage [mention/id] [message]\n" +
+                "[1b] send cmessage [mention/id] [message]\n" +
+                "[1c] send channelmsg [mention/id] [message]\n" +
                 "-----------------------------\n" +
-                "Private Message\n" +
-                "-> send privatemessage [mention/id] [message]\n" +
-                "-> send pm [mention/id] [message]\n" +
-                "-> send directmessage [mention/id] [message]\n" +
-                "-> send dm [mention/id] [message]\n" +
+                "[ 2] Private Message\n" +
+                "[2a] send privatemessage [mention/id] [message]\n" +
+                "[2b] send pm [mention/id] [message]\n" +
+                "[2c] send directmessage [mention/id] [message]\n" +
+                "[2d] send dm [mention/id] [message]\n" +
                 "```");
         }
 
         [Command("channelmessage"), Summary("Sends a message to the channel specified.")]
         [Alias("cmessage", "channelmsg")]
-        public async Task SendChannelMessage([Summary("The channel id to send the message to.")] SocketTextChannel channel, [Remainder]string message = null)
+        public async Task SendChannelMessage([Summary("The channel id to send the message to.")] ITextChannel channel, [Remainder]string message = null)
         {
             if(channel == null || message == null)
             {

@@ -69,9 +69,9 @@ namespace DiscordBot.Modules.Mod
                     "**Discriminator:** #" + DiscordBot.Bot.CurrentUser.Discriminator + "\n" +
                     "**Id:** " + DiscordBot.Bot.CurrentUser.Id)
                 .AddField("Developer Information", 
-                    "**Name:** " + MelissaNet.Discord.GetMelissaId().GetUser().Username + "\n" +
-                    "**Discriminator:** #" + MelissaNet.Discord.GetMelissaId().GetUser().Discriminator + "\n" +
-                    "**Id:** " + MelissaNet.Discord.GetMelissaId())
+                    "**Name:** " + Configuration.Load().Developer.GetUser().Username + "\n" +
+                    "**Discriminator:** #" + Configuration.Load().Developer.GetUser().Discriminator + "\n" +
+                    "**Id:** " + Configuration.Load().Developer)
                 .AddField("Bot Statistics", 
                     "**Active for:** " + CalculateUptime() + "\n" +
                     "**Latency:** " + DiscordBot.Bot.Latency + "ms" + "\n" +

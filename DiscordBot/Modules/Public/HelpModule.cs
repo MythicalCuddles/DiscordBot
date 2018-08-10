@@ -6,10 +6,12 @@ using Discord;
 using Discord.Commands;
 
 using DiscordBot.Common;
+using DiscordBot.Common.Preconditions;
 
 namespace DiscordBot.Modules.Public
 {
     [Name("Help Commands")]
+    [RequireGuild(222022898397741057)]
     public class HelpModule : ModuleBase<CommandContext>
     {
         public CommandService Service;

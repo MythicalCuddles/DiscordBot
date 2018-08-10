@@ -22,13 +22,22 @@ namespace DiscordBot.Modules.Mod
         public async Task ShowConfig()
         {
             await ReplyAsync("**Syntax:** " +
-                             GuildConfiguration.Load(Context.Guild.Id).Prefix + "showconfig [config]\n```" +
+                             GuildConfiguration.Load(Context.Guild.Id).Prefix + "showconfig [config]\n```INI\n" +
                              "Available Commands\n" +
                              "-----------------------------\n" +
-                             "-> showconfig bot\n" +
-                             "-> showconfig strings\n" +
-                             "-> showconfig guild\n" +
+                             "[ 1] showconfig all\n" +
+                             "[ 2] showconfig bot\n" +
+                             "[ 3] showconfig guild\n" +
+                             "[ 4] showconfig strings\n" +
                              "```");
+        }
+
+        [Command("all")]
+        public async Task ShowAllConfigs()
+        {
+            await ShowBotConfig();
+            await ShowGuildConfig();
+            await ShowStringConfiguration();
         }
 
         [Command("bot")]
@@ -46,15 +55,18 @@ namespace DiscordBot.Modules.Mod
                                "[ 5] Status Activity [ " + Configuration.Load().StatusActivity.ToActivityType() + " ]\n" +
                                "[ 6] Status [ " + Configuration.Load().Status + " ]\n" +
                                "[ 7] Unknown Command Enabled [ " + Configuration.Load().UnknownCommandEnabled.ToYesNo() + " ]\n" +
-                               "[ 8] Leaderboard Amount [ " + Configuration.Load().LeaderboardAmount + " ]\n" +
-                               "[ 9] Quote Cost [ " + Configuration.Load().QuoteCost + " coin(s) ]\n" +
-                               "[10] Prefix Cost [ " + Configuration.Load().PrefixCost + " coin(s) ]\n" +
-                               "[11] Senpai Chance Rate [ " + Configuration.Load().SenpaiChanceRate + "/100 ]\n" +
-                               "[12] Global Log Channel [ #" + (Configuration.Load().LogChannelId.GetTextChannel().Name ?? "UNDEFINED") + " ]\n" +
-                               "[13] Global Log Channel ID [ " + Configuration.Load().LogChannelId + " ]\n" +
-                               "[14] Respects [ " + Configuration.Load().Respects + " ]\n" +
-                               "[15] Min Length For Coin(s) [ " + Configuration.Load().MinLengthForCoin + " ]\n" +
-                               "[16] Max Rule34 Gamble ID [ " + Configuration.Load().MaxRuleXGamble + " ]\n" +
+                               "[ 8] Awarding Coins Enabled [ " + Configuration.Load().AwardingCoinsEnabled.ToYesNo() + " ]\n" +
+                               "[ 9] Awarding Tokens Enabled [ " + Configuration.Load().AwardingTokensEnabled.ToYesNo() + " ]\n" +
+                               "[10] Leaderboard Amount [ " + Configuration.Load().LeaderboardAmount + " ]\n" +
+                               "[11] Quote Cost [ " + Configuration.Load().QuoteCost + " coin(s) ]\n" +
+                               "[12] Prefix Cost [ " + Configuration.Load().PrefixCost + " coin(s) ]\n" +
+                               "[13] RGB Cost [ " + Configuration.Load().RGBCost + " coin(s) ]\n" +
+                               "[14] Senpai Chance Rate [ " + Configuration.Load().SenpaiChanceRate + "/100 ]\n" +
+                               "[15] Global Log Channel [ #" + (Configuration.Load().LogChannelId.GetTextChannel().Name ?? "UNDEFINED") + " ]\n" +
+                               "[16] Global Log Channel ID [ " + Configuration.Load().LogChannelId + " ]\n" +
+                               "[17] Respects [ " + Configuration.Load().Respects + " ]\n" +
+                               "[18] Min Length For Coin(s) [ " + Configuration.Load().MinLengthForCoin + " ]\n" +
+                               "[19] Max Rule34 Gamble ID [ " + Configuration.Load().MaxRuleXGamble + " ]\n" +
                                "```");
 
             await ReplyAsync("", false, eb.Build());
@@ -64,25 +76,15 @@ namespace DiscordBot.Modules.Mod
         [Command("strings")]
         public async Task ShowStringConfiguration()
         {
-            try
-            {
-                EmbedBuilder eb = new EmbedBuilder()
-                    .WithTitle("String Configuration")
-                    .WithFooter("Bot Owner permissions required to change these variables!");
+            EmbedBuilder eb = new EmbedBuilder()
+                .WithTitle("String Configuration")
+                .WithFooter("Bot Owner permissions required to change these variables!");
 
-                eb.WithDescription("```INI\n" +
-                                   "[ 1] Default Website Name [ " + (StringConfiguration.Load().DefaultWebsiteName ?? "UNDEFINED") + " ]\n" +
-                                   "```");
+            eb.WithDescription("```INI\n" +
+                               "[ 1] Default Website Name [ " + (StringConfiguration.Load().DefaultWebsiteName ?? "UNDEFINED") + " ]\n" +
+                               "```");
 
-                await ReplyAsync("", false, eb.Build());
-            }
-            catch (Exception e)
-            {
-                await ReplyAsync(
-                    "It appears that your Guild Configuration has not been set-up completely. Please complete all the steps before using this command.");
-                Console.WriteLine(e);
-                Console.WriteLine(e.Message);
-            }
+            await ReplyAsync("", false, eb.Build());
         }
 
         [Command("guild")]
@@ -105,8 +107,8 @@ namespace DiscordBot.Modules.Mod
                                    "[ 8] Senpai Enabled [ " + GuildConfiguration.Load(Context.Guild.Id).SenpaiEnabled.ToYesNo() + " ]\n" +
                                    "[ 9] Quotes Enabled [ " + GuildConfiguration.Load(Context.Guild.Id).QuotesEnabled.ToYesNo() + " ]\n" +
                                    "[10] NSFW Commands Enabled [ " + GuildConfiguration.Load(Context.Guild.Id).EnableNsfwCommands.ToYesNo() + " ]\n" +
-                                   "[11] Rule34 Gamble Channel [ #" + (GuildConfiguration.Load(Context.Guild.Id).RuleGambleChannelId.GetTextChannel().Name ?? "UNDEFINED") + " ]\n" +
-                                   "[12] Rule34 Gamble Channel ID [ " + (GuildConfiguration.Load(Context.Guild.Id).RuleGambleChannelId) + " ]\n" +
+                                   "[11] Rule34 Channel [ #" + (GuildConfiguration.Load(Context.Guild.Id).RuleGambleChannelId.GetTextChannel().Name ?? "UNDEFINED") + " ]\n" +
+                                   "[12] Rule34 Channel ID [ " + (GuildConfiguration.Load(Context.Guild.Id).RuleGambleChannelId) + " ]\n" +
                                    "```");
 
                 await ReplyAsync("", false, eb.Build());

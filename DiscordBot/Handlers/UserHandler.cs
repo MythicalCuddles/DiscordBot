@@ -64,8 +64,10 @@ namespace DiscordBot.Handlers
                 if (e.GetName() != null) eb.AddField("Name", e.GetName(), true);
                 if (e.GetGender() != null) eb.AddField("Gender", e.GetGender(), true);
                 if (e.GetPronouns() != null) eb.AddField("Pronouns", e.GetPronouns(), true);
-                if (e.GetMinecraftUser() != null) eb.AddField("Minecraft Username", e.GetMinecraftUser(), true);
+                if (e.GetMinecraftUsername() != null) eb.AddField("Minecraft Username", e.GetMinecraftUsername(), true);
+                if (e.GetInstagramUsername() != null) eb.AddField("Instagram", "[" + e.GetInstagramUsername() + "](https://www.instagram.com/" + e.GetInstagramUsername() + "/)", true);
                 if (e.GetSnapchatUsername() != null) eb.AddField("Snapchat", "[" + e.GetSnapchatUsername() + "](https://www.snapchat.com/add/" + e.GetSnapchatUsername() + "/)", true);
+                if (e.GetGitHubUsername() != null) eb.AddField("GitHub", "[" + e.GetGitHubUsername() + "](https://github.com/" + e.GetGitHubUsername() + "/)", true);
                 if (e.GetFooterText() != null) eb.AddField("Footer Text", e.GetFooterText(), true);
 
                 await GuildConfiguration.Load(e.Guild.Id).LogChannelId.GetTextChannel().SendMessageAsync("", false, eb.Build());
@@ -98,7 +100,7 @@ namespace DiscordBot.Handlers
             if (e.GetName() != null) eb.AddField("Name", e.GetName(), true);
             if (e.GetGender() != null) eb.AddField("Gender", e.GetGender(), true);
             if (e.GetPronouns() != null) eb.AddField("Pronouns", e.GetPronouns(), true);
-            if (e.GetMinecraftUser() != null) eb.AddField("Minecraft Username", e.GetMinecraftUser(), true);
+            if (e.GetMinecraftUsername() != null) eb.AddField("Minecraft Username", e.GetMinecraftUsername(), true);
             if (e.GetSnapchatUsername() != null) eb.AddField("Snapchat", "[" + e.GetSnapchatUsername() + "](https://www.snapchat.com/add/" + e.GetSnapchatUsername() + "/)", true);
             if (e.GetFooterText() != null) eb.AddField("Footer Text", e.GetFooterText(), true);
 

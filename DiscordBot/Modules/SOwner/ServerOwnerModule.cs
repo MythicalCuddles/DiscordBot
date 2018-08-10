@@ -106,7 +106,6 @@ namespace DiscordBot.Modules.SOwner
 
             if (channel == null)
             {
-                // todo: replace with actual syntax
                 await ReplyAsync("Syntax: " + GuildConfiguration.Load(Context.Guild.Id).Prefix +
                                  "toggleawardingcoins [#channel]");
                 return;

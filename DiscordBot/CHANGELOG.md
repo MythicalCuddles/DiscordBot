@@ -1,10 +1,72 @@
 | CHANGELOG.md  |
 | ------------- |
 
+## Version 2.11.0.0
+
+### Added
+    - Added TeamMemberModule to hold commands for users with the TeamMember permission.
+    - Added AwardingCoinsEnabled to check if users get awarded coins.
+    - Added check in MessageReceived to check if the user gets awarded coins.
+    - Added AwardingTokensEnabled to check if users get awarded tokens. 
+    - Added check in ReactionAdded to check if the user gets awarded tokens.
+    - Added AwardingCoinsEnabled and AwardingTokensEnabled to the command showconfig.
+    - Added awardingcoins and awardingtokens to editconfig.
+    - Added GitHub username to the user about card.
+    - Added Instagram to the user about card.
+    - Added commands to allow users to set their Instagram and GitHub username.
+    - Added force commands to allow admins to force change users Instagram and GitHub username.
+    - Added ProfileModule.cs.
+    - Addded GitHub and Instagram to UserHandler user card for when existing user joins another server.
+    - Added more custom flags to ModifyStringFlags for messages such as the welcome message.
+    - Added "showconfig all" to display all the available configurations.
+    - Added RGBCost to charge coins for users to issue the customrgb command.
+    - Added "editconfig rgbcost" to change the price for customrgb.
+    - Added RGBCost to showconfig.
+    - Added GetCustomRGB as a user extension.
+    - Added RequiredGuildAttribute to check if commands with the attribute are issued in the guild required.
+    - [Feature in testing] Added some commands to be guild-locked commands.
+    - Added parts of the raiding system (still in development, coming very soon)
+    - [Feature in testing] Added "addreaction" for the bot owner (to be changed in the future) to add a reaction to a cached message.
+
+### Changed
+    - Moved Guild event(s) from DiscordBot.cs to GuildHandler.cs in Handlers.
+    - Updated ReactionHandler.cs to award tokens instead of coins to the user reacting and the user posted.
+    - Updated guild join message to get the username of the bot.
+    - Updated DiscordBot.cs to write DiscordBot instead of MogiiBot to the console.
+    - Changed a section of code which requested the developer ID from MelissaNet to load from the configuration instead.
+    - Moved command globalmessage from the OwnerModule to the TeamMemberModule.
+    - Changed editconfig to show Yes/No instead of True/False for some options.
+    - Changed MELISSA flags to DEVELOPER flags in StringExtensions.
+    - Changed DeveloperInformation in ModeratorModule stats to load developer information from the configuration instead of MelissaNet.
+    - Moved user sets to ProfileModule.cs
+    - Updated user sets to be within the editprofile command.
+    - Moved command about to ProfileModule.cs
+    - Removed alias' from quoteprice and prefixprice.
+    - Changed the leaderboard layout by adding it to an embed instead of a string message.
+    - Changed the NSFW rule34gamble post by adding it to an embed instead of a string message.
+    - Updated the messages returned when a user successfully changes anything on their about profile card.
+    
+### Fixed
+    - Fixed an issue where the Personal Website tag on the about embed would update to match the users input.
+
+    
+### Removed
+    - Removed MelissaNet Version get during bot startup.
+    - Removed MELISSA.NET.VERSION flag from StringExtensions.
+    
+### Other
+    - Changed AwardCoinsToPlayer() to AwardCoinsToUser().
+    - Made AwardCoinsToUser() a user extension.
+    
+### Backend
+    - Updated Discord.Net and other packages to 2.0.0-beta2-00974.
+
+
 ## Version 2.10.1.0
 
 ### Fixed
     - Fixed an issue with the guild leaderboard.
+
 
 ## Version 2.10.1.0
 

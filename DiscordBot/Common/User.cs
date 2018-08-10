@@ -1,6 +1,6 @@
 ﻿using System;
 using System.IO;
-
+using Discord;
 using Newtonsoft.Json;
 
 namespace DiscordBot.Common
@@ -19,8 +19,9 @@ namespace DiscordBot.Common
         public string Gender { get; set; }
         public string Pronouns { get; set; }
         public string About { get; set; }
+        
         public string CustomPrefix { get; set; }
-
+        
         public byte AboutR { get; set; } = 140;
         public byte AboutG { get; set; } = 90;
         public byte AboutB { get; set; } = 210;
@@ -30,9 +31,16 @@ namespace DiscordBot.Common
         public string EmbedFooterBuilderIconUrl { get; set; }
         public string FooterText { get; set; }
 
+        /// Games //todo: coming in with raid system
+        public ulong InRaid { get; set; }
+        public int RaidInvestment { get; set; }
+        public DateTime LastRaid { get; set; }
+
         /// Socials
         public string MinecraftUsername { get; set; }
         public string Snapchat { get; set; }
+        public string InstagramUsername { get; set; }
+        public string GitHubUsername { get; set; }
         public string WebsiteName { get; set; }
         public string WebsiteUrl { get; set; }
 
@@ -116,34 +124,46 @@ namespace DiscordBot.Common
             return true;
         }
         
-        public static void UpdateUser(ulong uId, int? coins = null, string name = null, string gender = null, string pronouns = null,
-            string about = null, string customPrefix = null,
-            byte? aboutR = null, byte? aboutG = null, byte? aboutB = null, bool? teamMember = null,
-            string embedAuthorBuilderIconUrl = null, string embedFooterBuilderIconUrl = null,
-            string footerText = null, string minecraftUsername = null, string snapchat = null, bool? isBotIgnoringUser = null, 
-            string websiteName = null, string websiteUrl = null, int? mythicalTokens = null)
+        public static void UpdateUser(ulong uId, int? coins = null, int? mythicalTokens = null, 
+            string name = null, string gender = null, string pronouns = null, string about = null, string customPrefix = null,
+            byte? aboutR = null, byte? aboutG = null, byte? aboutB = null, 
+            ulong? inRaid = null, int? raidInvestment = null, DateTime? lastRaid = null,
+            bool? teamMember = null, string embedAuthorBuilderIconUrl = null, string embedFooterBuilderIconUrl = null, string footerText = null, 
+            string minecraftUsername = null, string snapchat = null, string instagram = null, string github = null, string websiteName = null, string websiteUrl = null,
+            bool? isBotIgnoringUser = null)
         {
             var user = new User()
             {
                 Coins = coins ?? Load(uId).Coins,
+                MythicalTokens = mythicalTokens ?? Load(uId).MythicalTokens,
+                
                 Name = name ?? Load(uId).Name,
                 Gender = gender ?? Load(uId).Gender,
                 Pronouns = pronouns ?? Load(uId).Pronouns,
                 About = about ?? Load(uId).About,
                 CustomPrefix = customPrefix ?? Load(uId).CustomPrefix,
+                
                 AboutR = aboutR ?? Load(uId).AboutR,
                 AboutG = aboutG ?? Load(uId).AboutG,
                 AboutB = aboutB ?? Load(uId).AboutB,
+                
+                InRaid = inRaid ?? Load(uId).InRaid,
+                RaidInvestment = raidInvestment ?? Load(uId).RaidInvestment,
+                LastRaid = lastRaid ?? Load(uId).LastRaid,
+                
                 TeamMember = teamMember ?? Load(uId).TeamMember,
                 EmbedAuthorBuilderIconUrl = embedAuthorBuilderIconUrl ?? Load(uId).EmbedAuthorBuilderIconUrl,
                 EmbedFooterBuilderIconUrl = embedFooterBuilderIconUrl ?? Load(uId).EmbedFooterBuilderIconUrl,
                 FooterText = footerText ?? Load(uId).FooterText,
+                
                 MinecraftUsername = minecraftUsername ?? Load(uId).MinecraftUsername,
                 Snapchat = snapchat ?? Load(uId).Snapchat,
-                IsBotIgnoringUser = isBotIgnoringUser ?? Load(uId).IsBotIgnoringUser,
+                InstagramUsername = instagram ?? Load(uId).InstagramUsername,
+                GitHubUsername = github ?? Load(uId).GitHubUsername,
                 WebsiteName = websiteName ?? Load(uId).WebsiteName,
                 WebsiteUrl = websiteUrl ?? Load(uId).WebsiteUrl,
-                MythicalTokens = mythicalTokens ?? Load(uId).MythicalTokens
+                
+                IsBotIgnoringUser = isBotIgnoringUser ?? Load(uId).IsBotIgnoringUser,
             };
             user.SaveJson(uId);
         }

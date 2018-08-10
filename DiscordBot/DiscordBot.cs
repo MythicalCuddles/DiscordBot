@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Net;
 using System.Reflection;
 using System.Security.Cryptography;
+using System.Threading;
 using System.Threading.Tasks;
-
+using System.Timers;
 using Microsoft.Extensions.DependencyInjection;
 
 using Discord;
@@ -27,8 +29,8 @@ namespace DiscordBot
     public class DiscordBot
     {
         public static DiscordSocketClient Bot;
-        public static CommandService CommandService;
-        public static IServiceProvider ServiceProvider;
+        private static CommandService _commandService;
+        private static IServiceProvider _serviceProvider;
 
         public async Task RunBotAsync()
         {
@@ -43,22 +45,31 @@ namespace DiscordBot
                 ConnectionTimeout = int.MaxValue,
 
             });
-            CommandService = new CommandService();
-            ServiceProvider = ConfigureServices();
+            _commandService = new CommandService();
+            _serviceProvider = ConfigureServices();
 
             // Create Tasks for Bot Events
+            #region Events
             Bot.Log += Log;
+            
             Bot.UserJoined += UserHandler.UserJoined;
             Bot.UserLeft += UserHandler.UserLeft;
+            
             Bot.ChannelCreated += ChannelHandler.ChannelCreated;
             Bot.ChannelDestroyed += ChannelHandler.ChannelDestroyed;
+            
             Bot.JoinedGuild += GuildHandler.BotOnJoinedGuild;
+            
             Bot.ReactionAdded += ReactionHandler.ReactionAdded;
+            
             Bot.MessageReceived += MessageReceived;
+            
             Bot.Ready += Ready;
+            
             Bot.Disconnected += Disconnected;
-
-            await CommandService.AddModulesAsync(Assembly.GetEntryAssembly(), ServiceProvider);
+            #endregion
+	        
+            await _commandService.AddModulesAsync(Assembly.GetEntryAssembly(), _serviceProvider);
 
             await LoginAndStart();
 
@@ -66,7 +77,7 @@ namespace DiscordBot
             await Task.Delay(-1);
         }
 
-        private IServiceProvider ConfigureServices()
+        private static IServiceProvider ConfigureServices()
         {
             var services = new ServiceCollection()
                 .AddSingleton(Bot)
@@ -106,7 +117,6 @@ namespace DiscordBot
 
         private static void ReEnterToken(string reasoning = "The token stored on file doesn't seem to be working. Please re-enter the bot token.")
         {
-            //TODO: Clean Up
             Console.WriteLine(reasoning);
 
             Console.Write(@"Token: ");
@@ -250,8 +260,7 @@ namespace DiscordBot
         {
             if (!(messageParam is SocketUserMessage message)) return; // If the message is null, return.
             if (message.Author.IsBot) return; // If the message was posted by a BOT account, return.
-            //if (!(messageParam.Channel is ITextChannel)) { return; } // If the message came from somewhere that is not a text channel.
-            if (User.Load(message.Author.Id).IsBotIgnoringUser && message.Author.Id != MelissaNet.Discord.GetMelissaId()) { return; } // If the bot is ignoring the user AND the user NOT Melissa.
+            if (User.Load(message.Author.Id).IsBotIgnoringUser && message.Author.Id != Configuration.Load().Developer) { return; } // If the bot is ignoring the user AND the user NOT Melissa.
 
             // If the message came from somewhere that is not a text channel -> Private Message
             if (!(messageParam.Channel is ITextChannel))
@@ -277,7 +286,7 @@ namespace DiscordBot
                 message.HasMentionPrefix(Bot.CurrentUser, ref argPos) || 
                 message.HasStringPrefix(uPrefix, ref argPos)) {
                 var context = new SocketCommandContext(Bot, message);
-                var result = await CommandService.ExecuteAsync(context, argPos, ServiceProvider);
+                var result = await _commandService.ExecuteAsync(context, argPos, _serviceProvider);
 
                 if (!result.IsSuccess && Configuration.Load().UnknownCommandEnabled)
                 {
@@ -294,37 +303,28 @@ namespace DiscordBot
             }
             else if (message.Content.ToUpper() == "F") // If the message is just "F", pay respects.
             {
-                var respects = Configuration.Load().Respects + 1;
+	            var respects = Configuration.Load().Respects + 1;
                 Configuration.UpdateConfiguration(respects: respects);
 
                 var eb = new EmbedBuilder()
                     .WithDescription("**" + message.Author.Username + "** has paid their respects.")
                     .WithFooter("Total Respects: " + respects)
-                    .WithColor(User.Load(message.Author.Id).AboutR, User.Load(message.Author.Id).AboutG, User.Load(message.Author.Id).AboutB);
+                    .WithColor(message.Author.GetCustomRGB());
 
-                await message.Channel.SendMessageAsync("", false, eb.Build());
+	            await message.Channel.SendMessageAsync("", false, eb.Build());
             }
             else
             {
-                if (message.Content.Length >= Configuration.Load().MinLengthForCoin)
+                if (Configuration.Load().AwardingCoinsEnabled)
                 {
-                    if (Channel.Load(message.Channel.Id).AwardingCoins)
-                    {
-                        AwardCoinsToPlayer(message.Author);
-                    }
+	                if (message.Content.Length >= Configuration.Load().MinLengthForCoin)
+	                {
+		                if (Channel.Load(message.Channel.Id).AwardingCoins)
+		                {
+			                message.Author.AwardCoinsToUser();
+		                }
+	                }
                 }
-            }
-        }
-
-        public static void AwardCoinsToPlayer(IUser user, int coinsToAward = 1)
-        {
-            try
-            {
-                User.UpdateUser(user.Id, (user.GetCoins() + coinsToAward));
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e);
             }
         }
     }

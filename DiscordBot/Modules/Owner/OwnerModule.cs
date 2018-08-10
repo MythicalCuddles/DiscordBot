@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -159,31 +160,6 @@ namespace DiscordBot.Modules.Owner
             }
         }
 
-        [Command("globalmessage")]
-        public async Task SendMessageToAllGuilds([Remainder]string message = null)
-        {
-            if (message == null)
-            {
-                await ReplyAsync("**Syntax:** " + GuildConfiguration.Load(Context.Guild.Id).Prefix + "globalmessage [message]\n" + 
-                                 "This will post an embed message to all guilds. It's main purpose is to inform guild owners of updates and changes.");
-                return;
-            }
-            
-            EmbedBuilder eb = new EmbedBuilder()
-            {
-                Title = "Announcement from " + Context.User.Username,
-                Color = new Color(User.Load(Context.User.Id).AboutR, User.Load(Context.User.Id).AboutG, User.Load(Context.User.Id).AboutB),
-                Description = message
-            }.WithCurrentTimestamp();
-
-            foreach (SocketGuild g in DiscordBot.Bot.Guilds)
-            {
-                await GuildConfiguration.Load(g.Id).LogChannelId.GetTextChannel().SendMessageAsync("", false, eb.Build());
-            }
-
-            await Configuration.Load().LogChannelId.GetTextChannel().SendMessageAsync("", false, eb.WithFooter("Message sent to all guilds").Build());
-        }
-
         [Command("die")]
         public async Task KillProgram(string confirmation = null)
         {
@@ -216,6 +192,38 @@ namespace DiscordBot.Modules.Owner
             else
             {
                 await ReplyAsync("Invalid Code.");
+            }
+        }
+
+        [Command("addreaction")]
+        public async Task AddReactionAsync(ulong? id = null, string emote = null)
+        {
+            if (id == null || emote == null)
+            {
+                await ReplyAsync("**Syntax:** " +
+                                 GuildConfiguration.Load(Context.Guild.Id).Prefix + "addreaction [message id] [emote]");
+                return;
+            }
+
+            foreach (var g in DiscordBot.Bot.Guilds)
+            {
+                foreach (var c in g.TextChannels)
+                {
+                    var msgs = c.GetMessagesAsync().GetEnumerator().Current;
+                    
+                    foreach (var m in msgs)
+                    {
+                        Console.WriteLine(m.Content);
+                        var msg = c.GetMessageAsync(m.Id).GetAwaiter().GetResult() as SocketUserMessage;
+
+                        if (msg.Id == id)
+                        {
+                            await msg.AddReactionAsync(new Emoji(emote));
+                            await ReplyAsync(Context.User.Mention + ", if that message exists in my cache, I've added a reaction to it.");
+                            return;
+                        }
+                    }
+                }
             }
         }
     }
