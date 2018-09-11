@@ -90,6 +90,7 @@ namespace DiscordBot.Modules.NSFW
                         string link = images[3].FindAndReplaceFirstInstance("//", "temp");
                         link = link.FindAndReplaceFirstInstance("//", "/");
                         link = link.FindAndReplaceFirstInstance("temp", "//");
+                        
                         // for debugging
                         //Console.WriteLine(@"[Final] " + link);
 

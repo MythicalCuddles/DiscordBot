@@ -1,6 +1,12 @@
 | CHANGELOG.md  |
 | ------------- |
 
+## Version 2.12.1.0
+    
+### Fixed
+    - Fixed an issue with the "leaderboard global" command.
+    - Fixed the bot becoming too spammy by making the level up messages delete themselves after a couple of minutes.
+
 ## Version 2.12.0.0
 
 ### Added

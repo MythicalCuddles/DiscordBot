@@ -5,6 +5,7 @@ using Discord.Commands;
 using Discord.WebSocket;
 using DiscordBot.Common;
 using DiscordBot.Handlers;
+using DiscordBot.Extensions;
 
 namespace DiscordBot.Extensions
 {
@@ -100,7 +101,7 @@ namespace DiscordBot.Extensions
             int userLevel = level ?? (user.GetLevel() + 1);
             return (0.04 * (Math.Pow(userLevel, 3))) + (0.8 * (Math.Pow(userLevel, 2))) + (2 * userLevel);   
         }
-        public static void AttemptLevelUp(this IUser user, SocketGuild guild)
+        public static async void AttemptLevelUp(this IUser user, SocketGuild guild)
         {
             double requiredEXP = user.EXPToLevelUp();
 
@@ -128,7 +129,8 @@ namespace DiscordBot.Extensions
                         Description = "Well done " + user.Mention + "! You levelled up to level " + user.GetLevel() + "! Gain " + (Math.Round(EXPToLevelUp(user)) - user.GetEXP()) + " more EXP to level up again!",
                     }.WithCurrentTimestamp();
                     
-                    botChannel.SendMessageAsync("", false, eb.Build());
+                    var msg = await botChannel.SendMessageAsync("", false, eb.Build());
+                    msg.DeleteAfter(120);
                 }
                 catch (Exception e)
                 {
