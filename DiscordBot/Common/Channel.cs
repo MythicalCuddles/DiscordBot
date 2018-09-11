@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
-
+using Discord;
+using DiscordBot.Extensions;
 using Newtonsoft.Json;
 
 namespace DiscordBot.Common
@@ -12,7 +13,7 @@ namespace DiscordBot.Common
         [JsonIgnore]
         private static string Extension { get; } = ".json";
 
-        public bool AwardingCoins { get; set; } = true;
+        public bool AwardingEXP { get; set; } = true;
 
         public static void EnsureExists(ulong cId)
         {
@@ -26,19 +27,11 @@ namespace DiscordBot.Common
 
                 var channel = new Channel();
                 channel.SaveJson(cId);
-
-                Console.Write(@"status: [");
-                Console.ForegroundColor = ConsoleColor.DarkGreen;
-                Console.Write(@"ok");
-                Console.ResetColor();
-                Console.WriteLine(@"]    " + fileName + @": created.");
+                
+                new LogMessage(LogSeverity.Info, "Channel Files", fileName + " created.").PrintToConsole();
             }
 
-            Console.Write(@"status: [");
-            Console.ForegroundColor = ConsoleColor.DarkGreen;
-            Console.Write(@"ok");
-            Console.ResetColor();
-            Console.WriteLine(@"]    " + fileName + @": loaded.");
+            new LogMessage(LogSeverity.Info, "Channel Files", fileName + " loaded.").PrintToConsole();
         }
 
         private void SaveJson(ulong cId)
@@ -58,22 +51,11 @@ namespace DiscordBot.Common
         private string ToJson()
             => JsonConvert.SerializeObject(this, Formatting.Indented);
 
-        //public static void SetAwardingCoins(ulong cId, bool value)
-        //{
-        //    string fileName = DirectoryPath + cId + Extension;
-        //    string json = File.ReadAllText(fileName);
-
-        //    dynamic jsonObj = JsonConvert.DeserializeObject(json);
-        //    jsonObj["AwardingCoins"] = value;
-        //    string output = JsonConvert.SerializeObject(jsonObj, Formatting.Indented);
-        //    File.WriteAllText(fileName, output);
-        //}
-
-        public static void UpdateChannel(ulong cId, bool? awardingCoins)
+        public static void UpdateChannel(ulong cId, bool? awardingEXP)
         {
             var channel = new Channel()
             {
-                AwardingCoins = awardingCoins ?? Load(cId).AwardingCoins
+                AwardingEXP = awardingEXP ?? Load(cId).AwardingEXP
             };
             channel.SaveJson(cId);
         }

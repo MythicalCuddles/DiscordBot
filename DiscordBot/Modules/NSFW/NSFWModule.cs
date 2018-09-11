@@ -67,16 +67,18 @@ namespace DiscordBot.Modules.NSFW
                         {
                             images.Add(node.Attributes["src"].Value);
                         }
-
-						Console.Write(@"[");
-						Console.ForegroundColor = ConsoleColor.Cyan;
-						Console.Write(@"RULE34 GAMBLE");
-						Console.ResetColor();
-						Console.WriteLine(@"]: " + Context.User.Username + @" got the Gamble Id: " + _id.ToString() + Environment.NewLine + @"The following images were gathered using that Id:");
+                        
+                        // for debugging
+						//Console.Write(@"[");
+						//Console.ForegroundColor = ConsoleColor.Cyan;
+						//Console.Write(@"RULE34 GAMBLE");
+						//Console.ResetColor();
+						//Console.WriteLine(@"]: " + Context.User.Username + @" got the Gamble Id: " + _id.ToString() + Environment.NewLine + @"The following images were gathered using that Id:");
                         
                         foreach (string s in images)
 						{
-							Console.WriteLine(s);
+						    // for debugging
+							//Console.WriteLine(s);
 
 						    if (s.Contains("thumbnails") || s.Contains("samples"))
 						    {
@@ -88,8 +90,10 @@ namespace DiscordBot.Modules.NSFW
                         string link = images[3].FindAndReplaceFirstInstance("//", "temp");
                         link = link.FindAndReplaceFirstInstance("//", "/");
                         link = link.FindAndReplaceFirstInstance("temp", "//");
-                        Console.WriteLine(@"[Final] " + link);
+                        // for debugging
+                        //Console.WriteLine(@"[Final] " + link);
 
+                        await new LogMessage(LogSeverity.Info, "Rule34Gamble", Context.User.Username + " got " + _id).PrintToConsole();
                         
                         EmbedBuilder eb = new EmbedBuilder()
                         {
@@ -100,18 +104,14 @@ namespace DiscordBot.Modules.NSFW
                             {
                                 Text = "ID: " + _id
                             }
-                        };
+                        }.WithCurrentTimestamp();
                         
                         //await ReplyAsync(Context.User.Mention + ", congratulations, you won the following image: \n" + link);
                         await ReplyAsync("", false, eb.Build());
                     }
                     catch (Exception ex)
                     {
-                        Console.Write(@"[");
-                        Console.ForegroundColor = ConsoleColor.Red;
-                        Console.Write(@"Gamble Exception");
-                        Console.ResetColor();
-                        Console.WriteLine(@"]: " + ex.Message);
+                        await new LogMessage(LogSeverity.Warning, "Rule34Gamble/Exception", ex.Message).PrintToConsole();
 
 						await ReplyAsync(Context.User.Mention + ", the random Id you got returned no image. Lucky you! Why not try again?");
                     }

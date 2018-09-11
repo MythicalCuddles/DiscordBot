@@ -128,71 +128,29 @@ namespace DiscordBot.Modules.Owner
             }
         }
 
-        [Command("resetallcoins")]
-        public async Task SetCoinsForAll(string confirmation = null)
-        {
-            if (confirmation == null)
-            {
-                await ReplyAsync("**Warning**\nIssuing this command will **reset all users coins**. This action is irreversible and any data not backed-up will be lost. Please ensure that you create a backup of the data if you wish to roll-back to the current state. If you wish to issue this command, please enter the TwoAuth code as follows: `" + GuildConfiguration.Load(Context.Guild.Id).Prefix + "resetallcoins [code]`");
-                return;
-            }
-
-            TwoFactorAuthenticator tfA = new TwoFactorAuthenticator();
-            var result = tfA.ValidateTwoFactorPIN(Cryptography.DecryptString(Configuration.Load().SecretKey), confirmation);
-
-            if (result)
-            {
-                await Configuration.Load().LogChannelId.GetTextChannel().SendMessageAsync(Context.User.Mention + " has forced all users coins to reset value.");
-
-                User.SetCoinsForAll();
-
-                var eb = new EmbedBuilder()
-                    .WithDescription(Context.User.Username + " has successfully reset the coin value for all users.")
-                    .WithColor(Color.DarkGreen)
-                    .WithCurrentTimestamp()
-                    .WithFooter("Info: This command has been logged successfully to " + Configuration.Load().LogChannelId.GetTextChannel().Name);
-
-                await ReplyAsync("", false, eb.Build());
-            }
-            else
-            {
-                await ReplyAsync("Invalid Code.");
-            }
-        }
-
         [Command("die")]
         public async Task KillProgram(string confirmation = null)
         {
-            if (confirmation == null)
+            if (confirmation.ToUpper() != "CONFIRM")
             {
-                await ReplyAsync("**Please confirm by entering the TwoAuth code as follows:** " + GuildConfiguration.Load(Context.Guild.Id).Prefix + "die [code]\n" +
+                await ReplyAsync("**Please confirm by entering the TwoAuth code as follows:** " + GuildConfiguration.Load(Context.Guild.Id).Prefix + "die confirm\n" +
                                  "Issuing this command will log the Bot out and terminate the process.");
                 return;
             }
 
-            TwoFactorAuthenticator tfA = new TwoFactorAuthenticator();
-            var result = tfA.ValidateTwoFactorPIN(Cryptography.DecryptString(Configuration.Load().SecretKey), confirmation);
+            Context.Message.DeleteAfter(1);
 
-            if (result)
+            EmbedBuilder eb = new EmbedBuilder()
             {
-                Context.Message.DeleteAfter(1);
+                Title = "",
+                Color = new Color(User.Load(Context.User.Id).AboutR, User.Load(Context.User.Id).AboutG, User.Load(Context.User.Id).AboutB),
+                Description = ""
+            }.AddField("", "");
 
-                EmbedBuilder eb = new EmbedBuilder()
-                {
-                    Title = "",
-                    Color = new Color(User.Load(Context.User.Id).AboutR, User.Load(Context.User.Id).AboutG, User.Load(Context.User.Id).AboutB),
-                    Description = ""
-                }.AddField("", "");
+            await ReplyAsync("", false, eb.Build());
 
-                await ReplyAsync("", false, eb.Build());
-
-                await DiscordBot.Bot.LogoutAsync();
-                Environment.Exit(0);
-            }
-            else
-            {
-                await ReplyAsync("Invalid Code.");
-            }
+            await DiscordBot.Bot.LogoutAsync();
+            Environment.Exit(0);
         }
 
         [Command("addreaction")]
@@ -213,7 +171,6 @@ namespace DiscordBot.Modules.Owner
                     
                     foreach (var m in msgs)
                     {
-                        Console.WriteLine(m.Content);
                         var msg = c.GetMessageAsync(m.Id).GetAwaiter().GetResult() as SocketUserMessage;
 
                         if (msg.Id == id)

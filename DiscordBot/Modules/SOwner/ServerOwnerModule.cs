@@ -32,7 +32,7 @@ namespace DiscordBot.Modules.SOwner
                     .Append("**Syntax:** " + GuildConfiguration.Load(Context.Guild.Id).Prefix + "setwelcome [Welcome Message]\n\n")
                     .Append("```Available Flags\n")
                     .Append("---------------\n")
-                    .Append("New User Flags:\n")
+                    .Append("User Flags:\n")
                     .Append("{USER.MENTION} - @" + Context.User.Username + "\n")
                     .Append("{USER.USERNAME} - " + Context.User.Username + "\n")
                     .Append("{USER.DISCRIMINATOR} - " + Context.User.Discriminator + "\n")
@@ -71,6 +71,13 @@ namespace DiscordBot.Modules.SOwner
             await ReplyAsync(Context.User.Mention + " has updated the Log Channel to: " + channel.Mention);
         }
 
+        [Command("botchannel"), Summary("Set the bot channel for the server.")]
+        public async Task SetBotChannel(SocketTextChannel channel)
+        {
+            GuildConfiguration.UpdateGuild(Context.Guild.Id, botChannelId: channel.Id);
+            await ReplyAsync(Context.User.Mention + " has updated the Bot Channel to: " + channel.Mention);
+        }
+
         [Command("togglesenpai"), Summary("Toggles the senpai command.")]
         public async Task ToggleSenpai()
         {
@@ -98,31 +105,31 @@ namespace DiscordBot.Modules.SOwner
             GuildConfiguration.UpdateGuild(Context.Guild.Id, ruleGameChannelId: channel.Id);
             await ReplyAsync(Context.User.Mention + " has updated the Rule34 Gamble Channel to: " + channel.Mention);
         }
-
-        [Command("toggleawardingcoins"), Summary("Toggle if the channel awards coins for typing messages.")]
-        public async Task ToggleChannelCoinStatus(SocketTextChannel channel = null)
+        
+        [Command("toggleexpawarding"), Summary("Toggle if the channel awards EXP for posted messages.")]
+        public async Task ToggleChannelAwardingEXPStatus(SocketTextChannel channel = null)
         {
             SocketTextChannel workingWithChannel = channel ?? Context.Channel as SocketTextChannel;
 
             if (channel == null)
             {
                 await ReplyAsync("Syntax: " + GuildConfiguration.Load(Context.Guild.Id).Prefix +
-                                 "toggleawardingcoins [#channel]");
+                                 "toggleexpawarding [#channel]");
                 return;
             }
 
-            bool value = !Channel.Load(workingWithChannel.Id).AwardingCoins;
+            bool value = !Channel.Load(workingWithChannel.Id).AwardingEXP;
 
-            Channel.UpdateChannel(workingWithChannel.Id, awardingCoins: value);
+            Channel.UpdateChannel(workingWithChannel.Id, awardingEXP: value);
 
             IUserMessage msg;
             if (value)
             {
-                msg = await ReplyAsync(Context.User.Mention + ", this channel is now awarding coins to the messages typed here.");
+                msg = await ReplyAsync(Context.User.Mention + ", this channel will award EXP to the users who's messages are typed here.");
             }
             else
             {
-                msg = await ReplyAsync(Context.User.Mention + ", this channel is no longer awarding coins to the messages typed here.");
+                msg = await ReplyAsync(Context.User.Mention + ", this channel will no longer award EXP to the users who's messages are typed here.");
             }
 
             Context.Message.DeleteAfter(15);

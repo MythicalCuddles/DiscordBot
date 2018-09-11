@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
-
+using Discord;
+using DiscordBot.Extensions;
 using Newtonsoft.Json;
 
 namespace DiscordBot.Common
@@ -28,18 +29,10 @@ namespace DiscordBot.Common
                 var stringConfig = new StringConfiguration();
                 stringConfig.SaveJson();
 
-                Console.Write(@"status: [");
-                Console.ForegroundColor = ConsoleColor.DarkGreen;
-                Console.Write(@"ok");
-                Console.ResetColor();
-                Console.WriteLine(@"]    " + FileName + @": created.");
+                new LogMessage(LogSeverity.Info, "Guild Configuration", FileName + " created.").PrintToConsole();
             }
 
-            Console.Write(@"status: [");
-            Console.ForegroundColor = ConsoleColor.DarkGreen;
-            Console.Write(@"ok");
-            Console.ResetColor();
-            Console.WriteLine(@"]    " + FileName + @": loaded.");
+            new LogMessage(LogSeverity.Info, "Guild Configuration", FileName + " loaded.").PrintToConsole();
         }
 
         public void SaveJson()

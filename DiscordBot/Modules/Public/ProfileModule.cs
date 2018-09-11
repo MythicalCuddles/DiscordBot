@@ -8,6 +8,7 @@ using Discord.WebSocket;
 using DiscordBot.Common;
 using DiscordBot.Common.Preconditions;
 using DiscordBot.Extensions;
+using DiscordBot.Handlers;
 using DiscordBot.Logging;
 
 namespace DiscordBot.Modules.Public
@@ -32,9 +33,9 @@ namespace DiscordBot.Modules.Public
                                  "[ 3] editprofile pronouns [value]\n" +
                                  "[ 4] editprofile about [value]\n" +
                                  "[ 5] editprofile customprefix [value]\n" +
-                                 "[5a] This feature costs " + Configuration.Load().PrefixCost + " coin(s).\n" +
+                                 "[5a] This feature requires level " + Configuration.Load().PrefixLevelRequirement + "!\n" +
                                  "[ 6] editprofile customrgb [value]\n" +
-                                 "[5a] This feature costs " + Configuration.Load().RGBCost + " coin(s).\n" +
+                                 "[5a] This feature requires level " + Configuration.Load().RGBLevelRequirement + "!\n" +
                                  "[ 7] editprofile mcusername [value]\n" +
                                  "[ 8] editprofile snapchat [value]\n" +
                                  "[ 9] editprofile instagram [value]\n" +
@@ -78,22 +79,19 @@ namespace DiscordBot.Modules.Public
             {
                 if (prefix == null)
                 {
-                    await ReplyAsync("**Syntax:** " + GuildConfiguration.Load(Context.Guild.Id).Prefix + "editprofile customprefix [prefix]\n\n`This feature will cost you: " + Configuration.Load().PrefixCost + " coin(s)`");
+                    await ReplyAsync("**Syntax:** " + GuildConfiguration.Load(Context.Guild.Id).Prefix + "editprofile customprefix [prefix]\n\n`This feature requires you to be level " + Configuration.Load().PrefixLevelRequirement + "!`");
                     return;
                 }
-    
-                if (User.Load(Context.User.Id).Coins >= Configuration.Load().PrefixCost)
+                
+                if (Context.User.GetLevel() >= Configuration.Load().PrefixLevelRequirement)
                 {
                     User.UpdateUser(Context.User.Id, customPrefix: prefix);
-                    User.UpdateUser(Context.User.Id, coins: (User.Load(Context.User.Id).Coins - Configuration.Load().PrefixCost));
-                    TransactionLogger.AddTransaction(Context.User.Username + " [" + Context.User.Id + "] paid " + Configuration.Load().PrefixCost + " coin(s) for a custom prefix.");
                     await ReplyAsync(Context.User.Mention + ", you have set `" + prefix + "` as a custom prefix for yourself. Please do take note that the following prefixes will work for you:\n```KEY: [Prefix][Command]\n" + prefix + " - User Set Prefix\n" + GuildConfiguration.Load(Context.Guild.Id).Prefix + " - Guild Set Prefix\n@" + DiscordBot.Bot.CurrentUser.Username + " - Global Prefix```");
                 }
                 else
                 {
-                    await ReplyAsync("You do not have enough coins to pay for this feature, " + Context.User.Mention + "! This feature costs " + Configuration.Load().PrefixCost + " coins.");
+                    await ReplyAsync(Context.User.Mention + ", this feature requires you to be level " + Configuration.Load().PrefixLevelRequirement + "!");
                 }
-    
             }
     
             [Command("customrgb"), Summary("Custom set the color of the about embed message.")]
@@ -106,7 +104,7 @@ namespace DiscordBot.Modules.Public
                     return;
                 }
 
-                if (Context.User.GetCoins() >= Configuration.Load().RGBCost)
+                if (Context.User.GetLevel() >= Configuration.Load().RGBLevelRequirement)
                 {
                     byte rValue, gValue, bValue;
     
@@ -118,7 +116,7 @@ namespace DiscordBot.Modules.Public
                     }
                     catch (Exception e)
                     {
-                        Console.WriteLine(@"ERROR" + Environment.NewLine + e.Message);
+                        ConsoleHandler.PrintExceptionToLog("ProfileModule/CustomRGB", e);
                         await ReplyAsync("An unexpected error has happened. Please ensure that you have passed through a byte value! (A number between 0 and 255)");
                         return;
                     }
@@ -134,13 +132,11 @@ namespace DiscordBot.Modules.Public
                         .WithDescription("<-- FYI, this is what you updated.")
                         .WithColor(aboutColor);
                     
-                    User.UpdateUser(Context.User.Id, coins: (User.Load(Context.User.Id).Coins - Configuration.Load().RGBCost));
-                    TransactionLogger.AddTransaction(Context.User.Username + " [" + Context.User.Id + "] paid " + Configuration.Load().RGBCost + " coin(s) for custom RGB.");
                     await ReplyAsync(Context.User.Mention + ", you have successfully updated your custom embed RGB!", false, eb.Build());
                 }
                 else
                 {
-                    await ReplyAsync("You do not have enough coins to pay for this feature, " + Context.User.Mention + "! This feature costs " + Configuration.Load().RGBCost + " coins.");
+                    await ReplyAsync(Context.User.Mention + ", this feature requires you to be level " + Configuration.Load().RGBLevelRequirement + "!");
                 }
             }
     
@@ -232,8 +228,8 @@ namespace DiscordBot.Modules.Public
             if (User.Load(userSpecified.Id).Pronouns != null)
                 eb.AddField("Pronouns", userSpecified.GetPronouns(), true);
             
-            eb.AddField("Coins", userSpecified.GetCoins(), true);
-            eb.AddField("Mythical Tokens", userSpecified.GetMythicalTokens(), true);
+            eb.AddField("Level", userSpecified.GetLevel(), true);
+            eb.AddField("EXP", userSpecified.GetEXP(), true);
             eb.AddField("Account Created", userSpecified.UserCreateDate(), true);
             eb.AddField("Joined Guild", userSpecified.GuildJoinDate(), true);
             

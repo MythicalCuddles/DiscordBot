@@ -31,17 +31,16 @@ namespace DiscordBot.Modules.Owner
                                  "[a.] [status] - [online] [donotdisturb] [idle] [invisible]\n" +
                                  "[ 3] toggleunknowncommand\n" +
                                  "[ 4] leaderboardamount [number of users to display]\n" +
-                                 "[ 5] quoteprice [price to add quote]\n" +
-                                 "[ 6] prefixprice [price to change custom prefix]\n" +
-                                 "[ 7] rgbprice [price to change custom RGB]\n" +
+                                 "[ 5] quotelevel [level]\n" +
+                                 "[ 6] prefixlevel [level]\n" +
+                                 "[ 7] rgblevel [level]\n" +
                                  "[ 8] senpaichance [number 1-100]\n" +
                                  "[ 9] globallogchannel [channel mention / channel id]\n" +
                                  "[10] rule34 [max number for random to use]\n" +
-                                 "[11] minlengthforcoins [string length for coins]\n" +
+                                 "[11] minlengthforexp [string length for exp gain]\n" +
                                  "[12] leaderboardtrophyurl [link]\n" +
                                  "[13] leaderboardembedcolor [uint id]\n" +
-                                 "[14] toggleawardingcoins\n" +
-                                 "[15] toggleawardingtokens\n" +
+                                 "[14] toggleexpawarding\n" +
                                  "```");
             }
 
@@ -130,28 +129,28 @@ namespace DiscordBot.Modules.Owner
                 await Configuration.Load().LogChannelId.GetTextChannel().SendMessageAsync(Context.User.Mention + " has updated the Leaderboard amount to: " + value + " (was: " + oldValue + ")");
             }
 
-            [Command("quoteprice"), Summary("")]
-            public async Task ChangeQuotePrice(int price)
+            [Command("quotelevel"), Summary("")]
+            public async Task ChangeQuotePrice(int levelRequirement)
             {
-                int oldPrice = Configuration.Load().QuoteCost;
-                Configuration.UpdateConfiguration(quoteCost: price);
-                await Configuration.Load().LogChannelId.GetTextChannel().SendMessageAsync("**" + Context.User.Mention + "** has updated the quote cost to **" + price + "** coins. (Was: **" + oldPrice + "** coins)");
+                int oldLevel = Configuration.Load().QuoteLevelRequirement;
+                Configuration.UpdateConfiguration(quoteLevelRequirement: levelRequirement);
+                await Configuration.Load().LogChannelId.GetTextChannel().SendMessageAsync("**" + Context.User.Mention + "** has updated the quote level to **" + levelRequirement + "**. (Was: **" + oldLevel + "**)");
             }
 
-            [Command("prefixprice"), Summary("")]
-            public async Task ChangePrefixPrice(int price)
+            [Command("prefixlevel"), Summary("")]
+            public async Task ChangePrefixPrice(int levelRequirement)
             {
-                int oldPrice = Configuration.Load().PrefixCost;
-                Configuration.UpdateConfiguration(prefixCost: price);
-                await Configuration.Load().LogChannelId.GetTextChannel().SendMessageAsync("**" + Context.User.Mention + "** has updated the prefix cost to **" + price + "** coins. (Was: **" + oldPrice + "** coins)");
+                int oldLevel = Configuration.Load().PrefixLevelRequirement;
+                Configuration.UpdateConfiguration(prefixLevelRequirement: levelRequirement);
+                await Configuration.Load().LogChannelId.GetTextChannel().SendMessageAsync("**" + Context.User.Mention + "** has updated the prefix level to **" + levelRequirement + "** coins. (Was: **" + oldLevel + "**)");
             }
 
-            [Command("rgbprice"), Summary("")]
-            public async Task ChangeRGBPrice(int price)
+            [Command("rgblevel"), Summary("")]
+            public async Task ChangeRGBPrice(int levelRequirement)
             {
-                int oldPrice = Configuration.Load().RGBCost;
-                Configuration.UpdateConfiguration(rgbCost: price);
-                await Configuration.Load().LogChannelId.GetTextChannel().SendMessageAsync("**" + Context.User.Mention + "** has updated the RGB cost to **" + price + "** coins. (Was: **" + oldPrice + "** coins)");
+                int oldLevel = Configuration.Load().RGBLevelRequirement;
+                Configuration.UpdateConfiguration(rgbLevelRequirement: levelRequirement);
+                await Configuration.Load().LogChannelId.GetTextChannel().SendMessageAsync("**" + Context.User.Mention + "** has updated the RGB level to **" + levelRequirement + "** coins. (Was: **" + oldLevel + "**)");
             }
 
             [Command("senpaichance"), Summary("")]
@@ -177,27 +176,20 @@ namespace DiscordBot.Modules.Owner
                 await Configuration.Load().LogChannelId.GetTextChannel().SendMessageAsync(Context.User.Mention + " has updated the Rule34 Max to: " + value + " (was: " + oldValue + ")");
             }
 
-            [Command("minlengthforcoins"), Summary("Set the required length of a message for a user to receive (a) coin(s).")]
+            [Command("minlengthforexp"), Summary("Set the required length of a message for a user to receive (a) coin(s).")]
             public async Task SetRequiredMessageLengthForCoins(int value)
             {
-                int oldValue = Configuration.Load().MinLengthForCoin;
-                Configuration.UpdateConfiguration(minLengthForCoin: value);
+                int oldValue = Configuration.Load().MinLengthForEXP;
+                Configuration.UpdateConfiguration(minLengthForEXP: value);
 
                 await Configuration.Load().LogChannelId.GetTextChannel().SendMessageAsync(Context.User.Mention + " has updated the MinLengthForCoin amount to: " + value + " (was: " + oldValue + ")");
             }
 
-            [Command("toggleawardingcoins"), Summary("Toggles if users receive coins.")]
-            public async Task ToggleAwardingCoins()
+            [Command("toggleexpawarding"), Summary("Toggles if users receive EXP.")]
+            public async Task ToggleEXPAwarding()
             {
-                Configuration.UpdateConfiguration(awardingCoinsEnabled: !Configuration.Load().AwardingCoinsEnabled);
-                await Configuration.Load().LogChannelId.GetTextChannel().SendMessageAsync("Awarding Coins has been toggled by " + Context.User.Mention + " (enabled: " + Configuration.Load().AwardingCoinsEnabled.ToYesNo() + ")");
-            }
-
-            [Command("toggleawardingtokens"), Summary("Toggles if users receive tokens.")]
-            public async Task ToggleAwardingTokens()
-            {
-                Configuration.UpdateConfiguration(awardingTokensEnabled: !Configuration.Load().AwardingTokensEnabled);
-                await Configuration.Load().LogChannelId.GetTextChannel().SendMessageAsync("Awarding Tokens has been toggled by " + Context.User.Mention + " (enabled: " + Configuration.Load().AwardingTokensEnabled.ToYesNo() + ")");
+                Configuration.UpdateConfiguration(awardingEXPEnabled: !Configuration.Load().AwardingEXPEnabled);
+                await Configuration.Load().LogChannelId.GetTextChannel().SendMessageAsync("EXP awarding has been toggled by " + Context.User.Mention + " (enabled: " + Configuration.Load().AwardingEXPEnabled.ToYesNo() + ")");
             }
 
             [Command("leaderboardtrophyurl"), Summary("")]

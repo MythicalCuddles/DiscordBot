@@ -7,7 +7,7 @@ using Discord.Commands;
 using DiscordBot.Common;
 using DiscordBot.Common.Preconditions;
 using DiscordBot.Extensions;
-
+using DiscordBot.Handlers;
 using MelissaNet;
 
 namespace DiscordBot.Modules.Mod
@@ -55,18 +55,17 @@ namespace DiscordBot.Modules.Mod
                                "[ 5] Status Activity [ " + Configuration.Load().StatusActivity.ToActivityType() + " ]\n" +
                                "[ 6] Status [ " + Configuration.Load().Status + " ]\n" +
                                "[ 7] Unknown Command Enabled [ " + Configuration.Load().UnknownCommandEnabled.ToYesNo() + " ]\n" +
-                               "[ 8] Awarding Coins Enabled [ " + Configuration.Load().AwardingCoinsEnabled.ToYesNo() + " ]\n" +
-                               "[ 9] Awarding Tokens Enabled [ " + Configuration.Load().AwardingTokensEnabled.ToYesNo() + " ]\n" +
-                               "[10] Leaderboard Amount [ " + Configuration.Load().LeaderboardAmount + " ]\n" +
-                               "[11] Quote Cost [ " + Configuration.Load().QuoteCost + " coin(s) ]\n" +
-                               "[12] Prefix Cost [ " + Configuration.Load().PrefixCost + " coin(s) ]\n" +
-                               "[13] RGB Cost [ " + Configuration.Load().RGBCost + " coin(s) ]\n" +
-                               "[14] Senpai Chance Rate [ " + Configuration.Load().SenpaiChanceRate + "/100 ]\n" +
-                               "[15] Global Log Channel [ #" + (Configuration.Load().LogChannelId.GetTextChannel().Name ?? "UNDEFINED") + " ]\n" +
-                               "[16] Global Log Channel ID [ " + Configuration.Load().LogChannelId + " ]\n" +
-                               "[17] Respects [ " + Configuration.Load().Respects + " ]\n" +
-                               "[18] Min Length For Coin(s) [ " + Configuration.Load().MinLengthForCoin + " ]\n" +
-                               "[19] Max Rule34 Gamble ID [ " + Configuration.Load().MaxRuleXGamble + " ]\n" +
+                               "[ 8] Awarding EXP Enabled [ " + Configuration.Load().AwardingEXPEnabled.ToYesNo() + " ]\n" +
+                               "[ 9] Leaderboard Amount [ " + Configuration.Load().LeaderboardAmount + " ]\n" +
+                               "[10] Quote Level Requirement [ " + Configuration.Load().QuoteLevelRequirement + " coin(s) ]\n" +
+                               "[11] Prefix Level Requirement [ " + Configuration.Load().PrefixLevelRequirement + " coin(s) ]\n" +
+                               "[12] RGB Level Requirement [ " + Configuration.Load().RGBLevelRequirement + " coin(s) ]\n" +
+                               "[13] Senpai Chance Rate [ " + Configuration.Load().SenpaiChanceRate + "/100 ]\n" +
+                               "[14] Global Log Channel [ #" + (Configuration.Load().LogChannelId.GetTextChannel().Name ?? "UNDEFINED") + " ]\n" +
+                               "[15] Global Log Channel ID [ " + Configuration.Load().LogChannelId + " ]\n" +
+                               "[16] Respects [ " + Configuration.Load().Respects + " ]\n" +
+                               "[17] Min Length For EXP [ " + Configuration.Load().MinLengthForEXP + " ]\n" +
+                               "[18] Max Rule34 Gamble ID [ " + Configuration.Load().MaxRuleXGamble + " ]\n" +
                                "```");
 
             await ReplyAsync("", false, eb.Build());
@@ -117,8 +116,7 @@ namespace DiscordBot.Modules.Mod
             {
                 await ReplyAsync(
                     "It appears that your Guild Configuration has not been set-up completely. Please complete all the steps before using this command.");
-                Console.WriteLine(e);
-                Console.WriteLine(e.Message);
+                ConsoleHandler.PrintExceptionToLog("ShowConfigModule", e);
             }
         }
     }

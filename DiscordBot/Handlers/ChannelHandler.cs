@@ -67,11 +67,7 @@ namespace DiscordBot.Handlers
 			}
             else 
 			{
-				Console.Write(@"status: [");
-				Console.ForegroundColor = ConsoleColor.DarkRed;
-				Console.Write(@"error");
-				Console.ResetColor();
-				Console.WriteLine(@"]    " + @": " + channel.Id + @" type is unknown.");
+				await new LogMessage(LogSeverity.Warning, "ChannelHandler", channel.Id + " type is unknown.").PrintToConsole();
 			}
 
             Channel.EnsureExists(channel.Id);
@@ -131,11 +127,7 @@ namespace DiscordBot.Handlers
 			}
             else
 			{
-				Console.Write(@"status: [");
-				Console.ForegroundColor = ConsoleColor.DarkRed;
-				Console.Write(@"error");
-				Console.ResetColor();
-				Console.WriteLine(@"]    " + @": " + channel.Id + @" type is unknown.");
+				await new LogMessage(LogSeverity.Critical, "UserExtensions", channel.Id + " type is unknown.").PrintToConsole();
 			}
 		}
 	}

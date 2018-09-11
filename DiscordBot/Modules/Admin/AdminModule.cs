@@ -34,42 +34,6 @@ namespace DiscordBot.Modules.Admin
             await GuildConfiguration.Load(Context.Guild.Id).WelcomeChannelId.GetTextChannel().SendMessageAsync(GuildConfiguration.Load(Context.Guild.Id).WelcomeMessage.ModifyStringFlags(user));
             await GuildConfiguration.Load(Context.Guild.Id).LogChannelId.GetTextChannel().SendMessageAsync("A welcome message for " + user.Mention + " has been posted. (Forced by: " + Context.User.Mention + ")");
         }
-        
-        [Command("awardcoins"), Summary("Award the specified user the specified amount of coins.")]
-        public async Task AwardCoins(IUser mentionedUser, int awardValue)
-        {
-            if(awardValue <= 0)
-            {
-                await ReplyAsync("You can not award that amount of coins!");
-                return;
-            }
-            
-            User.UpdateUser(mentionedUser.Id, coins: (mentionedUser.GetCoins()  + awardValue));
-            await Configuration.Load().LogChannelId.GetTextChannel().SendMessageAsync(Context.User.Mention + " has awarded " + mentionedUser.Mention + " " + awardValue + " coins!");
-            await ReplyAsync(mentionedUser.Mention + " has been awarded " + awardValue + " coins from " + Context.User.Mention);
-            TransactionLogger.AddTransaction(Context.User.Username + " [" + Context.User.Id + "] awarded " + mentionedUser.Username + " [" + mentionedUser.Id + "] " + awardValue + " coins.");
-        }
-
-        [Command("finecoins"), Summary("Fine the specified user the specified amount of coins.")]
-        public async Task FineCoins(IUser mentionedUser = null, int fineValue = 0)
-        {
-            if(mentionedUser == null || fineValue == 0)
-            {
-                await ReplyAsync("**Syntax:** " + GuildConfiguration.Load(Context.Guild.Id).Prefix + "finecoins [@User] [Amount]");
-                return;
-            }
-
-            if (fineValue <= 0)
-            {
-                await ReplyAsync("You can not fine that amount of coins!");
-                return;
-            }
-            
-            User.UpdateUser(mentionedUser.Id, coins: (User.Load(mentionedUser.Id).Coins - fineValue));
-            await Configuration.Load().LogChannelId.GetTextChannel().SendMessageAsync(Context.User.Mention + " has fined " + mentionedUser.Mention + " " + fineValue + " coins!");
-            await ReplyAsync(mentionedUser.Mention + " has been fined " + fineValue + " coins from " + Context.User.Mention);
-            TransactionLogger.AddTransaction(Context.User.Username + " [" + Context.User.Id + "] fined " + mentionedUser.Username + " [" + mentionedUser.Id + "] " + fineValue + " coins.");
-        }
                 
         [Command("listtransactions"), Summary("Sends a list of all the transactions.")]
         public async Task ListTransactions()

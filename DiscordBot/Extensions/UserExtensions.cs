@@ -1,22 +1,25 @@
 ﻿using System;
-
+using System.Threading.Tasks;
 using Discord;
-
+using Discord.Commands;
+using Discord.WebSocket;
 using DiscordBot.Common;
+using DiscordBot.Handlers;
 
 namespace DiscordBot.Extensions
 {
     public static class UserExtensions
     {
-        public static int GetCoins(this IUser user)
+        public static int GetLevel(this IUser user)
         {
-            return User.Load(user.Id).Coins;
-        }
-        public static int GetMythicalTokens(this IUser user)
-        {
-            return User.Load(user.Id).MythicalTokens;
+            return User.Load(user.Id).Level;
         }
 
+        public static int GetEXP(this IUser user)
+        {
+            return User.Load(user.Id).EXP;
+        }
+        
         public static string GetName(this IUser user)
         {
             return User.Load(user.Id).Name;
@@ -78,27 +81,59 @@ namespace DiscordBot.Extensions
         {
             return User.Load(user.Id).EmbedFooterBuilderIconUrl;
         }
-        
-        public static void AwardCoinsToUser(this IUser user, int? coinsToAward = 1)
+
+        public static void AwardEXPToUser(this IUser user, SocketGuild guild, int? exp = 1)
         {
             try
             {
-                User.UpdateUser(user.Id, (user.GetCoins() + coinsToAward));
+                User.UpdateUser(user.Id, exp:(user.GetEXP() + exp));
+                user.AttemptLevelUp(guild);
             }
             catch (Exception e)
             {
-                Console.WriteLine(e);
+                ConsoleHandler.PrintExceptionToLog("UserExtensions", e);
             }
         }
-        public static void AwardTokensToUser(this IUser user, int? tokensToAward = 1)
+        
+        public static double EXPToLevelUp(this IUser user, int? level = null)
         {
-            try
+            int userLevel = level ?? (user.GetLevel() + 1);
+            return (0.04 * (Math.Pow(userLevel, 3))) + (0.8 * (Math.Pow(userLevel, 2))) + (2 * userLevel);   
+        }
+        public static void AttemptLevelUp(this IUser user, SocketGuild guild)
+        {
+            double requiredEXP = user.EXPToLevelUp();
+
+            //debugging
+//            new LogMessage(LogSeverity.Debug, "EXPToLevelUp", user.Username + " - (User EXP) - " + user.GetEXP()).PrintToConsole();
+//            new LogMessage(LogSeverity.Debug, "EXPToLevelUp", user.Username + " - (Required EXP) " + requiredEXP).PrintToConsole();
+//            new LogMessage(LogSeverity.Debug, "EXPToLevelUp", user.Username + " - (int Casting of Required EXP) " + (int)requiredEXP).PrintToConsole();
+//            new LogMessage(LogSeverity.Debug, "EXPToLevelUp", user.Username + " - (Math Rounding of Required EXP) " + Math.Round(requiredEXP)).PrintToConsole();
+            
+            if (user.GetEXP() >= Math.Round(requiredEXP))
             {
-                User.UpdateUser(user.Id, mythicalTokens:(user.GetMythicalTokens() + tokensToAward));
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e);
+                try
+                {
+                    User.UpdateUser(user.Id, level: (user.GetLevel() + 1));
+
+                    SocketTextChannel botChannel = GuildConfiguration.Load(guild.Id).BotChannelId.GetTextChannel() ??
+                                                   GuildConfiguration.Load(guild.Id).WelcomeChannelId.GetTextChannel();
+                    
+                    //botChannel.SendMessageAsync(user.Mention + " has leveled up to " + User.Load(user.Id).Level);
+                    
+                    EmbedBuilder eb = new EmbedBuilder()
+                    {
+                        Title = "Level Up!",
+                        Color = user.GetCustomRGB(),
+                        Description = "Well done " + user.Mention + "! You levelled up to level " + user.GetLevel() + "! Gain " + (Math.Round(EXPToLevelUp(user)) - user.GetEXP()) + " more EXP to level up again!",
+                    }.WithCurrentTimestamp();
+                    
+                    botChannel.SendMessageAsync("", false, eb.Build());
+                }
+                catch (Exception e)
+                {
+                    ConsoleHandler.PrintExceptionToLog("UserExtensions", e);
+                }
             }
         }
     }

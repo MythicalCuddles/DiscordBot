@@ -162,57 +162,7 @@ namespace DiscordBot.Modules.Public
                 await ReplyAsync(Context.User.Mention + ", Senpai can not notice you if Senpai is in bed sleeping.");
             }
         }
-
-        [Command("balance"), Summary("")]
-        [Alias("purse", "wallet", "bal", "coins")]
-        public async Task LoadUserBalance(IUser user = null)
-        {
-            var usr = user;
-            if (user == null)
-            {
-                usr = Context.User;
-            }
-
-            var userCoins = usr.GetCoins();
-            await ReplyAsync(":moneybag: **" + usr.Username + "'s Balance** :moneybag:\n" + 
-                "\n" +
-                "**" + userCoins + "** coins\n");
-        }
-
-        [Command("givecoins"), Summary("Give some of coins to another user.")]
-        [Alias("pay")]
-        public async Task GiveCoins(IUser user = null, int coins = 0)
-        {
-            if(user == null || coins == 0)
-            {
-                await ReplyAsync("**Syntax:** " + GuildConfiguration.Load(Context.Guild.Id).Prefix + "pay [@User] [Coins]\n\n" + 
-                    "**Disclaimer**\n" +
-                    "*There are no refunds for payments that have been made. Payments will only be refunded if a valid reason is presented. The team will discuss your situation in this case and come to a vote on whether or not your refund request will be granted.* " +
-                    "*Before making the payment, please ensure that you have mentioned the correct user, and have entered the right amount of coins you wish to send. Refunds will not be made for mistyped payments!*");
-                return;
-            }
-
-            if(coins <= 0)
-            {
-                await ReplyAsync("You need to pay a positive amount of coins.");
-                return;
-            }
-
-            int issuerCoins = User.Load(Context.User.Id).Coins;
-            int userCoins = User.Load(user.Id).Coins;
-
-            if(coins > issuerCoins)
-            {
-                await ReplyAsync(Context.User.Mention + ", you don't have that amount of coins!");
-                return;
-            }
-            
-            User.UpdateUser(Context.User.Id, coins:((issuerCoins - coins)));
-            User.UpdateUser(user.Id, coins:(userCoins + coins));
-            TransactionLogger.AddTransaction(Context.User.Username + " [" + Context.User.Id + "] give " + user.Username + " [" + user.Id + "] " + coins + " coins.");
-            await ReplyAsync(Context.User.Mention + " has given " + user.Mention + " " + coins + " coin(s)");
-        }
-
+        
         [Command("quote"), Summary("Get a random quote from the list.")]
         public async Task GenerateQuote()
         {
@@ -233,12 +183,13 @@ namespace DiscordBot.Modules.Public
 		{
 		    if (GuildConfiguration.Load(Context.Guild.Id).QuotesEnabled)
 		    {
-		        int userCoins = User.Load(Context.User.Id).Coins;
-		        int quoteCost = Configuration.Load().QuoteCost;
+		        int userLevel = User.Load(Context.User.Id).Level;
+		        int quoteLevelRequirement = Configuration.Load().QuoteLevelRequirement;
+		        
                 
-		        if (userCoins < quoteCost)
+		        if(userLevel < quoteLevelRequirement)
 		        {
-		            await ReplyAsync(Context.User.Mention + ", you don't have enough coins! You need " + quoteCost + " coins to buy a quote request.");
+		            await ReplyAsync(Context.User.Mention + ", you need to be level " + quoteLevelRequirement + "+ to add a quote request."); 
 		            return;
 		        }
 
@@ -248,15 +199,12 @@ namespace DiscordBot.Modules.Public
 		                             GuildConfiguration.Load(Context.Guild.Id).Prefix + "buyquote [quote]\n```" +
 		                             "**Information:**\n" +
 		                             "-----------------------------\n" +
-		                             "• You can buy a quote for " + quoteCost + " coins.\n" +
 		                             "• Your quote will not be added instantly to the list. A staff member must first verify that it is safe to put on the list.\n" +
 		                             "```");
 		            return;
 		        }
 
 		        QuoteHandler.AddAndUpdateRequestQuotes(quote);
-                User.UpdateUser(Context.User.Id, coins: (userCoins - quoteCost));
-		        TransactionLogger.AddTransaction(Context.User.Username + " [" + Context.User.Id + "] paid " + quoteCost + " for a custom quote.");
 		        await ReplyAsync(Context.User.Mention + ", your quote has been added to the list, and should be verified by a staff member shortly.");
 
 		        await Configuration.Load().LogChannelId.GetTextChannel().SendMessageAsync("**New Quote**\nQuote requested by: **" + Context.User.Mention + "**\nQuote: " + quote);

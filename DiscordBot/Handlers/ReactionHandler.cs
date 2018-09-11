@@ -37,11 +37,14 @@ namespace DiscordBot.Handlers
                 return;
             }
 
-            if (Configuration.Load().AwardingTokensEnabled)
+            if(Configuration.Load().AwardingEXPEnabled)
             {
-                message.Value.Author.AwardTokensToUser(); 
-                reaction.User.Value.AwardTokensToUser();
+                message.Value.Author.AwardEXPToUser(channel.GetGuild());
+                reaction.User.Value.AwardEXPToUser(channel.GetGuild());
             }
+            
+            await new LogMessage(LogSeverity.Info, "ReactionAdded", "[" + channel.GetGuild() + "/#" + channel.Name + "] " + "[@ " + reaction.User.Value.Username + 
+                                                                "] : " + reaction.Emote.Name).PrintToConsole();
         }
 
         private static async Task HandleQuoteReactions(Cacheable<IUserMessage, ulong> message, ISocketMessageChannel channel, SocketReaction reaction)

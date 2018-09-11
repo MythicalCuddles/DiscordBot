@@ -26,15 +26,13 @@ namespace DiscordBot.Modules.Admin
                              "[ 2] force name [mention/id] [value]\n" +
                              "[ 3] force gender [mention/id] [value]\n" +
                              "[ 4] force pronouns [mention/id] [value]\n" +
-                             "[ 5] force coins [mention/id] [value]\n" +
-                             "[ 6] force mythicaltokens [mention/id] [value]\n" +
-                             "[ 7] force minecraftusername [mention/id] [value]\n" +
-                             "[ 8] force instagram [mention/id] [value]\n" +
-                             "[ 9] force snapchat [mention/id] [value]\n" +
-                             "[10] force github [mention/id] [value]\n" +
-                             "[11] force prefix [mention/id] [value]\n" +
-                             "[12] force websitename [mention/id] [value]\n" +
-                             "[13] force websiteurl [mention/id] [value]\n" +
+                             "[ 5] force minecraftusername [mention/id] [value]\n" +
+                             "[ 6] force instagram [mention/id] [value]\n" +
+                             "[ 7] force snapchat [mention/id] [value]\n" +
+                             "[ 8] force github [mention/id] [value]\n" +
+                             "[ 9] force prefix [mention/id] [value]\n" +
+                             "[10] force websitename [mention/id] [value]\n" +
+                             "[11] force websiteurl [mention/id] [value]\n" +
                              "```");
         }
 
@@ -107,50 +105,6 @@ namespace DiscordBot.Modules.Admin
                     .WithColor(Color.DarkGreen);
 
                 await ReplyAsync("", false, eb.Build());
-            }
-            else
-            {
-                await ReplyAsync(Context.User.Mention + ", you don't have a high enough permission level to do this to that user!");
-            }
-        }
-
-        [Command("coins"), Summary("Force set the coins for the specified user.")]
-        public async Task ForceCoins(IUser user, int newValue)
-        {
-            if (Context.User.HasHigherPermissionLevel(user))
-            {
-                int oldCoins = User.Load(user.Id).Coins;
-                User.UpdateUser(user.Id, coins: newValue);
-
-                var eb = new EmbedBuilder()
-                    .WithDescription(Context.User.Username + " changed " + user.Mention + "'s coins successfully.")
-                    .WithFooter("Was: " + oldCoins + " | Note: Your action has been logged!")
-                    .WithColor(Color.DarkGreen);
-
-                await ReplyAsync("", false, eb.Build());
-                await Configuration.Load().LogChannelId.GetTextChannel().SendMessageAsync("", false, eb.Build());
-            }
-            else
-            {
-                await ReplyAsync(Context.User.Mention + ", you don't have a high enough permission level to do this to that user!");
-            }
-        }
-
-        [Command("mythicaltokens"), Summary("Force set the Mythical Tokens for the specified user.")]
-        public async Task ForceMythicalTokens(IUser user, int newValue)
-        {
-            if (Context.User.HasHigherPermissionLevel(user))
-            {
-                int old = User.Load(user.Id).MythicalTokens;
-                User.UpdateUser(user.Id, mythicalTokens: newValue);
-
-                var eb = new EmbedBuilder()
-                    .WithDescription(Context.User.Username + " changed " + user.Mention + "'s Mythical Tokens successfully.")
-                    .WithFooter("Was: " + old + " | Note: Your action has been logged!")
-                    .WithColor(Color.DarkGreen);
-
-                await ReplyAsync("", false, eb.Build());
-                await Configuration.Load().LogChannelId.GetTextChannel().SendMessageAsync("", false, eb.Build());
             }
             else
             {

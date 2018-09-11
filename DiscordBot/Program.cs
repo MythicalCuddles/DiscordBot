@@ -42,7 +42,6 @@ namespace DiscordBot
             Console.WriteLine(@"-----------------------------------------------------------------");
             
             MelissaNet.MelissaNet.Initialize();
-            Console.WriteLine(@"-----------------------------------------------------------------");
 
             Configuration.EnsureExists();
             StringConfiguration.EnsureExists();
@@ -50,14 +49,6 @@ namespace DiscordBot
             VoteLinkHandler.EnsureExists();
             TransactionLogger.EnsureExists();
             Console.WriteLine(@"-----------------------------------------------------------------");
-            
-            if (Configuration.Load().SecretKey == null)
-            {
-                Console.WriteLine(@"Two Factor Authentication Running - Please save the QR Code in your authenticator app!");
-                Console.WriteLine(@"This is used as a safety to issue more serious commands! This is the only time you'll get to save this!");
-                Console.WriteLine(@"-----------------------------------------------------------------");
-                Application.Run(new frmAuth());
-            }
             
             new DiscordBot().RunBotAsync().GetAwaiter().GetResult();
         }

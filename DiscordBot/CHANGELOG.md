@@ -1,6 +1,89 @@
 | CHANGELOG.md  |
 | ------------- |
 
+## Version 2.12.0.0
+
+### Added
+    - Added "botchannel" for guild owners to get the bot channel for the guild.
+    - Added Level and EXP fields into the UserJoined embed if the user exists in the database.
+    - Added Level and EXP fields into the UserLeft embed if the user exists in the database.
+    - Added "toggleexpawarding" from ServerOwnerModule.
+    - Added "editconfig toggleexpawarding" from ConfigModule.
+    - Added AwardingEXP to Channel Configurations.
+    - Added GetLevel and GetEXP to UserExtensions.
+    - Added AwardEXPToUser, EXPToLevelUp and AttemptLevelUp to UserExtensions.
+    - Added AwardingEXPEnabled to "showconfig bot" in ShowConfigModule.
+    - Added Level and EXP to User Configurations.
+    - Added Level and EXP to "about" in ProfileModule.
+
+### Changed
+    - Updated the message that is posted on BotOnJoinedGuild to include the new configurable settings.
+    - Changed command minlengthforcoins to minlengthforexp to fit for the EXP system.
+    - Changed Quote Cost, Prefix Cost and RGB Cost in the 'showconfig bot' command to Quote Level Requirement, Prefix Level Requirement and RGB Level Requirement.
+    - Changed MessageReceived Event to award EXP instead of coins now.
+    - Changed "quoteprice", "prefixprice" and "rgbprice" to "quotelevel", "prefixlevel" and "rgblevel" to better fit for the leveling system.
+    - Changed ReactionHandler to award EXP instead of Tokens.
+    - Changed the LeaderboardModule to show Level and EXP of users instead of coins.
+    - Changed "buyquote" to require a min level instead of coins.
+    - Changed "customprefix" to require a min level instead of coins.
+    - Changed "customrgb" to require a min level instead of coins.
+    
+### Fixed
+    - Fixed an issue in LeaderboardModule which made a very small percentage of users unable to view the leaderboard due to their id neighbours being out of the range.
+    - 
+
+### Removed
+    - Removed the Two-Factor Authentication from the initial startup.
+    - Removed the requirement of Two-Factor Authentication for owner-locked commands (might come back in a future update).
+    - Removed the Coins field from UserJoined.
+    - Removed the Coins field from UserLeft.
+    - Removed "awardcoins" from AdminModule.
+    - Removed "toggleawardingcoins" from ServerOwnerModule.
+    - Removed TotalCoins and TotalGuildCoins from "stats" in ModeratorModule.
+    - Removed "force coins" and "force mythicaltokens" from ForceModule.
+    - Removed "editconfig toggleawardingcoins" from ConfigModule.
+    - Removed "editconfig toggleawardingtokens" from ConfigModule.
+    - Removed AwardingCoins from Channel Configurations.
+    - Removed GetCoins and GetMythicalTokens from UserExtensions.
+    - Removed AwardCoinsToUser and AwardTokensToUser from UserExtensions.
+    - Removed AwardingCoinsEnabled and AwardingTokensEnabled from "showconfig bot" in ShowConfigModule.
+    - Removed Coins and MythicalTokens from User Configurations.
+    - Removed "balance" and "givecoins" from FunModule.
+    - Removed "resetallcoins" from OwnerModule.
+    - Removed Coins and Mythical Tokens from "about" in ProfileModule.
+    - Removed the Raid Script(s) due to the system change from coins to levelling and EXP.
+    - 
+    
+### Additional
+    - Added ConsoleHandler to hold methods to print exceptions as a log message.
+    - GuildConfiguration EnsureExists() now prints as a log message instead of a console message.
+    - Removed SecretKey that was used for the Two-Factor Authentication from the Configuration.
+    - Configuration EnsureExists() now prints as a log message instead of a console message.
+    - ChannelHandler ChannelCreated() and ChannelDestroyed() now prints as a log message instead of a console message.
+    - QuoteHandler LoadAllQuotes() and EnsureExists() now prints as a log message instead of a console message.
+    - StringConfiguration EnsureExists() now prints as a log message instead of a console message.
+    - DiscordBot LoginAndStart() now prints as a log message instead of a console message.
+    - DiscordBot ReEnterToken() now prints as a log message instead of a console message.
+    - DiscordBot Ready() Event now prints as a log message instead of a console message.
+    - DiscordBot Disconnected() Event now prints as a log message instead of a console message.
+    - DiscordBot MessageReceived() Event now prints as a log message instead of a console message.
+    - Changed the Console.WriteLine in Log() from printing logMessage and instead now prints logMessage.Message
+    - TransactionLogger EnsureExists() now prints as a log message instead of a console message.
+    - TransactionLogger LoadTransactions() now prints as a log message instead of a console message.
+    - Removed QuoteCost, PrefixCost and RGBCost from Configuration.
+    - Added QuoteLevelRequirement, PrefixLevelRequirement and RGBLevelRequirement to Configuration.
+    - VoteLinkHandler LoadQuotes() and EnsureExists() now prints as a log message instead of a console message.
+    - Added PrintToConsole() to Extensions to pass Log Messages through to DiscordBot.Log().
+    - EmbedModule Exception now prints as a log message to the console.
+    - ShowConfigModule Exception now prints as a log message to the console.
+    - ProfileModule Exception(s) now prints as a log message to the console.
+    - NSFWModule now prints as a log message instead of a console message.
+    - Channel EnsureExists() now prints as a log message instead of a console message.
+    - User CreateUserFile() now prints as a log message instead of a console message.
+    - Removed SetCoinsForAll from User.cs
+    - Removed AwardingCoinsEnabled and AwardingTokensEnabled from Configuration.
+    - Added AwardingEXPEnabled to Configuration.
+
 ## Version 2.11.0.0
 
 ### Added
@@ -54,11 +137,10 @@
     - Removed MelissaNet Version get during bot startup.
     - Removed MELISSA.NET.VERSION flag from StringExtensions.
     
-### Other
+### Additional
     - Changed AwardCoinsToPlayer() to AwardCoinsToUser().
     - Made AwardCoinsToUser() a user extension.
     
-### Backend
     - Updated Discord.Net and other packages to 2.0.0-beta2-00974.
 
 
@@ -82,7 +164,7 @@
 ### Removed
     - Removed unused code in MogiiBot3.cs.
     
-### Other
+### Additional
     Code Style
     - Changed QuoteHandler.cs to use a expression-bodied property instead of the inconsistent body style.
     - Removed redundant parentheses in GuildConfiguration.cs.
@@ -237,7 +319,7 @@
     - Removed Image EnsureExists() from Program.
     - Removed MusicHandler.cs from the project. (Don't know why this wasn't removed earlier...)
 
-### Other
+### Additional
     - Cleaned up command "stats".
     - Cleaned up some users from the old "No Information Provided".
     - Added Discord.Addons.Interactive v1.0.1
@@ -266,7 +348,7 @@
 ### Removed
     - Removed BotChannelID.
 
-### Other
+### Additional
     - Added GoogleAuthenticator v1.2.1
     - Updated Discord.Net to v2.0.0-beta2-00940
     - Updated Discord.Net.Commands to v2.0.0-beta2-00940
@@ -309,7 +391,7 @@
 	- Removed MessageDeleted event.
 	- Removed private messages being sent to the log channel.
 
-### Other
+### Additional
 	- Changed formatting of CHANGELOG.md to make it appear nicer in the IDE.
 
 
@@ -360,7 +442,7 @@
 	- Added toggleawardingcoins for server owners to toggle which channels receive coins and which don't.
 	- Added channel check to startup to catch any channels created whilst the bot is offline.
 
-### Backend Notes
+### Additional
 	- Added SetCoins to User Object to see if any changes are made.
 	- Added Channel Object to keep track of channels awarding coins.
 
@@ -383,7 +465,7 @@
 	- Removed 'F' version info.
 	- Removed GUID from stats.
 
-### Backend Notes
+### Additional
 	- Changed the way commands and messages are read, ensuring that the AwardCoinsToPlayer method is called.
 
 
@@ -423,7 +505,7 @@ Many thanks to Marceline for getting MelissaNet added to MogiiBot in time for th
 	- Removed a switch which checked if the user can be awarded coins for reactions.
 	- Removed an error message which contained sensitive information.
 
-### Backend Notes
+### Additional
 	- Cleaned up the Configuration File to make it look nice and new. (ﾉ◕ヮ◕)ﾉ*:･ﾟ✧
 	- Added the Bot token to the configuration file. It will now check for a token there before asking MelissasCode for it.
 	- Added offlineList Tuple to log new users and the guild they joined whilst the bot was offline.

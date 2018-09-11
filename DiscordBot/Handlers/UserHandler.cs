@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 
 using Discord;
 using Discord.WebSocket;
@@ -57,7 +58,8 @@ namespace DiscordBot.Handlers
                 if (e.GetAbout() != null) eb.AddField("About " + e.Username, e.GetAbout());
 
                 eb.AddField("Username", "@" + e.Username + "#" + e.DiscriminatorValue, true);
-                eb.AddField("Coins", e.GetCoins(), true);
+                eb.AddField("Level", e.GetLevel(), true);
+                eb.AddField("EXP", e.GetEXP(), true);
                 eb.AddField("Account Created", e.UserCreateDate(), true);
                 eb.AddField("Joined Guild", e.GuildJoinDate(), true);
 
@@ -93,7 +95,8 @@ namespace DiscordBot.Handlers
             if (e.GetAbout() != null) eb.AddField("About " + e.Username, e.GetAbout());
 
             eb.AddField("Username", "@" + e.Username + "#" + e.DiscriminatorValue, true);
-            eb.AddField("Coins", e.GetCoins(), true);
+            eb.AddField("Level", e.GetLevel(), true);
+            eb.AddField("EXP", e.GetEXP(), true);
             eb.AddField("Account Created", e.UserCreateDate(), true);
             eb.AddField("Joined Guild", e.GuildJoinDate(), true);
 

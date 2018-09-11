@@ -97,10 +97,7 @@
     <Reference Include="HtmlAgilityPack, Version=1.8.4.0, Culture=neutral, PublicKeyToken=bd319b19eaf3b43a, processorArchitecture=MSIL">
       <HintPath>..\packages\HtmlAgilityPack.1.8.4\lib\Net45\HtmlAgilityPack.dll</HintPath>
     </Reference>
-    <Reference Include="MelissaNet, Version=1.2.0.36151, Culture=neutral, PublicKeyToken=null">
-      <HintPath>..\..\MelissaNet\MelissaNet\bin\Debug\MelissaNet.dll</HintPath>
-    </Reference>
-    <Reference Include="MelissaNet, Version=1.3.0.65341, Culture=neutral, PublicKeyToken=null">
+    <Reference Include="MelissaNet, Version=1.4.1.25565, Culture=neutral, PublicKeyToken=null">
       <HintPath>..\..\MelissaNet\MelissaNet\bin\Debug\MelissaNet.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.Extensions.DependencyInjection, Version=1.1.1.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
@@ -218,6 +215,7 @@
       <DependentUpon>frmAuth.cs</DependentUpon>
     </Compile>
     <Compile Include="Handlers\ChannelHandler.cs" />
+    <Compile Include="Handlers\ConsoleHandler.cs" />
     <Compile Include="Handlers\GuildHandler.cs" />
     <Compile Include="Handlers\ReactionHandler.cs" />
     <Compile Include="Handlers\UserHandler.cs" />
@@ -233,7 +231,6 @@
     <Compile Include="Modules\Owner\OwnerModule.cs" />
     <Compile Include="Modules\Public\FunModule.cs" />
     <Compile Include="Modules\Public\Games\HigherLowerGameModule.cs" />
-    <Compile Include="Modules\Public\Games\RaidGamemodeModule.cs" />
     <Compile Include="Modules\Public\Games\SlotsGameModule.cs" />
     <Compile Include="Modules\Public\HelpModule.cs" />
     <Compile Include="Modules\Public\InfoModule.cs" />

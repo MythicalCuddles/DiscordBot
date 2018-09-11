@@ -21,8 +21,8 @@ namespace DiscordBot.Modules.Mod
         [Command("stats"), Summary("Sends information about the bot.")]
         public async Task ShowStatistics()
         {
-            int totalUserCount = 0, totalChannelCount = 0, totalTextChannelCount = 0, totalCoins = 0;
-            int totalGuildUserCount = 0, totalGuildChannelCount = 0, totalGuildTextChannelCount = 0, totalGuildCoins = 0;
+            int totalUserCount = 0, totalChannelCount = 0, totalTextChannelCount = 0;
+            int totalGuildUserCount = 0, totalGuildChannelCount = 0, totalGuildTextChannelCount = 0;
 
             foreach (SocketGuild g in DiscordBot.Bot.Guilds)
             {
@@ -47,12 +47,10 @@ namespace DiscordBot.Modules.Mod
                 foreach (SocketGuildUser u in g.Users)
                 {
                     totalUserCount++;
-                    totalCoins += User.Load(u.Id).Coins;
 
                     if (g.Id == Context.Guild.Id)
                     {
                         totalGuildUserCount++;
-                        totalGuildCoins += User.Load(u.Id).Coins;
                     }
                 }
             }
@@ -78,15 +76,13 @@ namespace DiscordBot.Modules.Mod
                     "**Server Time:** " + DateTime.Now.ToString("h:mm:ss tt") + "\n" +
                     "**Guild Count:** " + DiscordBot.Bot.Guilds.Count + "\n" +
                     "**User Count:** " + totalUserCount + "\n" +
-                    "**Channel Count:** " + totalChannelCount + " (T:" + totalTextChannelCount + "/V:" + (totalChannelCount - totalTextChannelCount) + ")" + "\n" +
-                    "**Overall Coins:** " + totalCoins + "\n")
+                    "**Channel Count:** " + totalChannelCount + " (T:" + totalTextChannelCount + "/V:" + (totalChannelCount - totalTextChannelCount) + ")" + "\n")
                 .AddField("Guild Statistics - " + Context.Guild.Name,
                     "**Owner:** " + ((SocketGuildUser) Context.Guild.GetOwnerAsync().GetAwaiter().GetResult()).Username + "\n" +
                     "**Owner Discriminator:** #" + ((SocketGuildUser) Context.Guild.GetOwnerAsync().GetAwaiter().GetResult()).Discriminator + "\n" +
                     "**Owner Id:** " + ((SocketGuildUser) Context.Guild.GetOwnerAsync().GetAwaiter().GetResult()).Id + "\n" +
                     "**Channel Count:** " + totalGuildChannelCount + " (" + totalGuildTextChannelCount + "/" + (totalGuildChannelCount - totalGuildTextChannelCount) + ")" + "\n" +
-                    "**User Count:** " + totalGuildUserCount + "\n" +
-                    "**Coins:** " + totalGuildCoins)
+                    "**User Count:** " + totalGuildUserCount + "\n")
 
                 .WithFooter(efb)
                 .WithThumbnailUrl(DiscordBot.Bot.CurrentUser.GetAvatarUrl())

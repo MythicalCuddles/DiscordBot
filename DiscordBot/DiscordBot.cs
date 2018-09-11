@@ -29,8 +29,8 @@ namespace DiscordBot
     public class DiscordBot
     {
         public static DiscordSocketClient Bot;
-        private static CommandService _commandService;
-        private static IServiceProvider _serviceProvider;
+	    public static CommandService _commandService;
+	    public static IServiceProvider _serviceProvider;
 
         public async Task RunBotAsync()
         {
@@ -58,7 +58,7 @@ namespace DiscordBot
             Bot.ChannelCreated += ChannelHandler.ChannelCreated;
             Bot.ChannelDestroyed += ChannelHandler.ChannelDestroyed;
             
-            Bot.JoinedGuild += GuildHandler.BotOnJoinedGuild;
+            Bot.JoinedGuild += GuildHandler.JoinedGuild;
             
             Bot.ReactionAdded += ReactionHandler.ReactionAdded;
             
@@ -94,43 +94,42 @@ namespace DiscordBot
             }
             catch (CryptographicException exception)
             {
-                Console.WriteLine(@"Exception caught: " + exception.Source + Environment.NewLine + Environment.NewLine);
-                ReEnterToken();
+	            await new LogMessage(LogSeverity.Warning, "Startup", "Exception Caught: " + exception.ToString()).PrintToConsole();
+	            await ReEnterToken();
             }
             catch (Discord.Net.HttpException exception)
             {
                 if (exception.HttpCode == HttpStatusCode.Unauthorized || exception.HttpCode == HttpStatusCode.Forbidden)
                 {
-                    ReEnterToken();
+	                await ReEnterToken();
                 }
             }
             catch (FormatException)
             {
-                ReEnterToken();
+	            await ReEnterToken();
             }
             catch (Exception)
             {
-                Console.WriteLine(@"An error has occurred.");
+	            await new LogMessage(LogSeverity.Warning, "Startup", "An error has occured.").PrintToConsole();
                 throw;
             }
         }
 
-        private static void ReEnterToken(string reasoning = "The token stored on file doesn't seem to be working. Please re-enter the bot token.")
+        private static async Task ReEnterToken(string reasoning = "The token stored on file doesn't seem to be working. Please re-enter the bot token.")
         {
-            Console.WriteLine(reasoning);
+	        await new LogMessage(LogSeverity.Warning, "Startup", reasoning).PrintToConsole();
 
-            Console.Write(@"Token: ");
+	        await new LogMessage(LogSeverity.Info, "Startup", "Please enter the Bot Token:").PrintToConsole();
             Configuration.UpdateConfiguration(botToken:Cryptography.EncryptString(Console.ReadLine()));
 
-            Console.WriteLine(
-                @"Token saved successfully. Console will now be cleared for security reasons. Press the 'enter' key to continue.");
+	        await new LogMessage(LogSeverity.Warning, "Startup", "Token saved successfully. Console will now be cleared for security reasons. Press the 'enter' key to continue.").PrintToConsole();
             Console.ReadLine();
             Console.Clear();
 
             new DiscordBot().RunBotAsync().GetAwaiter().GetResult();
         }
 
-        private static Task Log(LogMessage logMessage)
+        internal static Task Log(LogMessage logMessage)
         {
 	        var cc = Console.ForegroundColor;
 	        switch (logMessage.Severity)
@@ -157,7 +156,7 @@ namespace DiscordBot
 			        Console.ForegroundColor = ConsoleColor.Blue;
 			        break;
 	        }
-	        Console.WriteLine($@"{DateTime.Now,-19} [{logMessage.Severity,8}] {logMessage.Source}: {logMessage.ToString()}");
+	        Console.WriteLine($@"{DateTime.Now,-19} [{logMessage.Severity,8}] {logMessage.Source}: {logMessage.Message}"); // .PrintToConsole uses this Console.WriteLine so do not change it!
             Console.ForegroundColor = cc;
 	        return Task.CompletedTask;
         }
@@ -173,19 +172,15 @@ namespace DiscordBot
 
 			ModeratorModule.ActiveForDateTime = DateTime.Now;
 
-			Console.WriteLine(@"-----------------------------------------------------------------");
+	        await new LogMessage(LogSeverity.Info, "Startup", "-----------------------------------------------------------------").PrintToConsole();
 			foreach (SocketGuild g in Bot.Guilds)
 			{
 			    Console.ResetColor();
-				Console.Write(@"status: [");
-				Console.ForegroundColor = ConsoleColor.Yellow;
-				Console.Write(@"find");
-				Console.ResetColor();
-				Console.WriteLine(@"]  " + g.Name + @": attempting to load.");
+				await new LogMessage(LogSeverity.Info, "Startup", "Attempting to load " + g.Name).PrintToConsole();
 
 				GuildConfiguration.EnsureExists(g.Id);
 
-				Console.WriteLine(@"-----------------------------------------------------------------");
+				await new LogMessage(LogSeverity.Info, "Startup", "-----------------------------------------------------------------").PrintToConsole();
 
 				foreach (SocketGuildUser u in g.Users)
 				{
@@ -193,39 +188,34 @@ namespace DiscordBot
 					{
 					    offlineList.Add(new Tuple<SocketGuildUser, SocketGuild>(u, g));
 					}
+					
+					//User.UpdateUser(u.Id, exp:1, level:1);
 				}
 
-			    Console.WriteLine(@"-----------------------------------------------------------------");
+				await new LogMessage(LogSeverity.Info, "Startup", "-----------------------------------------------------------------").PrintToConsole();
 
 			    foreach (SocketGuildChannel c in g.Channels)
 			    {
 			        Channel.EnsureExists(c.Id);
 			    }
 
-			    Console.WriteLine(@"-----------------------------------------------------------------");
+				await new LogMessage(LogSeverity.Info, "Startup", "-----------------------------------------------------------------").PrintToConsole();
             }
-
-            Console.Write(@"status: [");
-            Console.ForegroundColor = ConsoleColor.DarkCyan;
-            Console.Write(@"info");
-            Console.ResetColor();
-            Console.Write(@"]  " + Bot.CurrentUser.Username + @" : ");
+	        
             if (offlineList.Any())
             {
-                Console.WriteLine(offlineList.Count + @" new users added.");
+	            await new LogMessage(LogSeverity.Info, "Startup", offlineList.Count + " new users added.").PrintToConsole();
                 foreach (Tuple<SocketGuildUser, SocketGuild> tupleList in offlineList)
                 {
-                    Console.WriteLine(@"[ALERT] While " + Bot.CurrentUser.Username + @" was offline, " + tupleList.Item1.Mention + @" (" + tupleList.Item1.Id + @") joined " + tupleList.Item2.Name + @". They have been added to the database.");
+	                await new LogMessage(LogSeverity.Warning, "Startup", tupleList.Item1.Mention + " (" + tupleList.Item1.Id + ") joined " + tupleList.Item2.Name + " while the Bot was offline.").PrintToConsole();
                 }
             }
             else
-                Console.WriteLine(@"no new users added.");
+            {
+	            await new LogMessage(LogSeverity.Info, "Startup", "No new users added.").PrintToConsole();
+            }
 
-            Console.Write(@"status: [");
-		    Console.ForegroundColor = ConsoleColor.DarkGreen;
-		    Console.Write(@"ok");
-		    Console.ResetColor();
-		    Console.WriteLine(@"]    " + Bot.CurrentUser.Id + @": " + Bot.CurrentUser.Username + @" loaded.");
+	        await new LogMessage(LogSeverity.Info, "Startup", Bot.CurrentUser.Username + " loaded.").PrintToConsole();
 
 			// Send message to log channel to announce bot is up and running.
 			Version v = Assembly.GetExecutingAssembly().GetName().Version;
@@ -235,7 +225,7 @@ namespace DiscordBot
 					.WithThumbnailUrl(Bot.CurrentUser.GetAvatarUrl())
 					.WithDescription("**" + Bot.CurrentUser.Username + "** : ready event executed.")
                     .AddField("Version", v.Major + "." + v.Minor + "." + v.Build + "." + v.Revision, true)
-                    .AddField("Latest Version", MythicalCuddlesXYZ.CheckForNewVersion("MogiiBot3").Item1, true)
+                    .AddField("Latest Version", MelissaNet.Modules.Updater.CheckForNewVersion("MogiiBot3").Item1, true)
                     .AddField("MelissaNet", VersionInfo.Version, true)
 					.AddField("Latency", Bot.Latency + "ms", true)
                     .WithCurrentTimestamp();
@@ -250,10 +240,9 @@ namespace DiscordBot
             }
         }
 
-        private static Task Disconnected(Exception exception)
+        private static async Task Disconnected(Exception exception)
         {
-			Console.WriteLine(exception + Environment.NewLine);
-            return Task.CompletedTask;
+	        await new LogMessage(LogSeverity.Critical, "Disconnected", exception.ToString()).PrintToConsole();
         }
 	    
         private static async Task MessageReceived(SocketMessage messageParam)
@@ -277,7 +266,10 @@ namespace DiscordBot
 
                 return;
             }
-
+	        
+	        await new LogMessage(LogSeverity.Info, "MessageReceived", "[" + messageParam.Channel.GetGuild().Name + "/#" + messageParam.Channel.Name + "] " + "[@" + 
+	                                                            messageParam.Author.Username + "] : " + messageParam.Content).PrintToConsole();
+	        
             var uPrefix = User.Load(message.Author.Id).CustomPrefix;
             var gPrefix = GuildConfiguration.Load(message.Channel.GetGuild().Id).Prefix;
             if (uPrefix == null) { uPrefix = gPrefix; } // Fixes an issue with users not receiving coins due to null prefix.
@@ -292,11 +284,7 @@ namespace DiscordBot
                 {
                     var errorMessage = await context.Channel.SendMessageAsync(messageParam.Author.Mention + ", " + result.ErrorReason);
 
-                    Console.Write(@"status: [");
-                    Console.ForegroundColor = ConsoleColor.Yellow;
-                    Console.Write(@"warning");
-                    Console.ResetColor();
-                    Console.WriteLine(@"]  " + message.Author.Username + @" : " + result.ErrorReason);
+	                await new LogMessage(LogSeverity.Error, "MessageReceived", message.Author.Username + " - " + result.ErrorReason).PrintToConsole();
 
                     errorMessage.DeleteAfter(20);
                 }
@@ -315,13 +303,13 @@ namespace DiscordBot
             }
             else
             {
-                if (Configuration.Load().AwardingCoinsEnabled)
+	            if(Configuration.Load().AwardingEXPEnabled)
                 {
-	                if (message.Content.Length >= Configuration.Load().MinLengthForCoin)
+	                if (message.Content.Length >= Configuration.Load().MinLengthForEXP)
 	                {
-		                if (Channel.Load(message.Channel.Id).AwardingCoins)
+		                if (Channel.Load(message.Channel.Id).AwardingEXP)
 		                {
-			                message.Author.AwardCoinsToUser();
+			                message.Author.AwardEXPToUser(message.Channel.GetGuild());
 		                }
 	                }
                 }

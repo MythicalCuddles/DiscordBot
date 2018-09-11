@@ -11,7 +11,7 @@ namespace DiscordBot.Handlers
 {
     public static class GuildHandler
     {
-        public static async Task BotOnJoinedGuild(SocketGuild socketGuild)
+        public static async Task JoinedGuild(SocketGuild socketGuild)
         {
             GuildConfiguration.EnsureExists(socketGuild.Id);
 
@@ -19,6 +19,9 @@ namespace DiscordBot.Handlers
                 Channel.EnsureExists(c.Id);
 
             await Configuration.Load().LogChannelId.GetTextChannel().SendMessageAsync(socketGuild.Name + " has been added to " + DiscordBot.Bot.CurrentUser.Username + "'s guild list. \n" + socketGuild.Owner.Username + " is the owner (" + socketGuild.Owner.Id + ")");
+            
+            await new LogMessage(LogSeverity.Info, "JoinedGuild", "[" + socketGuild.Name + "] " + "[@" + socketGuild.Owner.Username + 
+                                                              "] : Bot Joined the Guild").PrintToConsole();
         }
     }
 }

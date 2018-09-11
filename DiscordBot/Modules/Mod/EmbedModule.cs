@@ -9,6 +9,7 @@ using Discord.WebSocket;
 using DiscordBot.Common.Preconditions;
 using DiscordBot.Common;
 using DiscordBot.Extensions;
+using DiscordBot.Handlers;
 
 namespace DiscordBot.Modules.Mod
 {
@@ -134,7 +135,7 @@ namespace DiscordBot.Modules.Mod
             }
             catch (Exception e)
             {
-                Console.WriteLine(@"ERROR" + Environment.NewLine + e.Message);
+                ConsoleHandler.PrintExceptionToLog("EmbedModule", e);
                 await ReplyAsync("An unexpected error has happened. Please ensure that you have passed through a byte value! (A number between 0 and 255)");
                 return;
             }

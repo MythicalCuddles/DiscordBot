@@ -14,6 +14,8 @@ namespace DiscordBot
 {
     public partial class frmAuth : Form
     {
+        // Removed as of 2.12.0.0 due to no real point of use.
+        
         public frmAuth()
         {
             InitializeComponent();
@@ -24,7 +26,7 @@ namespace DiscordBot
             txtAccountTitle.Text = @"MythicalCuddlesXYZ DiscordBot";
             string key = Guid.NewGuid().ToString().Replace("-", "");
             txtSecretKey.Text = key;
-            Configuration.UpdateConfiguration(secretKey: Cryptography.EncryptString(key));
+            //Configuration.UpdateConfiguration(secretKey: Cryptography.EncryptString(key));
 
             TwoFactorAuthenticator tfA = new TwoFactorAuthenticator();
             var setupCode = tfA.GenerateSetupCode(txtAccountTitle.Text, txtSecretKey.Text, pbQR.Width, pbQR.Height);

@@ -9,6 +9,7 @@ using Discord.WebSocket;
 
 using DiscordBot.Common.Preconditions;
 using DiscordBot.Common;
+using DiscordBot.Extensions;
 
 namespace DiscordBot.Modules.Public
 {
@@ -49,7 +50,7 @@ namespace DiscordBot.Modules.Public
                     {
                         if (userList.All(i => i.Item2.Id != u.Id) && !u.IsBot)
                         {
-                            userList.Add(new Tuple<int, SocketGuildUser>(User.Load(u.Id).Coins, u));
+                            userList.Add(new Tuple<int, SocketGuildUser>(u.GetEXP(), u));
                         }
                     }
                 }
@@ -59,7 +60,7 @@ namespace DiscordBot.Modules.Public
                     {
                         if (userList.All(i => i.Item2.Id != u.Id) && !u.IsBot)
                         {
-                            userList.Add(new Tuple<int, SocketGuildUser>(User.Load(u.Id).Coins, u));
+                            userList.Add(new Tuple<int, SocketGuildUser>(u.GetEXP(), u));
                         }
                     }
                 }
@@ -92,18 +93,27 @@ namespace DiscordBot.Modules.Public
             var shownList = new List<Tuple<int, SocketGuildUser>>();
             for (var i = 0; i < listAmount; i++)
             {
-                sb.Append("[" + (i + 1) + "] @" + sortedList[i].Item2.Username + ": " + sortedList[i].Item1 + " coin(s)\n");
+                sb.Append("[" + (i + 1) + "] @" + sortedList[i].Item2.Username + ": Level " + sortedList[i].Item2.GetLevel() + " (" + sortedList[i].Item1 + " EXP)\n");
                 shownList.Add(new Tuple<int, SocketGuildUser>(sortedList[i].Item1, sortedList[i].Item2));
             }
 
-            if (shownList.All(i => i.Item2.Id != context.User.Id))
+            if (shownList.All(i => i.Item2 != context.User))
             {
                 sb.Append("...\n");
                 var pos = sortedList.FindIndex(t => t.Item2.Id == context.User.Id);
 
-                sb.Append("[" + (pos) + "] @" + sortedList[pos - 1].Item2.Username + ": " + sortedList[pos - 1].Item1 + " coin(s)\n");
-                sb.Append("[" + (pos + 1) + "] @" + sortedList[pos].Item2.Username + ": " + sortedList[pos].Item1 + " coin(s)\n"); // Shown for User
-                sb.Append("[" + (pos + 2) + "] @" + sortedList[pos + 1].Item2.Username + ": " + sortedList[pos + 2].Item1 + " coin(s)\n");
+                if (sortedList[pos - 1] != null)
+                {
+                    sb.Append("[" + (pos) + "] @" + sortedList[pos - 1].Item2.Username + ": Level " + User.Load(sortedList[pos - 1].Item2.Id).Level + " (" + sortedList[pos - 1].Item1 + " EXP)\n");   
+                }
+                sb.Append("[" + (pos + 1) + "] @" + sortedList[pos].Item2.Username + ": Level " + User.Load(sortedList[pos].Item2.Id).Level + " (" +  sortedList[pos].Item1 + " EXP)\n"); // Shown for User
+                if ((pos + 1) < sortedList.Count)
+                {
+                    if (sortedList[pos + 1] != null)
+                    {
+                        sb.Append("[" + (pos + 2) + "] @" + sortedList[pos + 1].Item2.Username + ": Level " + User.Load(sortedList[pos + 1].Item2.Id).Level + " (" +  sortedList[pos + 2].Item1 + " EXP)\n");
+                    }
+                }
             }
             sb.Append("```");
             

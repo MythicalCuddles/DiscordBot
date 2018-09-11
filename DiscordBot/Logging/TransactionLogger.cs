@@ -2,13 +2,17 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-
+using Discord;
 using DiscordBot.Extensions;
 
 namespace DiscordBot.Logging
 {
     public class TransactionLogger
     {
+        /*todo: Review for next update.
+            - Is this needed anymore? Leveling System replaced the Coin System
+            - Reuse script to enable console message logging?
+         */
         private const string FileName = "MythicalCuddles/DiscordBot/common/transactions.txt";
         public static List<string> TransactionsList = new List<string>();
         public static List<List<string>> SplicedTransactionsList = new List<List<string>>();
@@ -20,11 +24,7 @@ namespace DiscordBot.Logging
             string file = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), FileName);
             TransactionsList = File.ReadAllLines(file).ToList();
 
-            Console.Write(@"status: [");
-            Console.ForegroundColor = ConsoleColor.DarkGreen;
-            Console.Write(@"ok");
-            Console.ResetColor();
-            Console.WriteLine(@"]    " + FileName + @": loaded.");
+            new LogMessage(LogSeverity.Info, "Transaction Logger", FileName + " loaded.").PrintToConsole();
         }
 
         public static void EnsureExists()
@@ -37,12 +37,8 @@ namespace DiscordBot.Logging
                     Directory.CreateDirectory(path);
 
                 SaveTransactionsToFile();
-
-                Console.Write(@"status: [");
-                Console.ForegroundColor = ConsoleColor.DarkGreen;
-                Console.Write(@"ok");
-                Console.ResetColor();
-                Console.WriteLine(@"]    " + FileName + @": created.");
+                
+                new LogMessage(LogSeverity.Info, "Transaction Logger", FileName + " created.").PrintToConsole();
             }
             LoadTransactions();
         }

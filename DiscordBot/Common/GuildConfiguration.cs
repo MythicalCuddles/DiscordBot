@@ -31,12 +31,8 @@ namespace DiscordBot.Common
 
                 var guildConfig = new GuildConfiguration();
                 guildConfig.SaveJson(guildId);
-
-                Console.Write(@"status: [");
-                Console.ForegroundColor = ConsoleColor.DarkGreen;
-                Console.Write(@"ok");
-                Console.ResetColor();
-                Console.WriteLine(@"]    " + GetPath(guildId) + @": created.");
+                
+                new LogMessage(LogSeverity.Info, "Guild Configuration", GetPath(guildId) + " created.").PrintToConsole();
 
 
                 EmbedBuilder eb = new EmbedBuilder()
@@ -47,9 +43,11 @@ namespace DiscordBot.Common
                                  "[2] Welcome Message: Type \"" + Load(guildId).Prefix + "setwelcomemessage\" to view flags and see how to set up the welcome message.\n" +
                                  "[3] Welcome Channel: Set the channel the welcome message is posted by typing \"" + Load(guildId).Prefix + "welcomechannel [channel mention]\"\n" +
                                  "[4] Log Channel: We now need a channel where we can post things for your eyes only! Type \"" + Load(guildId).Prefix + "logchannel [channel mention]\"\n" +
+                                 "[5] Bot Channel: Finally, we need a channel where the bot can post things for everyone to see! Type \"" + Load(guildId).Prefix + "botchannel [channel mention]\"\n" +
                                  "-- Optional --\n" +
-                                 "[5] Senpai Command: You can toggle senpai by typing \"" + Load(guildId).Prefix + "togglesenpai\"\n" +
-                                 "[6] Quote Command: You can toggle quotes by typing \"" + Load(guildId).Prefix + "togglequotes\"\n" +
+                                 "[6] Senpai Command: You can toggle senpai by typing \"" + Load(guildId).Prefix + "togglesenpai\"\n" +
+                                 "[7] Quote Command: You can toggle quotes by typing \"" + Load(guildId).Prefix + "togglequotes\"\n" +
+                                 "[8] Awarding Coins: You can toggle coins for channels by typing \"" + Load(guildId).Prefix + "toggleawardingcoins [channel mention]\"\n" +
                                  "\n[More] If you're interested in setting up NSFW commands and changing other settings, please visit the wiki.\n" +
                                  "```")
                 .WithFooter("Warning: Server Owner's may only change the configuration for the guild.")
@@ -59,7 +57,7 @@ namespace DiscordBot.Common
 
                 eb = new EmbedBuilder()
                     .WithTitle("Seen this message before?")
-                    .WithDescription("We apologise for the inconvience. Seeing this message again means that your guild configuration files have been reset." +
+                    .WithDescription("We apologise for the inconvience. Seeing this message again means that your guild configuration files have been reset. " +
                                      "Due to this bot being constantly updated, this might happen more than we, or you, would like." +
                                      "\n\n" +
                                      "It's easy to fix however. Please follow the steps above or head to the wiki and follow the quick setup guide again and your server will be good to go once more!" +
@@ -74,11 +72,7 @@ namespace DiscordBot.Common
 
             }
 
-            Console.Write(@"status: [");
-            Console.ForegroundColor = ConsoleColor.DarkGreen;
-            Console.Write(@"ok");
-            Console.ResetColor();
-            Console.WriteLine(@"]    " + GetPath(guildId) + @": loaded.");
+            new LogMessage(LogSeverity.Info, "Guild Configuration", GetPath(guildId) + " loaded.").PrintToConsole();
         }
 
         private static string GetPath(ulong guildId)
@@ -102,7 +96,7 @@ namespace DiscordBot.Common
             => JsonConvert.SerializeObject(this, Formatting.Indented);
 
         public static void UpdateGuild(ulong guildId, string prefix = null, string welcomeMessage = null,
-            ulong? welcomeChannelId = null, ulong? logChannelId = null,
+            ulong? welcomeChannelId = null, ulong? logChannelId = null, ulong? botChannelId = null,
             bool? senpaiEnabled = null, bool? quotesEnabled = false, bool? enableNsfwCommands = null, 
             ulong? ruleGameChannelId = null)
         {
@@ -112,6 +106,7 @@ namespace DiscordBot.Common
                 WelcomeMessage = welcomeMessage ?? Load(guildId).WelcomeMessage,
                 WelcomeChannelId = welcomeChannelId ?? Load(guildId).WelcomeChannelId,
                 LogChannelId = logChannelId ?? Load(guildId).LogChannelId,
+                BotChannelId = botChannelId ?? Load(guildId).BotChannelId,
                 SenpaiEnabled = senpaiEnabled ?? Load(guildId).SenpaiEnabled,
                 QuotesEnabled = quotesEnabled ?? Load(guildId).QuotesEnabled,
                 EnableNsfwCommands = enableNsfwCommands ?? Load(guildId).EnableNsfwCommands,

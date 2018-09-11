@@ -1,6 +1,8 @@
 ﻿using System;
 using System.IO;
+using System.Threading.Tasks;
 using Discord;
+using DiscordBot.Extensions;
 using Newtonsoft.Json;
 
 namespace DiscordBot.Common
@@ -12,8 +14,8 @@ namespace DiscordBot.Common
         [JsonIgnore]
         private static string Extension { get; } = ".json";
 
-        public int Coins { get; set; } = 0;
-        public int MythicalTokens { get; set; } = 0;
+        public int Level { get; set; } = 0;
+        public int EXP { get; set; } = 0;
         
         public string Name { get; set; }
         public string Gender { get; set; }
@@ -30,11 +32,6 @@ namespace DiscordBot.Common
         public string EmbedAuthorBuilderIconUrl { get; set; }
         public string EmbedFooterBuilderIconUrl { get; set; }
         public string FooterText { get; set; }
-
-        /// Games //todo: coming in with raid system
-        public ulong InRaid { get; set; }
-        public int RaidInvestment { get; set; }
-        public DateTime LastRaid { get; set; }
 
         /// Socials
         public string MinecraftUsername { get; set; }
@@ -59,21 +56,14 @@ namespace DiscordBot.Common
 
                 var user = new User();
                 user.SaveJson(uId);
-
-                Console.Write(@"status: [");
-                Console.ForegroundColor = ConsoleColor.DarkYellow;
-                Console.Write(@"alert");
-                Console.ResetColor();
-                Console.WriteLine(@"]    " + fileName + @": created.");
+                
+                new LogMessage(LogSeverity.Info, "User Files", fileName + " created.").PrintToConsole();
+                
                 return true;
             }
             else
             {
-                Console.Write(@"status: [");
-                Console.ForegroundColor = ConsoleColor.DarkGreen;
-                Console.Write(@"ok");
-                Console.ResetColor();
-                Console.WriteLine(@"]    " + fileName + @": already exists.");
+                new LogMessage(LogSeverity.Info, "User Files", fileName + " loaded.").PrintToConsole();
                 return false;
             }
         }
@@ -96,46 +86,18 @@ namespace DiscordBot.Common
 
         private string ToJson()
             => JsonConvert.SerializeObject(this, Formatting.Indented);
-
-        internal static bool SetCoinsForAll(int newValue = 0)
-        {
-            string filePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), DirectoryPath);
-            DirectoryInfo d = new DirectoryInfo(filePath);
-
-            Console.WriteLine(@"-----------------------------------------------------------------");
-            Console.WriteLine(@"[WARNING] A command was issued resetting the coins for all users.");
-
-            foreach (var file in d.GetFiles("*.json"))
-            {
-                string[] fileName = file.ToString().Split('.');
-
-                Console.WriteLine(@"[Info] " + file + @" - " + Load(Convert.ToUInt64(fileName[0])).Coins + @" coins has been set to " + newValue + @"!");
-                UpdateUser(Convert.ToUInt64(fileName[0]), newValue);
-            }
-
-            Console.WriteLine(@"-----------------------------------------------------------------");
-            Console.Write(@"status: [");
-            Console.ForegroundColor = ConsoleColor.DarkGreen;
-            Console.Write(@"ok");
-            Console.ResetColor();
-            Console.WriteLine(@"]  " + @"Coin Reset" + @": reset completed.");
-            Console.WriteLine(@"-----------------------------------------------------------------");
-
-            return true;
-        }
         
-        public static void UpdateUser(ulong uId, int? coins = null, int? mythicalTokens = null, 
+        public static void UpdateUser(ulong uId, int? coins = null, int? mythicalTokens = null, int? level = null, int? exp = null,
             string name = null, string gender = null, string pronouns = null, string about = null, string customPrefix = null,
             byte? aboutR = null, byte? aboutG = null, byte? aboutB = null, 
-            ulong? inRaid = null, int? raidInvestment = null, DateTime? lastRaid = null,
             bool? teamMember = null, string embedAuthorBuilderIconUrl = null, string embedFooterBuilderIconUrl = null, string footerText = null, 
             string minecraftUsername = null, string snapchat = null, string instagram = null, string github = null, string websiteName = null, string websiteUrl = null,
             bool? isBotIgnoringUser = null)
         {
             var user = new User()
             {
-                Coins = coins ?? Load(uId).Coins,
-                MythicalTokens = mythicalTokens ?? Load(uId).MythicalTokens,
+                Level = level ?? Load(uId).Level,
+                EXP = exp ?? Load(uId).EXP,
                 
                 Name = name ?? Load(uId).Name,
                 Gender = gender ?? Load(uId).Gender,
@@ -146,10 +108,6 @@ namespace DiscordBot.Common
                 AboutR = aboutR ?? Load(uId).AboutR,
                 AboutG = aboutG ?? Load(uId).AboutG,
                 AboutB = aboutB ?? Load(uId).AboutB,
-                
-                InRaid = inRaid ?? Load(uId).InRaid,
-                RaidInvestment = raidInvestment ?? Load(uId).RaidInvestment,
-                LastRaid = lastRaid ?? Load(uId).LastRaid,
                 
                 TeamMember = teamMember ?? Load(uId).TeamMember,
                 EmbedAuthorBuilderIconUrl = embedAuthorBuilderIconUrl ?? Load(uId).EmbedAuthorBuilderIconUrl,

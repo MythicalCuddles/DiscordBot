@@ -400,5 +400,10 @@ namespace DiscordBot.Extensions
                     return null;
             }
         }
+        
+        public static async Task PrintToConsole(this LogMessage logMessage)
+        {
+            await DiscordBot.Log(logMessage);
+        }
     }
 }

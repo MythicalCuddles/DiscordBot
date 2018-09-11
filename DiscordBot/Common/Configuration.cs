@@ -4,6 +4,7 @@ using System.IO;
 using Newtonsoft.Json;
 
 using Discord;
+using DiscordBot.Extensions;
 using MelissaNet;
 
 namespace DiscordBot.Common
@@ -16,7 +17,6 @@ namespace DiscordBot.Common
         private static readonly string File = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), FileName);
 
         public string BotToken { get; set; }
-        public string SecretKey { get; set; }
         
         public ulong Developer { get; set; } = 149991092337639424;
         public string StatusText { get; set; } = null;
@@ -25,25 +25,18 @@ namespace DiscordBot.Common
         public UserStatus Status { get; set; } = UserStatus.Online;
         
         public bool UnknownCommandEnabled { get; set; } = true;
-        public bool AwardingCoinsEnabled { get; set; } = true;
-        public bool AwardingTokensEnabled { get; set; } = true;
+        public bool AwardingEXPEnabled { get; set; } = true;
         
         public int LeaderboardAmount { get; set; } = 5;
-        public int QuoteCost { get; set; } = 250;
-        public int PrefixCost { get; set; } = 2500;
-        public int RGBCost { get; set; } = 5000;
+        public int QuoteLevelRequirement { get; set; } = 10;
+        public int PrefixLevelRequirement { get; set; } = 25;
+        public int RGBLevelRequirement { get; set; } = 15;
         public int SenpaiChanceRate { get; set; } = 5;
-        
-        // Raid Gamemode Settings //todo: coming as part of the raiding system. These variables need to be added to be made configurable.
-        public bool RaidsEnabled { get; set; } = true;
-        public bool RefundOnRaidLeave { get; set; } = true;
-        public int RaidCooldownInSeconds { get; set; } = 1800;
-        public int RaidChanceRate { get; set; } = 5;
         
         public ulong LogChannelId { get; set; } = 447769497344933900;
 
         public int Respects { get; set; }
-        public int MinLengthForCoin { get; set; }
+        public int MinLengthForEXP { get; set; }
 
         public string LeaderboardTrophyUrl { get; set; } = "https://i.imgur.com/Fancl1L.png";
         public uint LeaderboardEmbedColor { get; set; } = 16766287;
@@ -61,37 +54,33 @@ namespace DiscordBot.Common
 
                 var config = new Configuration();
 
-                Console.WriteLine(@"No configuration file was found. Lets set one up now!");
+                new LogMessage(LogSeverity.Warning, "Configuration", "No configuration file was found. Lets set one up now!").PrintToConsole();
 
-                Console.Write(@"Please enter the Bot Token: ");
+                new LogMessage(LogSeverity.Warning, "Configuration", "Please enter the Bot Token:").PrintToConsole();
                 config.BotToken = Cryptography.EncryptString(Console.ReadLine());
-                Console.WriteLine(@"Token saved to " + FileName + @"!");
+                new LogMessage(LogSeverity.Info, "Configuration", "Token saved to " + FileName + "!").PrintToConsole();
 
-                Console.WriteLine(@"Console will now be cleared for security reasons. Press the 'enter' key to continue.");
+                new LogMessage(LogSeverity.Warning, "Configuration", "Console will now be cleared for security reasons. Press the 'enter' key to continue.").PrintToConsole();
                 Console.ReadLine();
 
                 Console.Clear();
 
                 config.SaveJson();
                 
-                Console.Write(@"status: [");
-                Console.ForegroundColor = ConsoleColor.DarkGreen;
-                Console.Write(@"ok");
-                Console.ResetColor();
-                Console.WriteLine(@"]    " + FileName + @": created.");
+                new LogMessage(LogSeverity.Info, "Configuration", FileName + " created.").PrintToConsole();
             }
 
             if (Load().BotToken.IsNullOrEmpty() || Load().BotToken.IsNullOrWhiteSpace())
             {
                 var config = new Configuration();
 
-                Console.WriteLine(@"Warning: The Bot Token was not found.");
+                new LogMessage(LogSeverity.Warning, "Configuration", "The Bot Token was not found.").PrintToConsole();
 
-                Console.Write(@"Please enter the Bot Token: ");
+                new LogMessage(LogSeverity.Info, "Configuration", "Please enter the Bot Token:").PrintToConsole();
                 config.BotToken = Cryptography.EncryptString(Console.ReadLine());
-                Console.WriteLine(@"Token saved to " + FileName + @"!");
+                new LogMessage(LogSeverity.Info, "Configuration", "Token saved to " + FileName + "!").PrintToConsole();
 
-                Console.WriteLine(@"Console will now be cleared for security reasons. Press the 'enter' key to continue.");
+                new LogMessage(LogSeverity.Warning, "Configuration", "Console will now be cleared for security reasons. Press the 'enter' key to continue.").PrintToConsole();
                 Console.ReadLine();
 
                 Console.Clear();
@@ -101,11 +90,7 @@ namespace DiscordBot.Common
                 
             }
 
-            Console.Write(@"status: [");
-            Console.ForegroundColor = ConsoleColor.DarkGreen;
-            Console.Write(@"ok");
-            Console.ResetColor();
-            Console.WriteLine(@"]    " + FileName + @": loaded.");
+            new LogMessage(LogSeverity.Info, "Configuration", FileName + " loaded.").PrintToConsole();
         }
         
         public void SaveJson()
@@ -121,16 +106,15 @@ namespace DiscordBot.Common
         public string ToJson()
             => JsonConvert.SerializeObject(this, Formatting.Indented);
         
-        public static void UpdateConfiguration(string botToken = null, string secretKey = null, ulong? developer = null, string statusText = null, string statusLink = null,
-            int? statusActivity = null, UserStatus? status = null, bool? unknownCommandEnabled = null, bool? awardingCoinsEnabled = null, bool? awardingTokensEnabled = null,
+        public static void UpdateConfiguration(string botToken = null, ulong? developer = null, string statusText = null, string statusLink = null,
+            int? statusActivity = null, UserStatus? status = null, bool? unknownCommandEnabled = null, bool? awardingEXPEnabled = null,
             int? leaderboardAmount = null, string leaderboardTrophyUrl = null, uint? leaderboardEmbedColor = null,
-            int? quoteCost = null, int? prefixCost = null, int? senpaiChanceRate = null, int? rgbCost = null,
-            ulong? logChannelId = null, int? respects = null, int? minLengthForCoin = null, int? maxRuleXGamble = null)
+            int? quoteLevelRequirement = null, int? prefixLevelRequirement = null, int? senpaiChanceRate = null, int? rgbLevelRequirement = null,
+            ulong? logChannelId = null, int? respects = null, int? minLengthForEXP = null, int? maxRuleXGamble = null)
         {
             var config = new Configuration()
             {
                 BotToken = botToken ?? Load().BotToken,
-                SecretKey = secretKey ?? Load().SecretKey,
                 Developer = developer ?? Load().Developer,
 
                 StatusText = statusText ?? Load().StatusText,
@@ -139,22 +123,21 @@ namespace DiscordBot.Common
                 Status = status ?? Load().Status,
 
                 UnknownCommandEnabled = unknownCommandEnabled ?? Load().UnknownCommandEnabled,
-                AwardingCoinsEnabled = awardingCoinsEnabled ?? Load().AwardingCoinsEnabled,
-                AwardingTokensEnabled = awardingTokensEnabled ?? Load().AwardingTokensEnabled,
+                AwardingEXPEnabled = awardingEXPEnabled ?? Load().AwardingEXPEnabled,
                 
                 LeaderboardAmount = leaderboardAmount ?? Load().LeaderboardAmount,
                 LeaderboardTrophyUrl = leaderboardTrophyUrl ?? Load().LeaderboardTrophyUrl,
                 LeaderboardEmbedColor = leaderboardEmbedColor ?? Load().LeaderboardEmbedColor,
                 
-                QuoteCost = quoteCost ?? Load().QuoteCost,
-                PrefixCost = prefixCost ?? Load().PrefixCost,
-                RGBCost = rgbCost ?? Load().RGBCost,
+                QuoteLevelRequirement = quoteLevelRequirement ?? Load().QuoteLevelRequirement,
+                PrefixLevelRequirement = prefixLevelRequirement ?? Load().PrefixLevelRequirement,
+                RGBLevelRequirement = rgbLevelRequirement ?? Load().RGBLevelRequirement,
                 SenpaiChanceRate = senpaiChanceRate ?? Load().SenpaiChanceRate,
 
                 LogChannelId = logChannelId ?? Load().LogChannelId,
 
                 Respects = respects ?? Load().Respects,
-                MinLengthForCoin = minLengthForCoin ?? Load().MinLengthForCoin,
+                MinLengthForEXP = minLengthForEXP ?? Load().MinLengthForEXP,
 
                 MaxRuleXGamble = maxRuleXGamble ?? Load().MaxRuleXGamble
             };

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using Discord;
 using DiscordBot.Extensions;
 
 namespace DiscordBot.Other
@@ -28,20 +29,12 @@ namespace DiscordBot.Other
             string file = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), FileName);
             QuoteList = File.ReadAllLines(file).ToList();
 
-            Console.Write(@"status: [");
-            Console.ForegroundColor = ConsoleColor.DarkGreen;
-            Console.Write(@"ok");
-            Console.ResetColor();
-            Console.WriteLine(@"]    " + FileName + @": loaded.");
+            new LogMessage(LogSeverity.Info, "QuoteHandler", FileName + " loaded.").PrintToConsole();
             
             file = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), RequestQuotesFileName);
             RequestQuoteList = File.ReadAllLines(file).ToList();
 
-            Console.Write(@"status: [");
-            Console.ForegroundColor = ConsoleColor.DarkGreen;
-            Console.Write(@"ok");
-            Console.ResetColor();
-            Console.WriteLine(@"]    " + RequestQuotesFileName + @": loaded.");
+            new LogMessage(LogSeverity.Info, "QuoteHandler", FileName + " loaded.").PrintToConsole();
         }
 
         public static void EnsureExists()
@@ -54,12 +47,8 @@ namespace DiscordBot.Other
                     Directory.CreateDirectory(path);
 
                 SaveQuotes();
-
-                Console.Write(@"status: [");
-                Console.ForegroundColor = ConsoleColor.DarkGreen;
-                Console.Write(@"ok");
-                Console.ResetColor();
-                Console.WriteLine(@"]    " + FileName + @": created.");
+                
+                new LogMessage(LogSeverity.Info, "QuoteHandler", FileName + " created.").PrintToConsole();
             }
             
             file = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), RequestQuotesFileName);
@@ -70,12 +59,8 @@ namespace DiscordBot.Other
                     Directory.CreateDirectory(path);
 
                 SaveRequestQuotes();
-
-                Console.Write(@"status: [");
-                Console.ForegroundColor = ConsoleColor.DarkGreen;
-                Console.Write(@"ok");
-                Console.ResetColor();
-                Console.WriteLine(@"]    " + RequestQuotesFileName + @": created.");
+                
+                new LogMessage(LogSeverity.Info, "QuoteHandler", FileName + " created.").PrintToConsole();
             }
 
             LoadAllQuotes();
