@@ -9,7 +9,6 @@ using DiscordBot.Common;
 using DiscordBot.Common.Preconditions;
 using DiscordBot.Extensions;
 using DiscordBot.Handlers;
-using DiscordBot.Logging;
 
 namespace DiscordBot.Modules.Public
 {

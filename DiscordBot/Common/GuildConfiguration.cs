@@ -47,7 +47,7 @@ namespace DiscordBot.Common
                                  "-- Optional --\n" +
                                  "[6] Senpai Command: You can toggle senpai by typing \"" + Load(guildId).Prefix + "togglesenpai\"\n" +
                                  "[7] Quote Command: You can toggle quotes by typing \"" + Load(guildId).Prefix + "togglequotes\"\n" +
-                                 "[8] Awarding Coins: You can toggle coins for channels by typing \"" + Load(guildId).Prefix + "toggleawardingcoins [channel mention]\"\n" +
+                                 "[8] Awarding EXP: You can toggle exp awarding for channels by typing \"" + Load(guildId).Prefix + "toggleexpawarding [channel mention]\"\n" +
                                  "\n[More] If you're interested in setting up NSFW commands and changing other settings, please visit the wiki.\n" +
                                  "```")
                 .WithFooter("Warning: Server Owner's may only change the configuration for the guild.")

@@ -57,15 +57,16 @@ namespace DiscordBot.Modules.Mod
                                "[ 7] Unknown Command Enabled [ " + Configuration.Load().UnknownCommandEnabled.ToYesNo() + " ]\n" +
                                "[ 8] Awarding EXP Enabled [ " + Configuration.Load().AwardingEXPEnabled.ToYesNo() + " ]\n" +
                                "[ 9] Leaderboard Amount [ " + Configuration.Load().LeaderboardAmount + " ]\n" +
-                               "[10] Quote Level Requirement [ " + Configuration.Load().QuoteLevelRequirement + " coin(s) ]\n" +
-                               "[11] Prefix Level Requirement [ " + Configuration.Load().PrefixLevelRequirement + " coin(s) ]\n" +
-                               "[12] RGB Level Requirement [ " + Configuration.Load().RGBLevelRequirement + " coin(s) ]\n" +
+                               "[10] Quote Level Requirement [ " + Configuration.Load().QuoteLevelRequirement + " ]\n" +
+                               "[11] Prefix Level Requirement [ " + Configuration.Load().PrefixLevelRequirement + " ]\n" +
+                               "[12] RGB Level Requirement [ " + Configuration.Load().RGBLevelRequirement + " ]\n" +
                                "[13] Senpai Chance Rate [ " + Configuration.Load().SenpaiChanceRate + "/100 ]\n" +
                                "[14] Global Log Channel [ #" + (Configuration.Load().LogChannelId.GetTextChannel().Name ?? "UNDEFINED") + " ]\n" +
                                "[15] Global Log Channel ID [ " + Configuration.Load().LogChannelId + " ]\n" +
                                "[16] Respects [ " + Configuration.Load().Respects + " ]\n" +
                                "[17] Min Length For EXP [ " + Configuration.Load().MinLengthForEXP + " ]\n" +
                                "[18] Max Rule34 Gamble ID [ " + Configuration.Load().MaxRuleXGamble + " ]\n" +
+                               "[19] Showing All Awards [ " + Configuration.Load().ShowAllAwards.ToYesNo() + "]\n" +
                                "```");
 
             await ReplyAsync("", false, eb.Build());

@@ -5,7 +5,6 @@ using System.Windows.Forms;
 
 using DiscordBot.Common;
 using DiscordBot.Other;
-using DiscordBot.Logging;
 
 using MelissaNet;
 
@@ -35,7 +34,6 @@ namespace DiscordBot
             Console.WriteLine(@")");
             
             Console.WriteLine(@"Web: www.mythicalcuddles.xyz");
-            Console.WriteLine(@"Project: mogiibot.mythicalcuddles.xyz");
             Console.WriteLine(@"Contact: staff@mythicalcuddles.xyz");
             
             Console.WriteLine(@"Copyright 2017 - 2018 Melissa Brennan | Licensed under the MIT License.");
@@ -47,7 +45,6 @@ namespace DiscordBot
             StringConfiguration.EnsureExists();
             QuoteHandler.EnsureExists();
             VoteLinkHandler.EnsureExists();
-            TransactionLogger.EnsureExists();
             Console.WriteLine(@"-----------------------------------------------------------------");
             
             new DiscordBot().RunBotAsync().GetAwaiter().GetResult();

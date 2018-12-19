@@ -35,6 +35,31 @@ namespace DiscordBot.Modules.Public
             await Configuration.Load().LogChannelId.GetTextChannel().SendMessageAsync("", false, eb.Build());
         }
 
+        [Command("prefix"), Summary("Sends information on what prefixes are available to the user.")]
+        public async Task PrefixInfo()
+        {
+            var userPrefix = User.Load(Context.User.Id).CustomPrefix;
+            var guildPrefix = GuildConfiguration.Load(Context.Guild.Id).Prefix;
+
+            EmbedBuilder eb = new EmbedBuilder()
+                .WithAuthor(new EmbedAuthorBuilder().WithName("Available Prefixes for " + Context.User.Username).WithIconUrl(Context.User.GetAvatarUrl()))
+                .WithDescription("Here are the prefixes you can use with " + DiscordBot.Bot.CurrentUser.Username)
+                .AddField("Key", "[Prefix][Command]")
+                .WithColor(Context.User.GetCustomRGB());
+
+            if (!string.IsNullOrEmpty(userPrefix))
+            {
+                eb.AddField("User Set Prefix", userPrefix);
+            }
+
+            eb.AddField("Guild Prefix", guildPrefix);
+            eb.AddField("Global Prefix", DiscordBot.Bot.CurrentUser.Mention);
+
+            eb.WithFooter(new EmbedFooterBuilder().WithText("Interested in a custom prefix or changing your current prefix? " + guildPrefix + "editprofile customprefix"));
+
+            await ReplyAsync("", false, eb.Build());
+        }
+
         [Group("mogiicraft")]
         [RequireGuild(221250721046069249)]
         public class MogiiCraftCommands : ModuleBase

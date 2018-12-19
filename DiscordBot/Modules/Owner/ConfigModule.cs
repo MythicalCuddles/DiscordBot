@@ -41,6 +41,8 @@ namespace DiscordBot.Modules.Owner
                                  "[12] leaderboardtrophyurl [link]\n" +
                                  "[13] leaderboardembedcolor [uint id]\n" +
                                  "[14] toggleexpawarding\n" +
+                                 "[15] toggleshowallawards\n" +
+                                 "[16] awardsiconurl [link]\n" +
                                  "```");
             }
 
@@ -206,6 +208,75 @@ namespace DiscordBot.Modules.Owner
                 uint oldValue = Configuration.Load().LeaderboardEmbedColor;
                 Configuration.UpdateConfiguration(leaderboardEmbedColor: colorId);
                 await Configuration.Load().LogChannelId.GetTextChannel().SendMessageAsync(Context.User.Mention + " has updated the Leaderboard Embed Color ID to: " + colorId + " (was: " + oldValue + ")");
+            }
+
+            [Command("toggleshowallawards"), Summary("Toggles if users receive EXP.")]
+            public async Task ToggleShowingAllAwards()
+            {
+                Configuration.UpdateConfiguration(showAllAwards: !Configuration.Load().ShowAllAwards);
+                await Configuration.Load().LogChannelId.GetTextChannel().SendMessageAsync("Showing All Awards has been toggled by " + Context.User.Mention + " (enabled: " + Configuration.Load().ShowAllAwards.ToYesNo() + ")");
+            }
+
+            [Command("awardsiconurl"), Summary("")]
+            public async Task SetAwardsIconUrl(string link)
+            {
+                string oldValue = Configuration.Load().AwardsIconUrl;
+                Configuration.UpdateConfiguration(awardsIconUrl: link);
+                await Configuration.Load().LogChannelId.GetTextChannel().SendMessageAsync(Context.User.Mention + " has updated the Awards Icon URL to: " + link + " (was: " + oldValue + ")");
+            }
+        }
+
+        [Group("editdatabase")]
+        public class DatabaseConfiguration : ModuleBase
+        {
+            [Command("")]
+            public async Task SendSyntax()
+            {
+                await ReplyAsync("**Syntax:** " +
+                                 GuildConfiguration.Load(Context.Guild.Id).Prefix + "editdatabase [variable] [command syntax]\n```" +
+                                 "Available Commands\n" +
+                                 "-----------------------------\n" +
+                                 "-> editdatabase host [host address]\n" +
+                                 "-> editdatabase port [port number]\n" +
+                                 "-> editdatabase user [username]\n" +
+                                 "-> editdatabase password [password]\n" +
+                                 "-> editdatabase name [database name]\n" +
+                                 "```");
+            }
+
+            [Command("host")]
+            public async Task SetDatabaseAddress([Remainder] string value)
+            {
+                Configuration.UpdateConfiguration(databaseHost: value);
+                await Configuration.Load().LogChannelId.GetTextChannel().SendMessageAsync("Database Hostname has been changed by " + Context.User.Mention + " to " + value);
+            }
+
+            [Command("port")]
+            public async Task SetDatabasePort([Remainder] int value)
+            {
+                Configuration.UpdateConfiguration(databasePort: value);
+                await Configuration.Load().LogChannelId.GetTextChannel().SendMessageAsync("Database Port has been changed by " + Context.User.Mention + " to " + value);
+            }
+
+            [Command("user")]
+            public async Task SetDatabaseUser([Remainder] string value)
+            {
+                Configuration.UpdateConfiguration(databaseUser: value);
+                await Configuration.Load().LogChannelId.GetTextChannel().SendMessageAsync("Database User has been changed by " + Context.User.Mention + " to " + value);
+            }
+
+            [Command("password")]
+            public async Task SetDatabasePassword([Remainder] string value)
+            {
+                Configuration.UpdateConfiguration(databasePassword: value);
+                await Configuration.Load().LogChannelId.GetTextChannel().SendMessageAsync("Database Password has been changed by " + Context.User.Mention + " to " + value);
+            }
+
+            [Command("name")]
+            public async Task SetDatabaseName([Remainder] string value)
+            {
+                Configuration.UpdateConfiguration(databaseName: value);
+                await Configuration.Load().LogChannelId.GetTextChannel().SendMessageAsync("Database Name has been changed by " + Context.User.Mention + " to " + value);
             }
         }
 

@@ -17,12 +17,21 @@ namespace DiscordBot.Common
         private static readonly string File = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), FileName);
 
         public string BotToken { get; set; }
+
+        public string DatabaseHost { get; set; }
+        public int DatabasePort { get; set; }
+        public string DatabaseUser { get; set; }
+        public string DatabasePassword { get; set; }
+        public string DatabaseName { get; set; }
         
         public ulong Developer { get; set; } = 149991092337639424;
         public string StatusText { get; set; } = null;
         public string StatusLink { get; set; } = null;
         public int StatusActivity { get; set; } = -1;
         public UserStatus Status { get; set; } = UserStatus.Online;
+
+        public bool ShowAllAwards { get; set; } = false;
+        public string AwardsIconUrl { get; set; } = "https://i.imgur.com/Fancl1L.png";
         
         public bool UnknownCommandEnabled { get; set; } = true;
         public bool AwardingEXPEnabled { get; set; } = true;
@@ -107,6 +116,8 @@ namespace DiscordBot.Common
             => JsonConvert.SerializeObject(this, Formatting.Indented);
         
         public static void UpdateConfiguration(string botToken = null, ulong? developer = null, string statusText = null, string statusLink = null,
+            string databaseHost = null, int? databasePort = null, string databaseUser = null, string databasePassword = null, string databaseName = null,
+            bool? showAllAwards = null, string awardsIconUrl = null,
             int? statusActivity = null, UserStatus? status = null, bool? unknownCommandEnabled = null, bool? awardingEXPEnabled = null,
             int? leaderboardAmount = null, string leaderboardTrophyUrl = null, uint? leaderboardEmbedColor = null,
             int? quoteLevelRequirement = null, int? prefixLevelRequirement = null, int? senpaiChanceRate = null, int? rgbLevelRequirement = null,
@@ -117,10 +128,19 @@ namespace DiscordBot.Common
                 BotToken = botToken ?? Load().BotToken,
                 Developer = developer ?? Load().Developer,
 
+                DatabaseHost = databaseHost ?? Load().DatabaseHost,
+                DatabasePort = databasePort ?? Load().DatabasePort,
+                DatabaseUser = databaseUser ?? Load().DatabaseUser,
+                DatabasePassword = databasePassword ?? Load().DatabasePassword,
+                DatabaseName = databaseName ?? Load().DatabaseName,
+                
                 StatusText = statusText ?? Load().StatusText,
                 StatusLink = statusLink ?? Load().StatusLink,
                 StatusActivity = statusActivity ?? Load().StatusActivity,
                 Status = status ?? Load().Status,
+                
+                ShowAllAwards = showAllAwards ?? Load().ShowAllAwards,
+                AwardsIconUrl = awardsIconUrl ?? Load().AwardsIconUrl,
 
                 UnknownCommandEnabled = unknownCommandEnabled ?? Load().UnknownCommandEnabled,
                 AwardingEXPEnabled = awardingEXPEnabled ?? Load().AwardingEXPEnabled,

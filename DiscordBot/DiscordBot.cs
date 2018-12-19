@@ -180,6 +180,23 @@ namespace DiscordBot
 
 				GuildConfiguration.EnsureExists(g.Id);
 
+				//todo: maybe add something like this to add guild bans to a database to be read on a website?
+//				if (g.GetUser(Bot.CurrentUser.Id).IsGuildAdministrator() || g.GetUser(Bot.CurrentUser.Id).GuildPermissions.BanMembers)
+//				{
+//					var bans = await g.GetBansAsync();
+//					foreach (IBan b in bans)
+//					{
+//						await new LogMessage(LogSeverity.Info, g.Name, "@" + b.User.Username + " | Reason: " + b.Reason).PrintToConsole();
+//					}
+//					
+//					await new LogMessage(LogSeverity.Info, "Guild Bans", "Updated Guild Bans Successfully.").PrintToConsole();
+//				}
+//				else
+//				{
+//					await new LogMessage(LogSeverity.Info, "Guild Bans", "Unable to get banned users - Bot doesn't have the required permission(s).").PrintToConsole();
+//				}
+				// end.
+
 				await new LogMessage(LogSeverity.Info, "Startup", "-----------------------------------------------------------------").PrintToConsole();
 
 				foreach (SocketGuildUser u in g.Users)
@@ -188,8 +205,6 @@ namespace DiscordBot
 					{
 					    offlineList.Add(new Tuple<SocketGuildUser, SocketGuild>(u, g));
 					}
-					
-					//User.UpdateUser(u.Id, exp:1, level:1);
 				}
 
 				await new LogMessage(LogSeverity.Info, "Startup", "-----------------------------------------------------------------").PrintToConsole();

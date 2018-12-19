@@ -1,6 +1,27 @@
 | CHANGELOG.md  |
 | ------------- |
 
+## Version 2.12.2.0
+
+### Added
+    - Added "awards" command to see the specified users awards.
+    - Added "prefix" command to let the user see which prefixes are available to them.
+    - Added "editdatabase" command to let the Bot Owner change the database configuration.
+    - Added additional variables to "editconfig" to allow the Bot Owner to change the award variables.
+
+### Fixed
+    - Fixed a typo where Quote Level Requirement in the "showconfig" command would show coins.
+    - Fixed a typo where Prefix Level Requirement in the "showconfig" command would show coins.
+    - Fixed a typo where RGB Level Requirement in the "showconfig" command would show coins.
+    - Fixed a typo where the guild introduction message would show in coins instead of EXP.    
+
+### Removed
+    - Removed Transaction Logger as there is no need for it anymore.
+    - Removed a line of code which deleted the message informing users that they have levelled up.
+    
+### Additional
+    - Added an Award Object to make it easier to deal with user awards from the database.
+
 ## Version 2.12.1.0
     
 ### Fixed
@@ -36,7 +57,6 @@
     
 ### Fixed
     - Fixed an issue in LeaderboardModule which made a very small percentage of users unable to view the leaderboard due to their id neighbours being out of the range.
-    - 
 
 ### Removed
     - Removed the Two-Factor Authentication from the initial startup.
@@ -58,7 +78,6 @@
     - Removed "resetallcoins" from OwnerModule.
     - Removed Coins and Mythical Tokens from "about" in ProfileModule.
     - Removed the Raid Script(s) due to the system change from coins to levelling and EXP.
-    - 
     
 ### Additional
     - Added ConsoleHandler to hold methods to print exceptions as a log message.

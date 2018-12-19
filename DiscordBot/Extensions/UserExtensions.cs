@@ -116,6 +116,7 @@ namespace DiscordBot.Extensions
                 try
                 {
                     User.UpdateUser(user.Id, level: (user.GetLevel() + 1));
+                    //User.UpdateUser(user.Id, exp: 0); // reset exp every level up, resulting in longer times to level up (?) (eval: don't add, seems to be more difficult the higher levels)
 
                     SocketTextChannel botChannel = GuildConfiguration.Load(guild.Id).BotChannelId.GetTextChannel() ??
                                                    GuildConfiguration.Load(guild.Id).WelcomeChannelId.GetTextChannel();
@@ -130,7 +131,7 @@ namespace DiscordBot.Extensions
                     }.WithCurrentTimestamp();
                     
                     var msg = await botChannel.SendMessageAsync("", false, eb.Build());
-                    msg.DeleteAfter(120);
+                    //msg.DeleteAfter(300); // todo: updated from 120 to don't delete, maybe make configurable?
                 }
                 catch (Exception e)
                 {

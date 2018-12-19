@@ -1,12 +1,14 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Text;
 using System.Threading.Tasks;
 
 using Discord;
 using Discord.Commands;
-
+using Discord.WebSocket;
 using DiscordBot.Common;
 using DiscordBot.Common.Preconditions;
-using DiscordBot.Logging;
+using DiscordBot.Extensions;
 
 namespace DiscordBot.Modules.Public
 {

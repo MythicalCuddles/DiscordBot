@@ -12,7 +12,6 @@ using DiscordBot.Common.Preconditions;
 using DiscordBot.Common;
 using DiscordBot.Extensions;
 using DiscordBot.Other;
-using DiscordBot.Logging;
 
 namespace DiscordBot.Modules.Admin
 {
@@ -33,37 +32,6 @@ namespace DiscordBot.Modules.Admin
         {
             await GuildConfiguration.Load(Context.Guild.Id).WelcomeChannelId.GetTextChannel().SendMessageAsync(GuildConfiguration.Load(Context.Guild.Id).WelcomeMessage.ModifyStringFlags(user));
             await GuildConfiguration.Load(Context.Guild.Id).LogChannelId.GetTextChannel().SendMessageAsync("A welcome message for " + user.Mention + " has been posted. (Forced by: " + Context.User.Mention + ")");
-        }
-                
-        [Command("listtransactions"), Summary("Sends a list of all the transactions.")]
-        public async Task ListTransactions()
-        {
-            if(TransactionLogger.TransactionsList.Count > 0)
-            {
-                StringBuilder sb = new StringBuilder()
-                .Append("**Transactions**\n**----------------**\n`Total Transactions: " + TransactionLogger.TransactionsList.Count + "`\n```INI\n");
-
-                TransactionLogger.SpliceTransactionsIntoList();
-                List<string> transactions = TransactionLogger.GetSplicedTransactions(1);
-
-                for (int i = 0; i < transactions.Count; i++)
-                {
-                    sb.Append("[" + (i + 1) + "]: " + transactions[i] + "\n");
-                }
-
-                sb.Append("\n``` `Page 1`");
-
-                IUserMessage msg = await ReplyAsync(sb.ToString());
-                TransactionLogger.TransactionMessages.Add(msg.Id);
-                TransactionLogger.PageNumber.Add(1);
-
-                if (TransactionLogger.TransactionsList.Count > 10)
-                    await msg.AddReactionAsync(Extensions.Extensions.ArrowRight);
-            }
-            else
-            {
-                await ReplyAsync("No transactions were found in the database.");
-            }
         }
 
         [Command("addquote"), Summary("Add a quote to the list.")]
