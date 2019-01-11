@@ -89,9 +89,10 @@ namespace DiscordBot.Modules
                 {
                     if (!showAllAwards)
                     {
-                        if (date.Year >= a.dateAwarded.Year &&
-                            date.Month >= a.dateAwarded.Month &&
-                            date.Day >= a.dateAwarded.Day)
+                        int result = DateTime.Compare(date, a.dateAwarded);
+                        // result : -1:Future Date, 1:Past Date, 1:Today
+                        
+                        if (result >= 0)
                         {
                             sb.Append(a.awardText + " - " + a.dateAwarded.ToString("dd/MM/yyyy") + "\n");
                         }

@@ -1,6 +1,16 @@
 | CHANGELOG.md  |
 | ------------- |
 
+## Version 2.12.3.0
+
+### Fixed
+    - Fixed an issue where awards wouldn't show if they checked for the date awarded.
+    
+### Please Note
+The next versions of DiscordBot will be changing the main ways it works by adding the information it gathers to a database system. Along with this main change and the other changes planned for future updates, we will be discontinuing this changelog file and be publishing the changes within DiscordBot to the release page on GitHub as we change to continue developing DiscordBot using GitHub features such as Branching and Pull Requests.
+
+You can view the [releases along with the changes by clicking here](https://github.com/MythicalCuddles/DiscordBot/releases).
+
 ## Version 2.12.2.0
 
 ### Added
