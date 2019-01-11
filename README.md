@@ -1,7 +1,8 @@
 | [README.md](https://github.com/MythicalCuddles/DiscordBot/blob/master/README.md) |
 | ---------- |
 
-[![Build Status](https://travis-ci.org/MythicalCuddles/DiscordBot.svg?branch=master)](https://travis-ci.org/MythicalCuddles/DiscordBot)
+![Issues](https://img.shields.io/github/issues/MythicalCuddles/DiscordBot.svg)
+![License](https://img.shields.io/github/license/MythicalCuddles/DiscordBot.svg)
 [![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.me/mythicalcuddles)
 
 ---
