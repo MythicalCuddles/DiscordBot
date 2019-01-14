@@ -1,5 +1,3 @@
-
-//todo: add to changelog 2.13
 namespace DiscordBot.Objects
 {
     public class User
