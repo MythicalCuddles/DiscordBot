@@ -257,6 +257,7 @@
     <Compile Include="DiscordBot.cs" />
     <Compile Include="Modules\TeamMember\TeamMemberModule.cs" />
     <Compile Include="Objects\Award.cs" />
+    <Compile Include="Objects\User.cs" />
     <Compile Include="Other\QuoteHandler.cs" />
     <Compile Include="Other\VoteLinkHandler.cs" />
     <Compile Include="Program.cs" />
