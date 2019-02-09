@@ -25,6 +25,7 @@ namespace DiscordBot.Objects
         public string SnapchatUsername { get; set; }
         public string InstagramUsername { get; set; }
         public string GitHubUsername { get; set; }
+        public string PokemonGoFriendCode { get; set; } 
         public string WebsiteName { get; set; }
         public string WebsiteUrl { get; set; }
 
@@ -50,6 +51,7 @@ namespace DiscordBot.Objects
             string snapchatUsername = null,
             string instagramUsername = null,
             string gitHubUsername = null,
+            string pokemonGoFriendCode = null,
             string websiteName = null,
             string websiteUrl = null,
             bool? isBotIgnoring = null)
@@ -72,6 +74,7 @@ namespace DiscordBot.Objects
             SnapchatUsername = snapchatUsername;
             InstagramUsername = instagramUsername;
             GitHubUsername = gitHubUsername;
+            PokemonGoFriendCode = pokemonGoFriendCode;
             WebsiteName = websiteName;
             WebsiteUrl = websiteUrl;
             IsBotIgnoringUser = isBotIgnoring ?? IsBotIgnoringUser;
