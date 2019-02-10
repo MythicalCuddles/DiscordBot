@@ -43,6 +43,7 @@ namespace DiscordBot.Modules.Owner
                                  "[14] toggleexpawarding\n" +
                                  "[15] toggleshowallawards\n" +
                                  "[16] awardsiconurl [link]\n" +
+                                 "[17] toggleawardingexpmention\n" +
                                  "```");
             }
 
@@ -223,6 +224,13 @@ namespace DiscordBot.Modules.Owner
                 string oldValue = Configuration.Load().AwardsIconUrl;
                 Configuration.UpdateConfiguration(awardsIconUrl: link);
                 await Configuration.Load().LogChannelId.GetTextChannel().SendMessageAsync(Context.User.Mention + " has updated the Awards Icon URL to: " + link + " (was: " + oldValue + ")");
+            }
+
+            [Command("toggleawardingexpmention"), Summary("Toggles if users get mentioned when they level up.")]
+            public async Task ToggleAwardingEXPMention()
+            {
+                Configuration.UpdateConfiguration(awardingEXPMentionUser: !Configuration.Load().AwardingEXPMentionUser);
+                await Configuration.Load().LogChannelId.GetTextChannel().SendMessageAsync("AwardingEXPMentionUser has been toggled by " + Context.User.Mention + " (enabled: " + Configuration.Load().AwardingEXPMentionUser.ToYesNo() + ")");
             }
         }
 
