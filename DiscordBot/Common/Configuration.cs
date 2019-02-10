@@ -35,6 +35,7 @@ namespace DiscordBot.Common
         
         public bool UnknownCommandEnabled { get; set; } = true;
         public bool AwardingEXPEnabled { get; set; } = true;
+        public bool AwardingEXPMentionUser { get; set; } = true;
         
         public int LeaderboardAmount { get; set; } = 5;
         public int QuoteLevelRequirement { get; set; } = 10;
