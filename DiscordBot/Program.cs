@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 
 using DiscordBot.Common;
+using DiscordBot.Database;
 using DiscordBot.Other;
 
 using MelissaNet;
@@ -40,6 +41,8 @@ namespace DiscordBot
             Console.WriteLine(@"-----------------------------------------------------------------");
             
             MelissaNet.MelissaNet.Initialize();
+            
+            DatabaseActivity.CheckForDatabase();
 
             Configuration.EnsureExists();
             StringConfiguration.EnsureExists();
