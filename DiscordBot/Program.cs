@@ -41,13 +41,14 @@ namespace DiscordBot
             Console.WriteLine(@"-----------------------------------------------------------------");
             
             MelissaNet.MelissaNet.Initialize();
-            
-            DatabaseActivity.CheckForDatabase();
 
             Configuration.EnsureExists();
             StringConfiguration.EnsureExists();
             QuoteHandler.EnsureExists();
             VoteLinkHandler.EnsureExists();
+            
+            DatabaseActivity.CheckForDatabase();
+            
             Console.WriteLine(@"-----------------------------------------------------------------");
             
             new DiscordBot().RunBotAsync().GetAwaiter().GetResult();
