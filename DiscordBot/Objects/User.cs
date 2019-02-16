@@ -6,8 +6,8 @@ namespace DiscordBot.Objects
 {
     public class User
     {
-        public int? Level { get; set; } = 0;
-        public int? EXP { get; set; } = 0;
+        public int Level { get; set; } = 0;
+        public int EXP { get; set; } = 0;
         
         public string Name { get; set; }
         public string Gender { get; set; }
@@ -16,9 +16,9 @@ namespace DiscordBot.Objects
         
         public string CustomPrefix { get; set; }
         
-        public byte? AboutR { get; set; } = 140;
-        public byte? AboutG { get; set; } = 90;
-        public byte? AboutB { get; set; } = 210;
+        public byte AboutR { get; set; } = 140;
+        public byte AboutG { get; set; } = 90;
+        public byte AboutB { get; set; } = 210;
 
         public bool TeamMember { get; set; } = false;
         public string EmbedAuthorBuilderIconUrl { get; set; }
@@ -60,8 +60,8 @@ namespace DiscordBot.Objects
             string websiteUrl = null,
             bool? isBotIgnoring = null)
         {
-            Level = level;
-            EXP = exp;
+            Level = level ?? Level;
+            EXP = exp ?? EXP;
             Name = name;
             Gender = gender;
             Pronouns = pronouns;
