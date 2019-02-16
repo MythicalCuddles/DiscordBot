@@ -65,6 +65,10 @@ namespace DiscordBot.Extensions
         {
             return User.Load(user.Id).SnapchatUsername;
         }
+        public static string GetPokemonGoFriendCode(this IUser user)
+        {
+            return User.Load(user.Id).PokemonGoFriendCode;
+        }
         public static string GetFooterText(this IUser user)
         {
             return User.Load(user.Id).FooterText;
