@@ -1,3 +1,7 @@
+using System;
+using DiscordBot.Database;
+using MySql.Data.MySqlClient;
+
 namespace DiscordBot.Objects
 {
     public class User
@@ -78,6 +82,47 @@ namespace DiscordBot.Objects
             WebsiteName = websiteName;
             WebsiteUrl = websiteUrl;
             IsBotIgnoringUser = isBotIgnoring ?? IsBotIgnoringUser;
+        }
+        
+        public static User Load(ulong uId)
+        {
+            User user = new User();
+            
+            MySqlDataReader dr =
+                DatabaseActivity.ExecuteReader("SELECT * FROM users WHERE id=`" + uId + "`;");
+            
+            while (dr.Read())
+            {
+                user.Level = (int) dr["level"];
+                user.EXP = (int) dr["exp"];
+                user.Name = dr["name"].ToString();
+                user.Gender = dr["gender"].ToString();
+                user.Pronouns = dr["pronouns"].ToString();
+                user.About = dr["about"].ToString();
+                user.CustomPrefix = dr["customPrefix"].ToString();
+                user.AboutR = (byte) dr["aboutR"];
+                user.AboutG = (byte) dr["aboutG"];
+                user.AboutB = (byte) dr["aboutB"];
+
+                if (dr["teamMember"].ToString().ToUpper() == "Y")
+                    user.TeamMember = true;
+
+                user.EmbedAuthorBuilderIconUrl = dr["authorIconURL"].ToString();
+                user.EmbedFooterBuilderIconUrl = dr["footerIconURL"].ToString();
+                user.FooterText = dr["footerText"].ToString();
+                user.MinecraftUsername = dr["minecraftUsername"].ToString();
+                user.SnapchatUsername = dr["snapchatUsername"].ToString();
+                user.InstagramUsername = dr["instagramUsername"].ToString();
+                user.GitHubUsername = dr["githubUsername"].ToString();
+                user.PokemonGoFriendCode = dr["pokemonGoFriendCode"].ToString();
+                user.WebsiteName = dr["websiteName"].ToString();
+                user.WebsiteUrl = dr["websiteURL"].ToString();
+
+                if (dr["isBeingIgnored"].ToString().ToUpper() == "Y")
+                    user.IsBotIgnoringUser = true;
+            }
+
+            return user;
         }
     }
 }
