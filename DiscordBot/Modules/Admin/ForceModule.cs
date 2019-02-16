@@ -29,7 +29,7 @@ namespace DiscordBot.Modules.Admin
                              "[ 2] force name [mention/id] [value]\n" +
                              "[ 3] force gender [mention/id] [value]\n" +
                              "[ 4] force pronouns [mention/id] [value]\n" +
-                             "[ 5] force minecraftusername [mention/id] [value]\n" +
+                             "[ 5] force minecraft [mention/id] [value]\n" +
                              "[ 6] force instagram [mention/id] [value]\n" +
                              "[ 7] force snapchat [mention/id] [value]\n" +
                              "[ 8] force github [mention/id] [value]\n" +
@@ -139,7 +139,7 @@ namespace DiscordBot.Modules.Admin
             }
         }
 
-        [Command("minecraftusername"), Summary("Force set the minecraft username for the specified user.")]
+        [Command("minecraft"), Summary("Force set the minecraft username for the specified user.")]
         public async Task ForceMinecraftUsername(IUser user, [Remainder]string username)
         {
             if (Context.User.HasHigherPermissionLevel(user))
