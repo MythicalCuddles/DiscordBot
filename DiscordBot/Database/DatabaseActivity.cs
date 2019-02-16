@@ -107,7 +107,7 @@ namespace DiscordBot.Database
             string connectionString;
             if (databaseExists)
             {
-                connectionString = String.Format("server={0};port={1};user id={2}; password={3}; database={4}", Configuration.Load().DatabaseHost, Configuration.Load().DatabasePort.ToString(), Configuration.Load().DatabaseUser, Configuration.Load().DatabasePassword, Configuration.Load().DatabaseName);
+                connectionString = String.Format("server={0};port={1};user id={2}; password={3}; database={4}; CharSet=utf8mb4", Configuration.Load().DatabaseHost, Configuration.Load().DatabasePort.ToString(), Configuration.Load().DatabaseUser, Configuration.Load().DatabasePassword, Configuration.Load().DatabaseName);
             }
             else
             {
@@ -180,6 +180,10 @@ namespace DiscordBot.Database
         private static void CreateDatabaseIfNotExists()
         {
             ExecuteNonQueryCommand(string.Format("CREATE DATABASE IF NOT EXISTS {0};", Configuration.Load().DatabaseName));
+            ExecuteNonQueryCommand(string.Format(
+                "ALTER DATABASE {0} CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci;",
+                Configuration.Load().DatabaseName)); // set the charset of the database to allow for 
+            
             databaseExists = true;
         }
 
@@ -203,7 +207,7 @@ namespace DiscordBot.Database
                                    "`gender` text CHARACTER SET utf8," +
                                    "`pronouns` text CHARACTER SET utf8," +
                                    "`about` text CHARACTER SET utf8," +
-                                   "`customPrefix` char(1) CHARACTER SET utf8 DEFAULT NULL," +
+                                   "`customPrefix` text CHARACTER SET utf8," +
                                    "`aboutR` tinyint(3) UNSIGNED NOT NULL DEFAULT '140'," +
                                    "`aboutG` tinyint(3) UNSIGNED NOT NULL DEFAULT '90'," +
                                    "`aboutB` tinyint(3) UNSIGNED NOT NULL DEFAULT '210'," +
@@ -219,7 +223,7 @@ namespace DiscordBot.Database
                                    "`websiteName` text CHARACTER SET utf8," +
                                    "`websiteURL` text CHARACTER SET utf8," +
                                    "`isBeingIgnored` char(1) NOT NULL DEFAULT 'N'," +
-                                   "PRIMARY KEY (`id`))");
+                                   "PRIMARY KEY (`id`)) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_general_ci;");
         }
     }
 }
