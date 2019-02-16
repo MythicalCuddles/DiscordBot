@@ -300,10 +300,10 @@ namespace DiscordBot
 	        
 	        await new LogMessage(LogSeverity.Info, "MessageReceived", "[" + messageParam.Channel.GetGuild().Name + "/#" + messageParam.Channel.Name + "] " + "[@" + 
 	                                                            messageParam.Author.Username + "] : " + messageParam.Content).PrintToConsole();
-	        
-            var uPrefix = User.Load(message.Author.Id).CustomPrefix;
+
+            var uPrefix = message.Author.GetCustomPrefix();
             var gPrefix = GuildConfiguration.Load(message.Channel.GetGuild().Id).Prefix;
-            if (uPrefix == null) { uPrefix = gPrefix; } // Fixes an issue with users not receiving coins due to null prefix.
+            if (string.IsNullOrEmpty(uPrefix)) { uPrefix = gPrefix; } // Fixes an issue with users not receiving coins due to null prefix.
             var argPos = 0;
             if (message.HasStringPrefix(gPrefix, ref argPos) || 
                 message.HasMentionPrefix(Bot.CurrentUser, ref argPos) || 
