@@ -129,7 +129,7 @@ namespace DiscordBot.Database
             return connection;
         }
 
-        public static void ExecuteNonQueryCommand(string query, List<(string name, string value)> queryParams = null)
+        public static int ExecuteNonQueryCommand(string query, List<(string name, string value)> queryParams = null)
         {
             MySqlConnection conn = OpenDatabaseConnection();
             MySqlCommand cmd = new MySqlCommand(query, conn);
@@ -154,6 +154,8 @@ namespace DiscordBot.Database
 
                 new LogMessage(LogSeverity.Info, "Database Command",
                    "Command: " + cmd.CommandText + " | Rows affected: " + rows).PrintToConsole();
+
+                return rows;
             }
             catch (Exception e)
             {
