@@ -1,11 +1,14 @@
-﻿using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 
 using Discord.Commands;
 using Discord;
 
 using DiscordBot.Common.Preconditions;
 using DiscordBot.Common;
+using DiscordBot.Database;
 using DiscordBot.Extensions;
+using DiscordBot.Objects;
 
 namespace DiscordBot.Modules.Admin
 {
@@ -41,7 +44,13 @@ namespace DiscordBot.Modules.Admin
         {
             if (Context.User.HasHigherPermissionLevel(user))
             {
-                User.UpdateUser(user.Id, about: about);
+                //User.UpdateUser(user.Id, about: about);
+                
+                List<(string, string)> queryParams = new List<(string, string)>()
+                {
+                    ("@about", about)
+                };
+                DatabaseActivity.ExecuteNonQueryCommand("UPDATE users SET about=@about WHERE id='" + user.Id + "';", queryParams);
 
                 var eb = new EmbedBuilder()
                     .WithDescription(Context.User.Username + " changed " + user.Mention + "'s about text successfully.")
@@ -60,7 +69,13 @@ namespace DiscordBot.Modules.Admin
         {
             if (Context.User.HasHigherPermissionLevel(user))
             {
-                User.UpdateUser(user.Id, name:name);
+                //User.UpdateUser(user.Id, name:name);
+                
+                List<(string, string)> queryParams = new List<(string, string)>()
+                {
+                    ("@name", name)
+                };
+                DatabaseActivity.ExecuteNonQueryCommand("UPDATE users SET name=@name WHERE id='" + user.Id + "';", queryParams);
 
                 var eb = new EmbedBuilder()
                     .WithDescription(Context.User.Username + " changed " + user.Mention + "'s name text successfully.")
@@ -79,7 +94,13 @@ namespace DiscordBot.Modules.Admin
         {
             if (Context.User.HasHigherPermissionLevel(user))
             {
-                User.UpdateUser(user.Id, gender:gender);
+                //User.UpdateUser(user.Id, gender:gender);
+                
+                List<(string, string)> queryParams = new List<(string, string)>()
+                {
+                    ("@gender", gender)
+                };
+                DatabaseActivity.ExecuteNonQueryCommand("UPDATE users SET gender=@gender WHERE id='" + user.Id + "';", queryParams);
 
                 var eb = new EmbedBuilder()
                     .WithDescription(Context.User.Username + " changed " + user.Mention + "'s gender text successfully.")
@@ -98,7 +119,13 @@ namespace DiscordBot.Modules.Admin
         {
             if (Context.User.HasHigherPermissionLevel(user))
             {
-                User.UpdateUser(user.Id, pronouns:pronouns);
+                //User.UpdateUser(user.Id, pronouns:pronouns);
+                
+                List<(string, string)> queryParams = new List<(string, string)>()
+                {
+                    ("@pronouns", pronouns)
+                };
+                DatabaseActivity.ExecuteNonQueryCommand("UPDATE users SET pronouns=@pronouns WHERE id='" + user.Id + "';", queryParams);
 
                 var eb = new EmbedBuilder()
                     .WithDescription(Context.User.Username + " changed " + user.Mention + "'s pronoun text successfully.")
@@ -117,7 +144,13 @@ namespace DiscordBot.Modules.Admin
         {
             if (Context.User.HasHigherPermissionLevel(user))
             {
-                User.UpdateUser(user.Id, minecraftUsername:username);
+                //User.UpdateUser(user.Id, minecraftUsername:username);
+                
+                List<(string, string)> queryParams = new List<(string, string)>()
+                {
+                    ("@minecraftUsername", username)
+                };
+                DatabaseActivity.ExecuteNonQueryCommand("UPDATE users SET minecraftUsername=@minecraftUsername WHERE id='" + user.Id + "';", queryParams);
 
                 var eb = new EmbedBuilder()
                     .WithDescription(Context.User.Username + " changed " + user.Mention + "'s Minecraft username text successfully.")
@@ -136,7 +169,13 @@ namespace DiscordBot.Modules.Admin
         {
             if (Context.User.HasHigherPermissionLevel(user))
             {
-                User.UpdateUser(user.Id, instagram:username);
+                //User.UpdateUser(user.Id, instagram:username);
+                
+                List<(string, string)> queryParams = new List<(string, string)>()
+                {
+                    ("@instagramUsername", username)
+                };
+                DatabaseActivity.ExecuteNonQueryCommand("UPDATE users SET instagramUsername=@instagramUsername WHERE id='" + user.Id + "';", queryParams);
 
                 var eb = new EmbedBuilder()
                     .WithDescription(Context.User.Username + " changed " + user.Mention + "'s Instagram username text successfully.")
@@ -155,7 +194,13 @@ namespace DiscordBot.Modules.Admin
         {
             if (Context.User.HasHigherPermissionLevel(user))
             {
-                User.UpdateUser(user.Id, snapchat:username);
+                //User.UpdateUser(user.Id, snapchat:username);
+                
+                List<(string, string)> queryParams = new List<(string, string)>()
+                {
+                    ("@snapchatUsername", username)
+                };
+                DatabaseActivity.ExecuteNonQueryCommand("UPDATE users SET snapchatUsername=@snapchatUsername WHERE id='" + user.Id + "';", queryParams);
 
                 var eb = new EmbedBuilder()
                     .WithDescription(Context.User.Username + " changed " + user.Mention + "'s Snapchat username text successfully.")
@@ -174,7 +219,13 @@ namespace DiscordBot.Modules.Admin
         {
             if (Context.User.HasHigherPermissionLevel(user))
             {
-                User.UpdateUser(user.Id, github:username);
+                //User.UpdateUser(user.Id, github:username);
+                
+                List<(string, string)> queryParams = new List<(string, string)>()
+                {
+                    ("@githubUsername", username)
+                };
+                DatabaseActivity.ExecuteNonQueryCommand("UPDATE users SET githubUsername=@githubUsername WHERE id='" + user.Id + "';", queryParams);
 
                 var eb = new EmbedBuilder()
                     .WithDescription(Context.User.Username + " changed " + user.Mention + "'s GitHub username text successfully.")
@@ -193,7 +244,13 @@ namespace DiscordBot.Modules.Admin
         {
             if (Context.User.HasHigherPermissionLevel(user))
             {
-                User.UpdateUser(user.Id, customPrefix:prefix);
+                //User.UpdateUser(user.Id, customPrefix:prefix);
+                
+                List<(string, string)> queryParams = new List<(string, string)>()
+                {
+                    ("@customPrefix", prefix)
+                };
+                DatabaseActivity.ExecuteNonQueryCommand("UPDATE users SET customPrefix=@customPrefix WHERE id='" + user.Id + "';", queryParams);
 
                 var eb = new EmbedBuilder()
                     .WithDescription(Context.User.Username + " changed " + user.Mention + "'s custom prefix successfully.")
@@ -212,7 +269,13 @@ namespace DiscordBot.Modules.Admin
         {
             if (Context.User.HasHigherPermissionLevel(user))
             {
-                User.UpdateUser(user.Id, websiteUrl: url);
+                //User.UpdateUser(user.Id, websiteUrl: url);
+                
+                List<(string, string)> queryParams = new List<(string, string)>()
+                {
+                    ("@websiteUrl", url)
+                };
+                DatabaseActivity.ExecuteNonQueryCommand("UPDATE users SET websiteURL=@websiteUrl WHERE id='" + user.Id + "';", queryParams);
 
                 var eb = new EmbedBuilder()
                     .WithDescription(Context.User.Username + " changed " + user.Mention + "'s website URL successfully.")
@@ -231,7 +294,13 @@ namespace DiscordBot.Modules.Admin
         {
             if (Context.User.HasHigherPermissionLevel(user))
             {
-                User.UpdateUser(user.Id, websiteName: name);
+                //User.UpdateUser(user.Id, websiteName: name);
+                
+                List<(string, string)> queryParams = new List<(string, string)>()
+                {
+                    ("@websiteName", name)
+                };
+                DatabaseActivity.ExecuteNonQueryCommand("UPDATE users SET websiteName=@websiteName WHERE id='" + user.Id + "';", queryParams);
 
                 var eb = new EmbedBuilder()
                     .WithDescription(Context.User.Username + " changed " + user.Mention + "'s website name successfully.")
