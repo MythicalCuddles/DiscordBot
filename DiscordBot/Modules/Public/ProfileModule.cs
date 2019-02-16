@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 using Discord;
@@ -43,8 +45,9 @@ namespace DiscordBot.Modules.Public
                                  "[ 8] editprofile snapchat [value]\n" +
                                  "[ 9] editprofile instagram [value]\n" +
                                  "[10] editprofile github [value]\n" +
-                                 "[11] editprofile websitename [value]\n" +
-                                 "[12] editprofile websiteurl [value]\n" +
+                                 "[11] editprofile pokemongo [value]\n" +
+                                 "[12] editprofile websitename [value]\n" +
+                                 "[13] editprofile websiteurl [value]\n" +
                                  "```");
             }
             
@@ -243,6 +246,33 @@ namespace DiscordBot.Modules.Public
                 await ReplyAsync(Context.User.Mention + ", you have successfully updated the GitHub username on your profile to \"" + username + "\"!");
             }
     
+            [Command("pokemongofriendcode"), Summary("")]
+            [Alias("pokemongo", "pokemongofc", "pgofriendcode")]
+            public async Task SetPokemonGoFriendCode([Remainder]string friendCode)
+            {
+                if (friendCode.All(char.IsDigit))
+                {
+                    if (friendCode[4] != ' ')
+                        friendCode = friendCode.Insert(4, " ");
+
+                    if (friendCode[9] != ' ')
+                        friendCode = friendCode.Insert(9, " ");
+                    
+                    List<(string, string)> queryParams = new List<(string, string)>()
+                    {
+                        ("@code", friendCode)
+                    };
+                    DatabaseActivity.ExecuteNonQueryCommand("UPDATE users SET pokemonGoFriendCode=@code WHERE id='" + Context.User.Id + "';", queryParams);
+
+                    await ReplyAsync(Context.User.Mention + ", you have successfully updated your Pokemon Go Friend Code on your profile to \"" + friendCode + "\"!");
+                }
+                else
+                {
+                    await ReplyAsync(Context.User.Mention + ", your friend code must be all digits!");
+                }
+                
+            }
+    
             [Command("websitename"), Summary("")]
             public async Task SetWebsiteName([Remainder]string name)
             {
@@ -333,6 +363,9 @@ namespace DiscordBot.Modules.Public
 
             if (!String.IsNullOrEmpty(userSpecified.GetGitHubUsername()))
                 eb.AddField("GitHub", "[" + userSpecified.GetGitHubUsername() + "](https://github.com/" + userSpecified.GetGitHubUsername() + "/)", true);
+
+            if (!String.IsNullOrEmpty(userSpecified.GetPokemonGoFriendCode()))
+                eb.AddField("Pokémon Go Friend Code", "[" + userSpecified.GetPokemonGoFriendCode() + "](https://chart.googleapis.com/chart?chs=300x300&cht=qr&" + userSpecified.GetPokemonGoFriendCode().Replace(" ", "") + "&choe=UTF-8)", true);
 
             if (!String.IsNullOrEmpty(userSpecified.GetCustomPrefix()))
                 eb.AddField("Custom Prefix", userSpecified.GetCustomPrefix(), true);
