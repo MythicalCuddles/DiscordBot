@@ -100,9 +100,9 @@ namespace DiscordBot.Objects
                 user.Pronouns = dr["pronouns"].ToString();
                 user.About = dr["about"].ToString();
                 user.CustomPrefix = dr["customPrefix"].ToString();
-                user.AboutR = (byte) dr["aboutR"];
-                user.AboutG = (byte) dr["aboutG"];
-                user.AboutB = (byte) dr["aboutB"];
+                user.AboutR = dr.GetByte(dr.GetOrdinal("aboutR"));
+                user.AboutG = dr.GetByte(dr.GetOrdinal("aboutG"));
+                user.AboutB = dr.GetByte(dr.GetOrdinal("aboutB"));
                 
                 if (dr["teamMember"].ToString().ToUpper() == "Y")
                     user.TeamMember = true;
