@@ -129,28 +129,31 @@ namespace DiscordBot.Database
             return connection;
         }
 
-        //public static void ExecuteNonQueryCommand(string command, List<string> paramIds = null, List<string> paramValues = null)
-        public static void ExecuteNonQueryCommand(string query, List<(string, string)> queryParams = null)
+        public static void ExecuteNonQueryCommand(string query, List<(string name, string value)> queryParams = null)
         {
-            MySqlCommand cmd = new MySqlCommand
-            {
-                Connection = OpenDatabaseConnection(),
-                CommandText = query
-            };
-
+            MySqlConnection conn = OpenDatabaseConnection();
+            MySqlCommand cmd = new MySqlCommand(query, conn);
+            cmd.Prepare();
+            
             if (queryParams != null)
             {
                 foreach(var s in queryParams)
                 {
-                    cmd.Parameters.AddWithValue(s.Item1, s.Item2);
+                    MySqlParameter param = new MySqlParameter();
+                    param.ParameterName = s.name;
+                    param.Value = s.value;
+
+                    cmd.Parameters.Add(param);
                 }
             }
 
             try
             {
                 int rows = cmd.ExecuteNonQuery();
+                conn.Close();
+
                 new LogMessage(LogSeverity.Info, "Database Command",
-                    "Command: " + cmd.CommandText + " | Rows affected: " + rows).PrintToConsole();
+                   "Command: " + cmd.CommandText + " | Rows affected: " + rows).PrintToConsole();
             }
             catch (Exception e)
             {
@@ -174,14 +177,7 @@ namespace DiscordBot.Database
 
         private static void CreateDatabaseIfNotExists()
         {
-            string query = "CREATE DATABASE IF NOT EXISTS `@databaseName`;";
-            
-            List<(string, string)> queryParams = new List<(string id, string value)>()
-            {
-                ("@databaseName", Configuration.Load().DatabaseName)
-            };
-            
-            ExecuteNonQueryCommand(query, queryParams);
+            ExecuteNonQueryCommand(string.Format("CREATE DATABASE IF NOT EXISTS {0};", Configuration.Load().DatabaseName));
             databaseExists = true;
         }
 
