@@ -20,7 +20,7 @@ namespace DiscordBot.Objects
         public byte? AboutG { get; set; } = 90;
         public byte? AboutB { get; set; } = 210;
 
-        public bool? TeamMember { get; set; } = false;
+        public bool TeamMember { get; set; } = false;
         public string EmbedAuthorBuilderIconUrl { get; set; }
         public string EmbedFooterBuilderIconUrl { get; set; }
         public string FooterText { get; set; }
@@ -33,7 +33,7 @@ namespace DiscordBot.Objects
         public string WebsiteName { get; set; }
         public string WebsiteUrl { get; set; }
 
-        public bool? IsBotIgnoringUser { get; set; } = false;
+        public bool IsBotIgnoringUser { get; set; } = false;
         
         public User() { }
 
