@@ -18,6 +18,7 @@ using Discord.Net.Providers.WS4Net;
 using Discord.WebSocket;
 
 using DiscordBot.Common;
+using DiscordBot.Database;
 using DiscordBot.Extensions;
 using DiscordBot.Handlers;
 using DiscordBot.Modules.Mod;
@@ -201,9 +202,23 @@ namespace DiscordBot
 
 				foreach (SocketGuildUser u in g.Users)
 				{
-					if (User.CreateUserFile(u.Id))
+					//Insert new users into the database by using INSERT IGNORE
+					List<(string, string)> queryParams = new List<(string id, string value)>()
 					{
-					    offlineList.Add(new Tuple<SocketGuildUser, SocketGuild>(u, g));
+						("@username", u.Username),
+						("@avatarUrl", u.GetAvatarUrl())
+					};
+					
+					int rowsUpdated = DatabaseActivity.ExecuteNonQueryCommand(
+						"INSERT IGNORE INTO " +
+						"users(id,username,avatarUrl) " +
+						"VALUES (" + u.Id + ", @username, @avatarUrl);", queryParams);
+					
+					//end.
+					
+					if (rowsUpdated > 0) // If any rows were affected, add the user to the list to be dealt with later.
+					{
+						offlineList.Add(new Tuple<SocketGuildUser, SocketGuild>(u, g));
 					}
 				}
 
