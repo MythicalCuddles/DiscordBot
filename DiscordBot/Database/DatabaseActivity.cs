@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using Discord;
 using DiscordBot.Common;
 using DiscordBot.Extensions;
@@ -127,13 +129,22 @@ namespace DiscordBot.Database
             return connection;
         }
 
-        public static void ExecuteNonQueryCommand(string command)
+        //public static void ExecuteNonQueryCommand(string command, List<string> paramIds = null, List<string> paramValues = null)
+        public static void ExecuteNonQueryCommand(string query, List<(string, string)> queryParams = null)
         {
             MySqlCommand cmd = new MySqlCommand
             {
                 Connection = OpenDatabaseConnection(),
-                CommandText = command
+                CommandText = query
             };
+
+            if (queryParams != null)
+            {
+                foreach(var s in queryParams)
+                {
+                    cmd.Parameters.AddWithValue(s.Item1, s.Item2);
+                }
+            }
 
             try
             {
@@ -150,16 +161,27 @@ namespace DiscordBot.Database
 
         public static MySqlDataReader ExecuteReader(string command)
         {
-            MySqlCommand cmd = new MySqlCommand();
-            cmd.Connection = OpenDatabaseConnection();
-            cmd.CommandText = command;
+            MySqlCommand cmd = new MySqlCommand
+            {
+                Connection = OpenDatabaseConnection(),
+                CommandText = command
+            };
+            
             MySqlDataReader dr = cmd.ExecuteReader();
+            
             return dr;
         }
 
         private static void CreateDatabaseIfNotExists()
         {
-            ExecuteNonQueryCommand(String.Format("CREATE DATABASE IF NOT EXISTS {0};", Configuration.Load().DatabaseName));
+            string query = "CREATE DATABASE IF NOT EXISTS `@databaseName`;";
+            
+            List<(string, string)> queryParams = new List<(string id, string value)>()
+            {
+                ("@databaseName", Configuration.Load().DatabaseName)
+            };
+            
+            ExecuteNonQueryCommand(query, queryParams);
             databaseExists = true;
         }
 
@@ -170,7 +192,7 @@ namespace DiscordBot.Database
                                    "`userId` bigint(20) UNSIGNED NOT NULL, " +
                                    "`awardText` text CHARACTER SET utf8 COLLATE utf8_bin NOT NULL, " +
                                    "`dateAwarded` date NOT NULL," +
-                                   "PRIMARY KEY (`awardId`))");
+                                   "PRIMARY KEY (awardId))");
             
             
             ExecuteNonQueryCommand("CREATE TABLE IF NOT EXISTS `users` (" +
@@ -198,8 +220,8 @@ namespace DiscordBot.Database
                                    "`githubUsername` text CHARACTER SET utf8," +
                                    "`websiteName` text CHARACTER SET utf8," +
                                    "`websiteURL` text CHARACTER SET utf8," +
-                                   "`isBeingIgnored` char(1) NOT NULL DEFAULT 'N'" +
-                                   ")");
+                                   "`isBeingIgnored` char(1) NOT NULL DEFAULT 'N'," +
+                                   "PRIMARY KEY (`id`))");
         }
     }
 }
