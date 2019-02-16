@@ -1,11 +1,15 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Runtime.Remoting.Contexts;
 using System.Threading.Tasks;
 using Discord;
 using Discord.Commands;
 using Discord.WebSocket;
 using DiscordBot.Common;
+using DiscordBot.Database;
 using DiscordBot.Handlers;
 using DiscordBot.Extensions;
+using DiscordBot.Objects;
 
 namespace DiscordBot.Extensions
 {
@@ -59,7 +63,7 @@ namespace DiscordBot.Extensions
         }
         public static string GetSnapchatUsername(this IUser user)
         {
-            return User.Load(user.Id).Snapchat;
+            return User.Load(user.Id).SnapchatUsername;
         }
         public static string GetFooterText(this IUser user)
         {
@@ -83,11 +87,21 @@ namespace DiscordBot.Extensions
             return User.Load(user.Id).EmbedFooterBuilderIconUrl;
         }
 
-        public static void AwardEXPToUser(this IUser user, SocketGuild guild, int? exp = 1)
+        public static void AwardEXPToUser(this IUser user, SocketGuild guild, int exp = 1)
         {
             try
             {
-                User.UpdateUser(user.Id, exp:(user.GetEXP() + exp));
+                //User.UpdateUser(user.Id, exp:(user.GetEXP() + exp));
+
+                int updatedEXP = user.GetEXP() + exp;
+                
+                List<(string, string)> queryParams = new List<(string, string)>()
+                {
+                    ("@exp", updatedEXP.ToString())
+                };
+                
+                DatabaseActivity.ExecuteNonQueryCommand("UPDATE users SET exp=@exp WHERE id='" + user.Id + "';", queryParams);
+                
                 user.AttemptLevelUp(guild);
             }
             catch (Exception e)
@@ -104,20 +118,23 @@ namespace DiscordBot.Extensions
         public static async void AttemptLevelUp(this IUser user, SocketGuild guild)
         {
             double requiredEXP = user.EXPToLevelUp();
-
-            //debugging
-//            new LogMessage(LogSeverity.Debug, "EXPToLevelUp", user.Username + " - (User EXP) - " + user.GetEXP()).PrintToConsole();
-//            new LogMessage(LogSeverity.Debug, "EXPToLevelUp", user.Username + " - (Required EXP) " + requiredEXP).PrintToConsole();
-//            new LogMessage(LogSeverity.Debug, "EXPToLevelUp", user.Username + " - (int Casting of Required EXP) " + (int)requiredEXP).PrintToConsole();
-//            new LogMessage(LogSeverity.Debug, "EXPToLevelUp", user.Username + " - (Math Rounding of Required EXP) " + Math.Round(requiredEXP)).PrintToConsole();
             
             if (user.GetEXP() >= Math.Round(requiredEXP))
             {
                 try
                 {
-                    User.UpdateUser(user.Id, level: (user.GetLevel() + 1));
+                    //User.UpdateUser(user.Id, level: (user.GetLevel() + 1));
                     //User.UpdateUser(user.Id, exp: 0); // reset exp every level up, resulting in longer times to level up (?) (eval: don't add, seems to be more difficult the higher levels)
-
+                    
+                    int updatedLevel = user.GetLevel() + 1;
+                
+                    List<(string, string)> queryParams = new List<(string, string)>()
+                    {
+                        ("@level", updatedLevel.ToString())
+                    };
+                
+                    DatabaseActivity.ExecuteNonQueryCommand("UPDATE users SET level=@level WHERE id='" + user.Id + "';", queryParams);
+                    
                     SocketTextChannel botChannel = GuildConfiguration.Load(guild.Id).BotChannelId.GetTextChannel() ??
                                                    GuildConfiguration.Load(guild.Id).WelcomeChannelId.GetTextChannel();
                     
