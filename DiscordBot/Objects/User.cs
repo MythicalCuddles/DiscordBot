@@ -89,12 +89,12 @@ namespace DiscordBot.Objects
             User user = new User();
             
             MySqlDataReader dr =
-                DatabaseActivity.ExecuteReader("SELECT * FROM users WHERE id=`" + uId + "`;");
+                DatabaseActivity.ExecuteReader("SELECT * FROM users WHERE id=" + uId + ";");
             
             while (dr.Read())
             {
-                user.Level = (int) dr["level"];
-                user.EXP = (int) dr["exp"];
+                user.Level = dr.GetInt32(dr.GetOrdinal("level"));
+                user.EXP = dr.GetInt32(dr.GetOrdinal("exp"));
                 user.Name = dr["name"].ToString();
                 user.Gender = dr["gender"].ToString();
                 user.Pronouns = dr["pronouns"].ToString();
@@ -103,7 +103,7 @@ namespace DiscordBot.Objects
                 user.AboutR = (byte) dr["aboutR"];
                 user.AboutG = (byte) dr["aboutG"];
                 user.AboutB = (byte) dr["aboutB"];
-
+                
                 if (dr["teamMember"].ToString().ToUpper() == "Y")
                     user.TeamMember = true;
 
@@ -117,7 +117,7 @@ namespace DiscordBot.Objects
                 user.PokemonGoFriendCode = dr["pokemonGoFriendCode"].ToString();
                 user.WebsiteName = dr["websiteName"].ToString();
                 user.WebsiteUrl = dr["websiteURL"].ToString();
-
+                
                 if (dr["isBeingIgnored"].ToString().ToUpper() == "Y")
                     user.IsBotIgnoringUser = true;
             }
