@@ -1,12 +1,14 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 using Discord;
 using Discord.WebSocket;
 
 using DiscordBot.Common;
+using DiscordBot.Database;
 using DiscordBot.Extensions;
-
+using DiscordBot.Objects;
 using MelissaNet;
 
 namespace DiscordBot.Handlers
@@ -15,7 +17,21 @@ namespace DiscordBot.Handlers
     {
         public static async Task UserJoined(SocketGuildUser e)
         {
-            if (User.CreateUserFile(e.Id))
+            //Insert new users into the database by using INSERT IGNORE
+            List<(string, string)> queryParams = new List<(string id, string value)>()
+            {
+                ("@username", e.Username),
+                ("@avatarUrl", e.GetAvatarUrl())
+            };
+					
+            int rowsUpdated = DatabaseActivity.ExecuteNonQueryCommand(
+                "INSERT IGNORE INTO " +
+                "users(id,username,avatarUrl) " +
+                "VALUES (" + e.Id + ", @username, @avatarUrl);", queryParams);
+					
+            //end.
+            
+            if (rowsUpdated == 0)
             {
                 EmbedBuilder eb = new EmbedBuilder()
                 {
@@ -29,7 +45,7 @@ namespace DiscordBot.Handlers
                     await GuildConfiguration.Load(e.Guild.Id).WelcomeChannelId.GetTextChannel().SendMessageAsync(GuildConfiguration.Load(e.Guild.Id).WelcomeMessage.ModifyStringFlags(e));
 
                 await GuildConfiguration.Load(e.Guild.Id).LogChannelId.GetTextChannel().SendMessageAsync("", false, eb.Build());
-
+                
                 EmbedBuilder lEB = new EmbedBuilder()
                 {
                     Title = "New User - " + e.Username,
@@ -108,6 +124,20 @@ namespace DiscordBot.Handlers
             if (e.GetFooterText() != null) eb.AddField("Footer Text", e.GetFooterText(), true);
 
             await GuildConfiguration.Load(e.Guild.Id).LogChannelId.GetTextChannel().SendMessageAsync("", false, eb.Build());
+        }
+
+        public static async Task UserUpdated(SocketUser cachedUser, SocketUser user)
+        {
+            if (user.Username != cachedUser.Username || user.GetAvatarUrl() != cachedUser.GetAvatarUrl()) // If user has updated username or avatar
+            {
+                List<(string, string)> queryParams = new List<(string, string)>()
+                {
+                    ("@username", user.Username),
+                    ("@avatarUrl", user.GetAvatarUrl())
+                };
+                DatabaseActivity.ExecuteNonQueryCommand("UPDATE users SET username=@username, avatarUrl=@avatarUrl WHERE id='" + user.Id + "';", queryParams);
+
+            }
         }
     }
 }
