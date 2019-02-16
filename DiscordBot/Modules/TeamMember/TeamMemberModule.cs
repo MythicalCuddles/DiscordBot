@@ -9,7 +9,7 @@ using Discord.WebSocket;
 using DiscordBot.Common;
 using DiscordBot.Common.Preconditions;
 using DiscordBot.Extensions;
-
+using DiscordBot.Objects;
 using MelissaNet;
 
 namespace DiscordBot.Modules.TeamMember
