@@ -22,7 +22,7 @@ using DiscordBot.Database;
 using DiscordBot.Extensions;
 using DiscordBot.Handlers;
 using DiscordBot.Modules.Mod;
-
+using DiscordBot.Objects;
 using MelissaNet;
 
 namespace DiscordBot
@@ -55,6 +55,7 @@ namespace DiscordBot
             
             Bot.UserJoined += UserHandler.UserJoined;
             Bot.UserLeft += UserHandler.UserLeft;
+	        Bot.UserUpdated += UserHandler.UserUpdated;
             
             Bot.ChannelCreated += ChannelHandler.ChannelCreated;
             Bot.ChannelDestroyed += ChannelHandler.ChannelDestroyed;
