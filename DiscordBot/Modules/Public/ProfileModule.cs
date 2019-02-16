@@ -279,22 +279,20 @@ namespace DiscordBot.Modules.Public
         public async Task UserAbout(IUser user = null)
         {
             var userSpecified = user as SocketGuildUser ?? Context.User as SocketGuildUser;
-            var typing = Context.Channel.EnterTypingState();
 
             if (userSpecified == null)
             {
                 await ReplyAsync("User not found, please try again.");
-                typing.Dispose();
                 return;
             }
-
+            
             EmbedAuthorBuilder eab = new EmbedAuthorBuilder();
-            if(userSpecified.Nickname != null) eab.WithName("About " + userSpecified.Nickname);
+            if(!String.IsNullOrEmpty(userSpecified.Nickname)) eab.WithName("About " + userSpecified.Nickname);
             else eab.WithName("About " + userSpecified.Username);
 
             EmbedFooterBuilder efb = new EmbedFooterBuilder();
             if (userSpecified.IsTeamMember()) eab.WithIconUrl(userSpecified.GetEmbedAuthorBuilderIconUrl());
-            if (userSpecified.GetFooterText() != null)
+            if (!String.IsNullOrEmpty(userSpecified.GetFooterText()))
             {
                 efb.WithText(userSpecified.GetFooterText());
                 efb.WithIconUrl(userSpecified.GetEmbedFooterBuilderIconUrl());
@@ -307,13 +305,13 @@ namespace DiscordBot.Modules.Public
                 .WithDescription(User.Load(userSpecified.Id).About)
                 .WithColor(userSpecified.GetCustomRGB());
 
-            if (User.Load(userSpecified.Id).Name != null)
+            if (!String.IsNullOrEmpty(userSpecified.GetName()))
                 eb.AddField("Name", userSpecified.GetName(), true);
 
-            if (User.Load(userSpecified.Id).Gender != null)
+            if (!String.IsNullOrEmpty(userSpecified.GetGender()))
                 eb.AddField("Gender", userSpecified.GetGender(), true);
             
-            if (User.Load(userSpecified.Id).Pronouns != null)
+            if (!String.IsNullOrEmpty(userSpecified.GetPronouns()))
                 eb.AddField("Pronouns", userSpecified.GetPronouns(), true);
             
             eb.AddField("Level", userSpecified.GetLevel(), true);
@@ -321,26 +319,25 @@ namespace DiscordBot.Modules.Public
             eb.AddField("Account Created", userSpecified.UserCreateDate(), true);
             eb.AddField("Joined Guild", userSpecified.GuildJoinDate(), true);
             
-            if (User.Load(userSpecified.Id).MinecraftUsername != null)
+            if (!String.IsNullOrEmpty(userSpecified.GetMinecraftUsername()))
                 eb.AddField("Minecraft Username", userSpecified.GetMinecraftUsername(), true);
 
-            if (userSpecified.GetWebsiteUrl() != null)
+            if (!String.IsNullOrEmpty(userSpecified.GetWebsiteUrl()))
                 eb.AddField(StringConfiguration.Load().DefaultWebsiteName, "[" + (userSpecified.GetWebsiteName() ?? StringConfiguration.Load().DefaultWebsiteName) + "](" + userSpecified.GetWebsiteUrl() + ")", true);
 
-            if (userSpecified.GetInstagramUsername() != null)
+            if (!String.IsNullOrEmpty(userSpecified.GetInstagramUsername()))
                 eb.AddField("Instagram", "[" + userSpecified.GetInstagramUsername() + "](https://www.instagram.com/" + userSpecified.GetInstagramUsername() + "/)", true);
 
-            if (userSpecified.GetSnapchatUsername() != null)
+            if (!String.IsNullOrEmpty(userSpecified.GetSnapchatUsername()))
                 eb.AddField("Snapchat", "[" + userSpecified.GetSnapchatUsername() + "](https://www.snapchat.com/add/" + userSpecified.GetSnapchatUsername() + "/)", true);
 
-            if (User.Load(userSpecified.Id).GitHubUsername != null)
+            if (!String.IsNullOrEmpty(userSpecified.GetGitHubUsername()))
                 eb.AddField("GitHub", "[" + userSpecified.GetGitHubUsername() + "](https://github.com/" + userSpecified.GetGitHubUsername() + "/)", true);
 
-            if (User.Load(userSpecified.Id).CustomPrefix != null)
-                eb.AddField("Custom Prefix", User.Load(userSpecified.Id).CustomPrefix, true);
-
+            if (!String.IsNullOrEmpty(userSpecified.GetCustomPrefix()))
+                eb.AddField("Custom Prefix", userSpecified.GetCustomPrefix(), true);
+            
             await ReplyAsync("", false, eb.Build());
-            typing.Dispose();
         }
     }
 }
