@@ -33,9 +33,10 @@ namespace DiscordBot.Modules.Admin
                              "[ 6] force instagram [mention/id] [value]\n" +
                              "[ 7] force snapchat [mention/id] [value]\n" +
                              "[ 8] force github [mention/id] [value]\n" +
-                             "[ 9] force prefix [mention/id] [value]\n" +
-                             "[10] force websitename [mention/id] [value]\n" +
-                             "[11] force websiteurl [mention/id] [value]\n" +
+                             "[ 9] force pokemongo [mention/id] [value]\n" +
+                             "[10] force prefix [mention/id] [value]\n" +
+                             "[11] force websitename [mention/id] [value]\n" +
+                             "[12] force websiteurl [mention/id] [value]\n" +
                              "```");
         }
 
@@ -179,6 +180,29 @@ namespace DiscordBot.Modules.Admin
 
                 var eb = new EmbedBuilder()
                     .WithDescription(Context.User.Username + " changed " + user.Mention + "'s Instagram username text successfully.")
+                    .WithColor(Color.DarkGreen);
+
+                await ReplyAsync("", false, eb.Build());
+            }
+            else
+            {
+                await ReplyAsync(Context.User.Mention + ", you don't have a high enough permission level to do this to that user!");
+            }
+        }
+
+        [Command("pokemongo"), Summary("")]
+        public async Task ForcePokemonGoFriendCode(IUser user, [Remainder]string code)
+        {
+            if (Context.User.HasHigherPermissionLevel(user))
+            {
+                List<(string, string)> queryParams = new List<(string, string)>()
+                {
+                    ("@pokemonGoFriendCode", code)
+                };
+                DatabaseActivity.ExecuteNonQueryCommand("UPDATE users SET pokemonGoFriendCode=@pokemonGoFriendCode WHERE id='" + user.Id + "';", queryParams);
+
+                var eb = new EmbedBuilder()
+                    .WithDescription(Context.User.Username + " changed " + user.Mention + "'s Pokemon Go Friend Code successfully.")
                     .WithColor(Color.DarkGreen);
 
                 await ReplyAsync("", false, eb.Build());
