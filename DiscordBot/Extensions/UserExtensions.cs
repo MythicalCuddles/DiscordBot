@@ -147,9 +147,23 @@ namespace DiscordBot.Extensions
                     EmbedBuilder eb = new EmbedBuilder()
                     {
                         Title = "Level Up!",
-                        Color = user.GetCustomRGB(),
-                        Description = "Well done " + user.Mention + "! You levelled up to level " + user.GetLevel() + "! Gain " + (Math.Round(EXPToLevelUp(user)) - user.GetEXP()) + " more EXP to level up again!",
+                        Color = user.GetCustomRGB()
                     }.WithCurrentTimestamp();
+
+                    if (Configuration.Load().AwardingEXPMentionUser)
+                    {
+                        eb.WithDescription("Well done " + user.Mention + "! You levelled up to level " +
+                                           user.GetLevel() + "! Gain " +
+                                           (Math.Round(EXPToLevelUp(user)) - user.GetEXP()) +
+                                           " more EXP to level up again!");
+                    }
+                    else
+                    {
+                        eb.WithDescription("Well done " + user.Username + "! You levelled up to level " +
+                                           user.GetLevel() + "! Gain " +
+                                           (Math.Round(EXPToLevelUp(user)) - user.GetEXP()) +
+                                           " more EXP to level up again!");
+                    }
                     
                     var msg = await botChannel.SendMessageAsync("", false, eb.Build());
                     //msg.DeleteAfter(300); // todo: updated from 120 to don't delete, maybe make configurable?

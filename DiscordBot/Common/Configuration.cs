@@ -35,6 +35,7 @@ namespace DiscordBot.Common
         
         public bool UnknownCommandEnabled { get; set; } = true;
         public bool AwardingEXPEnabled { get; set; } = true;
+        public bool AwardingEXPMentionUser { get; set; } = true;
         
         public int LeaderboardAmount { get; set; } = 5;
         public int QuoteLevelRequirement { get; set; } = 10;
@@ -118,7 +119,7 @@ namespace DiscordBot.Common
         public static void UpdateConfiguration(string botToken = null, ulong? developer = null, string statusText = null, string statusLink = null,
             string databaseHost = null, int? databasePort = null, string databaseUser = null, string databasePassword = null, string databaseName = null,
             bool? showAllAwards = null, string awardsIconUrl = null,
-            int? statusActivity = null, UserStatus? status = null, bool? unknownCommandEnabled = null, bool? awardingEXPEnabled = null,
+            int? statusActivity = null, UserStatus? status = null, bool? unknownCommandEnabled = null, bool? awardingEXPEnabled = null, bool? awardingEXPMentionUser = null,
             int? leaderboardAmount = null, string leaderboardTrophyUrl = null, uint? leaderboardEmbedColor = null,
             int? quoteLevelRequirement = null, int? prefixLevelRequirement = null, int? senpaiChanceRate = null, int? rgbLevelRequirement = null,
             ulong? logChannelId = null, int? respects = null, int? minLengthForEXP = null, int? maxRuleXGamble = null)
@@ -144,6 +145,7 @@ namespace DiscordBot.Common
 
                 UnknownCommandEnabled = unknownCommandEnabled ?? Load().UnknownCommandEnabled,
                 AwardingEXPEnabled = awardingEXPEnabled ?? Load().AwardingEXPEnabled,
+                AwardingEXPMentionUser = awardingEXPMentionUser ?? Load().AwardingEXPMentionUser,
                 
                 LeaderboardAmount = leaderboardAmount ?? Load().LeaderboardAmount,
                 LeaderboardTrophyUrl = leaderboardTrophyUrl ?? Load().LeaderboardTrophyUrl,
