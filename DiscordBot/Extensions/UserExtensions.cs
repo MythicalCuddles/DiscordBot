@@ -90,6 +90,10 @@ namespace DiscordBot.Extensions
         {
             return User.Load(user.Id).EmbedFooterBuilderIconUrl;
         }
+        public static bool IsUserIgnoredByBot(this IUser user)
+        {
+            return User.Load(user.Id).IsBotIgnoringUser;
+        }
 
         public static void AwardEXPToUser(this IUser user, SocketGuild guild, int exp = 1)
         {

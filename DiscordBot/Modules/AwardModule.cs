@@ -42,18 +42,21 @@ namespace DiscordBot.Modules
             
             List<Award> awards = new List<Award>();
             
-            MySqlDataReader dr =
-                DatabaseActivity.ExecuteReader("SELECT * FROM awards WHERE userId=" + userSpecified.Id + ";");
-            while (dr.Read())
+            (MySqlDataReader dr, MySqlConnection conn) reader = DatabaseActivity.ExecuteReader("SELECT * FROM awards WHERE userId=" + userSpecified.Id + ";");
+            
+            while (reader.dr.Read())
             {
                 awards.Add(new Award()
                 {
-                    awardId = (ulong) dr["awardId"],
-                    userId = (ulong) dr["userId"],
-                    awardText = dr["awardText"].ToString(),
-                    dateAwarded = (DateTime)dr["dateAwarded"]
+                    awardId = (ulong) reader.dr["awardId"],
+                    userId = (ulong) reader.dr["userId"],
+                    awardText = reader.dr["awardText"].ToString(),
+                    dateAwarded = (DateTime)reader.dr["dateAwarded"]
                 });
             }
+            
+            reader.dr.Close();
+            reader.conn.Close();
             
             awards.Sort((x, y) => x.dateAwarded.CompareTo(y.dateAwarded)); // newest awards will appear first
             //awards.Sort((x, y) => y.dateAwarded.CompareTo(x.dateAwarded)); // oldest awards will appear first

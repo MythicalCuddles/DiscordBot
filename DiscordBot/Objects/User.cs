@@ -1,4 +1,5 @@
 using System;
+using System.Threading.Tasks;
 using DiscordBot.Database;
 using MySql.Data.MySqlClient;
 
@@ -87,41 +88,43 @@ namespace DiscordBot.Objects
         public static User Load(ulong uId)
         {
             User user = new User();
-            
-            MySqlDataReader dr =
-                DatabaseActivity.ExecuteReader("SELECT * FROM users WHERE id=" + uId + ";");
-            
-            while (dr.Read())
-            {
-                user.Level = dr.GetInt32(dr.GetOrdinal("level"));
-                user.EXP = dr.GetInt32(dr.GetOrdinal("exp"));
-                user.Name = dr["name"].ToString();
-                user.Gender = dr["gender"].ToString();
-                user.Pronouns = dr["pronouns"].ToString();
-                user.About = dr["about"].ToString();
-                user.CustomPrefix = dr["customPrefix"].ToString();
-                user.AboutR = dr.GetByte(dr.GetOrdinal("aboutR"));
-                user.AboutG = dr.GetByte(dr.GetOrdinal("aboutG"));
-                user.AboutB = dr.GetByte(dr.GetOrdinal("aboutB"));
                 
-                if (dr["teamMember"].ToString().ToUpper() == "Y")
+            (MySqlDataReader dr, MySqlConnection conn) reader = DatabaseActivity.ExecuteReader("SELECT * FROM users WHERE id=" + uId + ";");
+            
+            while (reader.dr.Read())
+            {
+                user.Level = reader.dr.GetInt32(reader.dr.GetOrdinal("level"));
+                user.EXP = reader.dr.GetInt32(reader.dr.GetOrdinal("exp"));
+                user.Name = reader.dr["name"].ToString();
+                user.Gender = reader.dr["gender"].ToString();
+                user.Pronouns = reader.dr["pronouns"].ToString();
+                user.About = reader.dr["about"].ToString();
+                user.CustomPrefix = reader.dr["customPrefix"].ToString();
+                user.AboutR = reader.dr.GetByte(reader.dr.GetOrdinal("aboutR"));
+                user.AboutG = reader.dr.GetByte(reader.dr.GetOrdinal("aboutG"));
+                user.AboutB = reader.dr.GetByte(reader.dr.GetOrdinal("aboutB"));
+
+                if (reader.dr["teamMember"].ToString().ToUpper() == "Y")
                     user.TeamMember = true;
 
-                user.EmbedAuthorBuilderIconUrl = dr["authorIconURL"].ToString();
-                user.EmbedFooterBuilderIconUrl = dr["footerIconURL"].ToString();
-                user.FooterText = dr["footerText"].ToString();
-                user.MinecraftUsername = dr["minecraftUsername"].ToString();
-                user.SnapchatUsername = dr["snapchatUsername"].ToString();
-                user.InstagramUsername = dr["instagramUsername"].ToString();
-                user.GitHubUsername = dr["githubUsername"].ToString();
-                user.PokemonGoFriendCode = dr["pokemonGoFriendCode"].ToString();
-                user.WebsiteName = dr["websiteName"].ToString();
-                user.WebsiteUrl = dr["websiteURL"].ToString();
-                
-                if (dr["isBeingIgnored"].ToString().ToUpper() == "Y")
+                user.EmbedAuthorBuilderIconUrl = reader.dr["authorIconURL"].ToString();
+                user.EmbedFooterBuilderIconUrl = reader.dr["footerIconURL"].ToString();
+                user.FooterText = reader.dr["footerText"].ToString();
+                user.MinecraftUsername = reader.dr["minecraftUsername"].ToString();
+                user.SnapchatUsername = reader.dr["snapchatUsername"].ToString();
+                user.InstagramUsername = reader.dr["instagramUsername"].ToString();
+                user.GitHubUsername = reader.dr["githubUsername"].ToString();
+                user.PokemonGoFriendCode = reader.dr["pokemonGoFriendCode"].ToString();
+                user.WebsiteName = reader.dr["websiteName"].ToString();
+                user.WebsiteUrl = reader.dr["websiteURL"].ToString();
+
+                if (reader.dr["isBeingIgnored"].ToString().ToUpper() == "Y")
                     user.IsBotIgnoringUser = true;
             }
-
+            
+            reader.dr.Close();
+            reader.conn.Close();
+            
             return user;
         }
     }

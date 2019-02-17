@@ -102,7 +102,7 @@ namespace DiscordBot.Database
             CreateTablesIfNotExists();
         }
 
-        public static MySqlConnection OpenDatabaseConnection()
+        public static MySqlConnection GetDatabaseConnection()
         {
             string connectionString;
             if (databaseExists)
@@ -118,7 +118,8 @@ namespace DiscordBot.Database
             
             try
             {
-                connection.Open();
+                //connection.Open();
+                return connection;
             }
             catch (Exception e)
             {
@@ -131,69 +132,64 @@ namespace DiscordBot.Database
 
         public static int ExecuteNonQueryCommand(string query, List<(string name, string value)> queryParams = null)
         {
-            MySqlConnection conn = OpenDatabaseConnection();
-            MySqlCommand cmd = new MySqlCommand(query, conn);
-            cmd.Prepare();
-            
-            if (queryParams != null)
+            using (MySqlConnection conn = GetDatabaseConnection())
             {
-                foreach(var s in queryParams)
+                conn.Open();
+                MySqlCommand cmd = new MySqlCommand(query, conn);
+                cmd.Prepare();
+            
+                if (queryParams != null)
                 {
-                    MySqlParameter param = new MySqlParameter();
-                    param.ParameterName = s.name;
-                    param.Value = s.value;
+                    foreach(var s in queryParams)
+                    {
+                        MySqlParameter param = new MySqlParameter();
+                        param.ParameterName = s.name;
+                        param.Value = s.value;
 
-                    cmd.Parameters.Add(param);
+                        cmd.Parameters.Add(param);
+                    }
+                }
+
+                try
+                {
+                    int rows = cmd.ExecuteNonQuery();
+                    conn.CloseAsync();
+
+                    new LogMessage(LogSeverity.Info, "Database Command",
+                        "Command: " + cmd.CommandText + " | Rows affected: " + rows).PrintToConsole();
+
+                    return rows;
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e.Message);
+                    throw;
                 }
             }
+        }
 
+        public static (MySqlDataReader,MySqlConnection) ExecuteReader(string query)
+        {
+            MySqlConnection conn = GetDatabaseConnection();
+            MySqlCommand cmd = new MySqlCommand(query, conn);
+            
+            conn.Open();
+            
             try
             {
-                int rows = cmd.ExecuteNonQuery();
+                MySqlDataReader dr = cmd.ExecuteReader();
 
                 new LogMessage(LogSeverity.Info, "Database Command",
-                    "Command: " + cmd.CommandText + " | Rows affected: " + rows).PrintToConsole();
+                    "Command: " + cmd.CommandText).PrintToConsole();
 
-                return rows;
+                return (dr, conn);
             }
             catch (Exception e)
             {
                 Console.WriteLine(e.Message);
                 throw;
             }
-            finally
-            {
-                conn.Close();
-            }
-        }
-
-        public static MySqlDataReader ExecuteReader(string command)
-        {
-            MySqlConnection conn = OpenDatabaseConnection();
-            MySqlDataReader dr;
             
-            MySqlCommand cmd = new MySqlCommand
-            {
-                Connection = conn,
-                CommandText = command
-            };
-
-            try
-            {
-                dr = cmd.ExecuteReader();
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e);
-                throw;
-            }
-            finally
-            {
-                conn.Close();
-            }
-            
-            
-            return dr;
         }
 
         private static void CreateDatabaseIfNotExists()
