@@ -18,10 +18,11 @@ using Discord.Net.Providers.WS4Net;
 using Discord.WebSocket;
 
 using DiscordBot.Common;
+using DiscordBot.Database;
 using DiscordBot.Extensions;
 using DiscordBot.Handlers;
 using DiscordBot.Modules.Mod;
-
+using DiscordBot.Objects;
 using MelissaNet;
 
 namespace DiscordBot
@@ -54,6 +55,7 @@ namespace DiscordBot
             
             Bot.UserJoined += UserHandler.UserJoined;
             Bot.UserLeft += UserHandler.UserLeft;
+	        Bot.UserUpdated += UserHandler.UserUpdated;
             
             Bot.ChannelCreated += ChannelHandler.ChannelCreated;
             Bot.ChannelDestroyed += ChannelHandler.ChannelDestroyed;
@@ -201,9 +203,23 @@ namespace DiscordBot
 
 				foreach (SocketGuildUser u in g.Users)
 				{
-					if (User.CreateUserFile(u.Id))
+					//Insert new users into the database by using INSERT IGNORE
+					List<(string, string)> queryParams = new List<(string id, string value)>()
 					{
-					    offlineList.Add(new Tuple<SocketGuildUser, SocketGuild>(u, g));
+						("@username", u.Username),
+						("@avatarUrl", u.GetAvatarUrl())
+					};
+					
+					int rowsUpdated = DatabaseActivity.ExecuteNonQueryCommand(
+						"INSERT IGNORE INTO " +
+						"users(id,username,avatarUrl) " +
+						"VALUES (" + u.Id + ", @username, @avatarUrl);", queryParams);
+					
+					//end.
+					
+					if (rowsUpdated > 0) // If any rows were affected, add the user to the list to be dealt with later.
+					{
+						offlineList.Add(new Tuple<SocketGuildUser, SocketGuild>(u, g));
 					}
 				}
 
@@ -284,10 +300,10 @@ namespace DiscordBot
 	        
 	        await new LogMessage(LogSeverity.Info, "MessageReceived", "[" + messageParam.Channel.GetGuild().Name + "/#" + messageParam.Channel.Name + "] " + "[@" + 
 	                                                            messageParam.Author.Username + "] : " + messageParam.Content).PrintToConsole();
-	        
-            var uPrefix = User.Load(message.Author.Id).CustomPrefix;
+
+            var uPrefix = message.Author.GetCustomPrefix();
             var gPrefix = GuildConfiguration.Load(message.Channel.GetGuild().Id).Prefix;
-            if (uPrefix == null) { uPrefix = gPrefix; } // Fixes an issue with users not receiving coins due to null prefix.
+            if (string.IsNullOrEmpty(uPrefix)) { uPrefix = gPrefix; } // Fixes an issue with users not receiving coins due to null prefix.
             var argPos = 0;
             if (message.HasStringPrefix(gPrefix, ref argPos) || 
                 message.HasMentionPrefix(Bot.CurrentUser, ref argPos) || 

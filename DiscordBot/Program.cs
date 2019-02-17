@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 
 using DiscordBot.Common;
+using DiscordBot.Database;
 using DiscordBot.Other;
 
 using MelissaNet;
@@ -45,6 +46,9 @@ namespace DiscordBot
             StringConfiguration.EnsureExists();
             QuoteHandler.EnsureExists();
             VoteLinkHandler.EnsureExists();
+            
+            DatabaseActivity.CheckForDatabase();
+            
             Console.WriteLine(@"-----------------------------------------------------------------");
             
             new DiscordBot().RunBotAsync().GetAwaiter().GetResult();

@@ -7,6 +7,7 @@ using Discord.Commands;
 using Discord.WebSocket;
 using DiscordBot.Common;
 using DiscordBot.Common.Preconditions;
+using DiscordBot.Database;
 using DiscordBot.Extensions;
 using DiscordBot.Objects;
 using MySql.Data.MySqlClient;
@@ -39,25 +40,10 @@ namespace DiscordBot.Modules
                 .WithThumbnailUrl(userSpecified.GetAvatarUrl())
                 .WithColor(userSpecified.GetCustomRGB());
             
-            
-            string connectionString = String.Format("server={0};port={1};user id={2}; password={3}; database={4}", Configuration.Load().DatabaseHost, Configuration.Load().DatabasePort.ToString(), Configuration.Load().DatabaseUser, Configuration.Load().DatabasePassword, Configuration.Load().DatabaseName);
-            MySqlConnection connection = new MySqlConnection(connectionString);
             List<Award> awards = new List<Award>();
-
-            try
-            {
-                connection.Open();
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e.Message);
-                throw;
-            }
-
-            MySqlCommand cmd = new MySqlCommand();
-            cmd.Connection = connection;
-            cmd.CommandText = "SELECT * FROM awards WHERE userId=" + userSpecified.Id + ";";
-            MySqlDataReader dr = cmd.ExecuteReader();
+            
+            MySqlDataReader dr =
+                DatabaseActivity.ExecuteReader("SELECT * FROM awards WHERE userId=" + userSpecified.Id + ";");
             while (dr.Read())
             {
                 awards.Add(new Award()
@@ -68,8 +54,6 @@ namespace DiscordBot.Modules
                     dateAwarded = (DateTime)dr["dateAwarded"]
                 });
             }
-
-            connection.Close();
             
             awards.Sort((x, y) => x.dateAwarded.CompareTo(y.dateAwarded)); // newest awards will appear first
             //awards.Sort((x, y) => y.dateAwarded.CompareTo(x.dateAwarded)); // oldest awards will appear first

@@ -1,4 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 using Discord;
@@ -7,8 +10,11 @@ using Discord.WebSocket;
 
 using DiscordBot.Common;
 using DiscordBot.Common.Preconditions;
+using DiscordBot.Database;
 using DiscordBot.Extensions;
 using DiscordBot.Handlers;
+using DiscordBot.Objects;
+using MySql.Data.MySqlClient;
 
 namespace DiscordBot.Modules.Public
 {
@@ -39,8 +45,9 @@ namespace DiscordBot.Modules.Public
                                  "[ 8] editprofile snapchat [value]\n" +
                                  "[ 9] editprofile instagram [value]\n" +
                                  "[10] editprofile github [value]\n" +
-                                 "[11] editprofile websitename [value]\n" +
-                                 "[12] editprofile websiteurl [value]\n" +
+                                 "[11] editprofile pokemongo [value]\n" +
+                                 "[12] editprofile websitename [value]\n" +
+                                 "[13] editprofile websiteurl [value]\n" +
                                  "```");
             }
             
@@ -48,28 +55,56 @@ namespace DiscordBot.Modules.Public
             [Command("name"), Summary("")]
             public async Task SetName([Remainder]string name)
             {
-                User.UpdateUser(Context.User.Id, name: name);
+                //User.UpdateUser(Context.User.Id, name: name);
+                
+                List<(string, string)> queryParams = new List<(string, string)>()
+                {
+                    ("@name", name)
+                };
+                DatabaseActivity.ExecuteNonQueryCommand("UPDATE users SET name=@name WHERE id='" + Context.User.Id + "';", queryParams);
+                
                 await ReplyAsync(Context.User.Mention + ", you have successfully updated the name on your profile to \"" + name + "\"!");
             }
     
             [Command("gender"), Summary("")]
             public async Task SetGender([Remainder]string gender)
             {
-                User.UpdateUser(Context.User.Id, gender: gender);
+                //User.UpdateUser(Context.User.Id, gender: gender);
+                
+                List<(string, string)> queryParams = new List<(string, string)>()
+                {
+                    ("@gender", gender)
+                };
+                DatabaseActivity.ExecuteNonQueryCommand("UPDATE users SET gender=@gender WHERE id='" + Context.User.Id + "';", queryParams);
+                
                 await ReplyAsync(Context.User.Mention + ", you have successfully updated the gender on your profile to \"" + gender + "\"!");
             }
     
             [Command("pronouns"), Summary("Set your pronouns!")]
             public async Task SetUserPronouns([Remainder]string pronouns)
             {
-                User.UpdateUser(Context.User.Id, pronouns: pronouns);
+                //User.UpdateUser(Context.User.Id, pronouns: pronouns);
+                
+                List<(string, string)> queryParams = new List<(string, string)>()
+                {
+                    ("@pronouns", pronouns)
+                };
+                DatabaseActivity.ExecuteNonQueryCommand("UPDATE users SET pronouns=@pronouns WHERE id='" + Context.User.Id + "';", queryParams);
+
                 await ReplyAsync(Context.User.Mention + ", you have successfully updated the pronouns on your profile to \"" + pronouns + "\"!");
             }
     
             [Command("about"), Summary("Set your about message!")]
             public async Task SetUserAbout([Remainder]string aboutMessage)
             {
-                User.UpdateUser(Context.User.Id, about: aboutMessage);
+                //User.UpdateUser(Context.User.Id, about: aboutMessage);
+                
+                List<(string, string)> queryParams = new List<(string, string)>()
+                {
+                    ("@aboutMessage", aboutMessage)
+                };
+                DatabaseActivity.ExecuteNonQueryCommand("UPDATE users SET about=@aboutMessage WHERE id='" + Context.User.Id + "';", queryParams);
+
                 await ReplyAsync(Context.User.Mention + ", you have successfully updated the about section on your profile!");
             }
     
@@ -84,7 +119,14 @@ namespace DiscordBot.Modules.Public
                 
                 if (Context.User.GetLevel() >= Configuration.Load().PrefixLevelRequirement)
                 {
-                    User.UpdateUser(Context.User.Id, customPrefix: prefix);
+                    //User.UpdateUser(Context.User.Id, customPrefix: prefix);
+                
+                    List<(string, string)> queryParams = new List<(string, string)>()
+                    {
+                        ("@customPrefix", prefix)
+                    };
+                    DatabaseActivity.ExecuteNonQueryCommand("UPDATE users SET customPrefix=@customPrefix WHERE id='" + Context.User.Id + "';", queryParams);
+
                     await ReplyAsync(Context.User.Mention + ", you have set `" + prefix + "` as a custom prefix for yourself. Please do take note that the following prefixes will work for you:\n```KEY: [Prefix][Command]\n" + prefix + " - User Set Prefix\n" + GuildConfiguration.Load(Context.Guild.Id).Prefix + " - Guild Set Prefix\n@" + DiscordBot.Bot.CurrentUser.Username + " - Global Prefix```");
                 }
                 else
@@ -120,9 +162,17 @@ namespace DiscordBot.Modules.Public
                         return;
                     }
     
-                    User.UpdateUser(Context.User.Id, aboutR: rValue);
-                    User.UpdateUser(Context.User.Id, aboutG: gValue);
-                    User.UpdateUser(Context.User.Id, aboutB: bValue);
+                    //User.UpdateUser(Context.User.Id, aboutR: rValue);
+                    //User.UpdateUser(Context.User.Id, aboutG: gValue);
+                    //User.UpdateUser(Context.User.Id, aboutB: bValue);
+                
+                    List<(string, string)> queryParams = new List<(string, string)>()
+                    {
+                        ("@aboutR", rValue.ToString()),
+                        ("@aboutG", gValue.ToString()),
+                        ("@aboutB", bValue.ToString())
+                    };
+                    DatabaseActivity.ExecuteNonQueryCommand("UPDATE users SET aboutR=@aboutR, aboutG=@aboutG, aboutB=@aboutB WHERE id='" + Context.User.Id + "';", queryParams);
     
                     Color aboutColor = new Color(User.Load(Context.User.Id).AboutR, User.Load(Context.User.Id).AboutG, User.Load(Context.User.Id).AboutB);
     
@@ -143,42 +193,111 @@ namespace DiscordBot.Modules.Public
             [Alias("minecraftusername", "mcreg", "mcregister")]
             public async Task SetMinecraftUsername([Remainder]string username)
             {
-                User.UpdateUser(Context.User.Id, minecraftUsername:username);
+                //User.UpdateUser(Context.User.Id, minecraftUsername:username);
+                
+                List<(string, string)> queryParams = new List<(string, string)>()
+                {
+                    ("@minecraft", username)
+                };
+                DatabaseActivity.ExecuteNonQueryCommand("UPDATE users SET minecraftUsername=@minecraft WHERE id='" + Context.User.Id + "';", queryParams);
+
                 await ReplyAsync(Context.User.Mention + ", you have successfully updated the Minecraft username on your profile to \"" + username + "\"!");
             }
     
             [Command("snapchat"), Summary("")]
             public async Task SetSnapchatUsername([Remainder]string username)
             {
-                User.UpdateUser(Context.User.Id, snapchat:username);
+                //User.UpdateUser(Context.User.Id, snapchat:username);
+                
+                List<(string, string)> queryParams = new List<(string, string)>()
+                {
+                    ("@snapchat", username)
+                };
+                DatabaseActivity.ExecuteNonQueryCommand("UPDATE users SET snapchatUsername=@snapchat WHERE id='" + Context.User.Id + "';", queryParams);
+
                 await ReplyAsync(Context.User.Mention + ", you have successfully updated the Snapchat username on your profile to \"" + username + "\"!");
             }
     
             [Command("instagram"), Summary("")]
             public async Task SetInstagramUsername([Remainder]string username)
             {
-                User.UpdateUser(Context.User.Id, instagram:username);
+                //User.UpdateUser(Context.User.Id, instagram:username);
+                
+                List<(string, string)> queryParams = new List<(string, string)>()
+                {
+                    ("@instagram", username)
+                };
+                DatabaseActivity.ExecuteNonQueryCommand("UPDATE users SET instagramUsername=@instagram WHERE id='" + Context.User.Id + "';", queryParams);
+
                 await ReplyAsync(Context.User.Mention + ", you have successfully updated the Instagram username on your profile to \"" + username + "\"!");
             }
     
             [Command("github"), Summary("")]
             public async Task SetGitHubUsername([Remainder]string username)
             {
-                User.UpdateUser(Context.User.Id, github:username);
+                //User.UpdateUser(Context.User.Id, github:username);
+                
+                List<(string, string)> queryParams = new List<(string, string)>()
+                {
+                    ("@github", username)
+                };
+                DatabaseActivity.ExecuteNonQueryCommand("UPDATE users SET githubUsername=@github WHERE id='" + Context.User.Id + "';", queryParams);
+
                 await ReplyAsync(Context.User.Mention + ", you have successfully updated the GitHub username on your profile to \"" + username + "\"!");
+            }
+    
+            [Command("pokemongofriendcode"), Summary("")]
+            [Alias("pokemongo", "pokemongofc", "pgofriendcode")]
+            public async Task SetPokemonGoFriendCode([Remainder]string friendCode)
+            {
+                if (friendCode.All(char.IsDigit))
+                {
+                    if (friendCode[4] != ' ')
+                        friendCode = friendCode.Insert(4, " ");
+
+                    if (friendCode[9] != ' ')
+                        friendCode = friendCode.Insert(9, " ");
+                    
+                    List<(string, string)> queryParams = new List<(string, string)>()
+                    {
+                        ("@code", friendCode)
+                    };
+                    DatabaseActivity.ExecuteNonQueryCommand("UPDATE users SET pokemonGoFriendCode=@code WHERE id='" + Context.User.Id + "';", queryParams);
+
+                    await ReplyAsync(Context.User.Mention + ", you have successfully updated your Pokemon Go Friend Code on your profile to \"" + friendCode + "\"!");
+                }
+                else
+                {
+                    await ReplyAsync(Context.User.Mention + ", your friend code must be all digits!");
+                }
+                
             }
     
             [Command("websitename"), Summary("")]
             public async Task SetWebsiteName([Remainder]string name)
             {
-                User.UpdateUser(Context.User.Id, websiteName: name);
+                //User.UpdateUser(Context.User.Id, websiteName: name);
+                
+                List<(string, string)> queryParams = new List<(string, string)>()
+                {
+                    ("@websiteName", name)
+                };
+                DatabaseActivity.ExecuteNonQueryCommand("UPDATE users SET websiteName=@websiteName WHERE id='" + Context.User.Id + "';", queryParams);
+
                 await ReplyAsync(Context.User.Mention + ", you have successfully updated the website name on your profile to \"" + name + "\"!");
             }
     
             [Command("websiteurl"), Summary("")]
             public async Task SetWebsiteUrl([Remainder]string url)
             {
-                User.UpdateUser(Context.User.Id, websiteUrl: url);
+                //User.UpdateUser(Context.User.Id, websiteUrl: url);
+                
+                List<(string, string)> queryParams = new List<(string, string)>()
+                {
+                    ("@websiteUrl", url)
+                };
+                DatabaseActivity.ExecuteNonQueryCommand("UPDATE users SET websiteURL=@websiteUrl WHERE id='" + Context.User.Id + "';", queryParams);
+
                 await ReplyAsync(Context.User.Mention + ", you have successfully updated the website URL on your profile to \"" + url + "\"!");
             }
     
@@ -190,22 +309,20 @@ namespace DiscordBot.Modules.Public
         public async Task UserAbout(IUser user = null)
         {
             var userSpecified = user as SocketGuildUser ?? Context.User as SocketGuildUser;
-            var typing = Context.Channel.EnterTypingState();
 
             if (userSpecified == null)
             {
                 await ReplyAsync("User not found, please try again.");
-                typing.Dispose();
                 return;
             }
-
+            
             EmbedAuthorBuilder eab = new EmbedAuthorBuilder();
-            if(userSpecified.Nickname != null) eab.WithName("About " + userSpecified.Nickname);
+            if(!String.IsNullOrEmpty(userSpecified.Nickname)) eab.WithName("About " + userSpecified.Nickname);
             else eab.WithName("About " + userSpecified.Username);
 
             EmbedFooterBuilder efb = new EmbedFooterBuilder();
             if (userSpecified.IsTeamMember()) eab.WithIconUrl(userSpecified.GetEmbedAuthorBuilderIconUrl());
-            if (userSpecified.GetFooterText() != null)
+            if (!String.IsNullOrEmpty(userSpecified.GetFooterText()))
             {
                 efb.WithText(userSpecified.GetFooterText());
                 efb.WithIconUrl(userSpecified.GetEmbedFooterBuilderIconUrl());
@@ -218,13 +335,13 @@ namespace DiscordBot.Modules.Public
                 .WithDescription(User.Load(userSpecified.Id).About)
                 .WithColor(userSpecified.GetCustomRGB());
 
-            if (User.Load(userSpecified.Id).Name != null)
+            if (!String.IsNullOrEmpty(userSpecified.GetName()))
                 eb.AddField("Name", userSpecified.GetName(), true);
 
-            if (User.Load(userSpecified.Id).Gender != null)
+            if (!String.IsNullOrEmpty(userSpecified.GetGender()))
                 eb.AddField("Gender", userSpecified.GetGender(), true);
             
-            if (User.Load(userSpecified.Id).Pronouns != null)
+            if (!String.IsNullOrEmpty(userSpecified.GetPronouns()))
                 eb.AddField("Pronouns", userSpecified.GetPronouns(), true);
             
             eb.AddField("Level", userSpecified.GetLevel(), true);
@@ -232,26 +349,28 @@ namespace DiscordBot.Modules.Public
             eb.AddField("Account Created", userSpecified.UserCreateDate(), true);
             eb.AddField("Joined Guild", userSpecified.GuildJoinDate(), true);
             
-            if (User.Load(userSpecified.Id).MinecraftUsername != null)
+            if (!String.IsNullOrEmpty(userSpecified.GetMinecraftUsername()))
                 eb.AddField("Minecraft Username", userSpecified.GetMinecraftUsername(), true);
 
-            if (userSpecified.GetWebsiteUrl() != null)
+            if (!String.IsNullOrEmpty(userSpecified.GetWebsiteUrl()))
                 eb.AddField(StringConfiguration.Load().DefaultWebsiteName, "[" + (userSpecified.GetWebsiteName() ?? StringConfiguration.Load().DefaultWebsiteName) + "](" + userSpecified.GetWebsiteUrl() + ")", true);
 
-            if (userSpecified.GetInstagramUsername() != null)
+            if (!String.IsNullOrEmpty(userSpecified.GetInstagramUsername()))
                 eb.AddField("Instagram", "[" + userSpecified.GetInstagramUsername() + "](https://www.instagram.com/" + userSpecified.GetInstagramUsername() + "/)", true);
 
-            if (userSpecified.GetSnapchatUsername() != null)
+            if (!String.IsNullOrEmpty(userSpecified.GetSnapchatUsername()))
                 eb.AddField("Snapchat", "[" + userSpecified.GetSnapchatUsername() + "](https://www.snapchat.com/add/" + userSpecified.GetSnapchatUsername() + "/)", true);
 
-            if (User.Load(userSpecified.Id).GitHubUsername != null)
+            if (!String.IsNullOrEmpty(userSpecified.GetGitHubUsername()))
                 eb.AddField("GitHub", "[" + userSpecified.GetGitHubUsername() + "](https://github.com/" + userSpecified.GetGitHubUsername() + "/)", true);
 
-            if (User.Load(userSpecified.Id).CustomPrefix != null)
-                eb.AddField("Custom Prefix", User.Load(userSpecified.Id).CustomPrefix, true);
+            if (!String.IsNullOrEmpty(userSpecified.GetPokemonGoFriendCode()))
+                eb.AddField("Pokémon Go Friend Code", "[" + userSpecified.GetPokemonGoFriendCode() + "](https://chart.googleapis.com/chart?chs=300x300&cht=qr&" + userSpecified.GetPokemonGoFriendCode().Replace(" ", "") + "&choe=UTF-8)", true);
 
+            if (!String.IsNullOrEmpty(userSpecified.GetCustomPrefix()))
+                eb.AddField("Custom Prefix", userSpecified.GetCustomPrefix(), true);
+            
             await ReplyAsync("", false, eb.Build());
-            typing.Dispose();
         }
     }
 }

@@ -8,6 +8,7 @@ using Discord.WebSocket;
 using Discord.Addons.EmojiTools;
 
 using DiscordBot.Common;
+using DiscordBot.Objects;
 
 namespace DiscordBot.Extensions
 {

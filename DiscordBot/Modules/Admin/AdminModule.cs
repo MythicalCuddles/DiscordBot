@@ -11,6 +11,7 @@ using Discord.WebSocket;
 using DiscordBot.Common.Preconditions;
 using DiscordBot.Common;
 using DiscordBot.Extensions;
+using DiscordBot.Objects;
 using DiscordBot.Other;
 
 namespace DiscordBot.Modules.Admin
