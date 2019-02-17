@@ -278,14 +278,10 @@ namespace DiscordBot
 	    
         private static async Task MessageReceived(SocketMessage messageParam)
         {
-	        Console.WriteLine("1");
             if (!(messageParam is SocketUserMessage message)) return; // If the message is null, return.
-	        Console.WriteLine("1.1");
             if (message.Author.IsBot) return; // If the message was posted by a BOT account, return.
-	        Console.WriteLine("1.2");
             if (message.Author.IsUserIgnoredByBot() && message.Author.Id != Configuration.Load().Developer) { return; } // If the bot is ignoring the user AND the user NOT Melissa.
 
-	        Console.WriteLine("2");
             // If the message came from somewhere that is not a text channel -> Private Message
             if (!(messageParam.Channel is ITextChannel))
             {

@@ -179,8 +179,7 @@ namespace DiscordBot.Database
             {
                 MySqlDataReader dr = cmd.ExecuteReader();
 
-                new LogMessage(LogSeverity.Info, "Database Command",
-                    "Command: " + cmd.CommandText).PrintToConsole();
+                //new LogMessage(LogSeverity.Info, "Database Command", "Command: " + cmd.CommandText).PrintToConsole();
 
                 return (dr, conn);
             }
