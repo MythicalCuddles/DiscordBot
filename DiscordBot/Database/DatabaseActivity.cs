@@ -150,10 +150,9 @@ namespace DiscordBot.Database
             try
             {
                 int rows = cmd.ExecuteNonQuery();
-                conn.Close();
 
                 new LogMessage(LogSeverity.Info, "Database Command",
-                   "Command: " + cmd.CommandText + " | Rows affected: " + rows).PrintToConsole();
+                    "Command: " + cmd.CommandText + " | Rows affected: " + rows).PrintToConsole();
 
                 return rows;
             }
@@ -162,17 +161,37 @@ namespace DiscordBot.Database
                 Console.WriteLine(e.Message);
                 throw;
             }
+            finally
+            {
+                conn.Close();
+            }
         }
 
         public static MySqlDataReader ExecuteReader(string command)
         {
+            MySqlConnection conn = OpenDatabaseConnection();
+            MySqlDataReader dr;
+            
             MySqlCommand cmd = new MySqlCommand
             {
-                Connection = OpenDatabaseConnection(),
+                Connection = conn,
                 CommandText = command
             };
+
+            try
+            {
+                dr = cmd.ExecuteReader();
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw;
+            }
+            finally
+            {
+                conn.Close();
+            }
             
-            MySqlDataReader dr = cmd.ExecuteReader();
             
             return dr;
         }
