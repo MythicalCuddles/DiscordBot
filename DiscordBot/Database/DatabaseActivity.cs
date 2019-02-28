@@ -262,6 +262,7 @@ namespace DiscordBot.Database
             
             ExecuteNonQueryCommand("CREATE TABLE IF NOT EXISTS `channels` (" +
                                    "`channelID` bigint(20) NOT NULL," +
+                                   "`inGuildID` bigint(20) NOT NULL," +
                                    "`channelName` text COLLATE utf8mb4_unicode_ci NOT NULL," +
                                    "`awardingEXP` tinyint(1) NOT NULL DEFAULT '1'," +
                                    "PRIMARY KEY (`channelID`)" +
