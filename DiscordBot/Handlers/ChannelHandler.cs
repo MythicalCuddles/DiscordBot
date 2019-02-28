@@ -1,10 +1,12 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 using Discord;
 using Discord.WebSocket;
 
 using DiscordBot.Common;
+using DiscordBot.Database;
 using DiscordBot.Extensions;
 
 namespace DiscordBot.Handlers
@@ -13,7 +15,6 @@ namespace DiscordBot.Handlers
 	{
 		public static async Task ChannelCreated(SocketChannel channel)
 		{
-
 			if (channel is ITextChannel textChannelParam)
 			{
 			    EmbedBuilder eb = new EmbedBuilder()
@@ -46,6 +47,21 @@ namespace DiscordBot.Handlers
 
 			    await Configuration.Load().LogChannelId.GetTextChannel().SendMessageAsync("", false, eb.Build());
 			}
+			else if (channel is ICategoryChannel categoryChannelParam)
+			{
+				EmbedBuilder eb = new EmbedBuilder()
+				{
+					Title = "New Category Channel",
+					Description = categoryChannelParam.Name,
+					Color = new Color(0x52cf35)
+				}
+				.AddField("Channel ID", categoryChannelParam.Id)
+				.AddField("Channel Name", categoryChannelParam.Name)
+				.AddField("Guild ID", categoryChannelParam.GuildId)
+				.AddField("Guild Name", categoryChannelParam.Guild.Name);
+
+				await Configuration.Load().LogChannelId.GetTextChannel().SendMessageAsync("", false, eb.Build());
+			}
             else if (channel is IPrivateChannel privateChannelParam)
 			{
 			    EmbedBuilder eb = new EmbedBuilder()
@@ -63,14 +79,25 @@ namespace DiscordBot.Handlers
 			    }
 
 			    await Configuration.Load().LogChannelId.GetTextChannel().SendMessageAsync("", false, eb.Build());
-			    return;
+				return; // return prevents private messages from being entered into the database.
 			}
             else 
 			{
 				await new LogMessage(LogSeverity.Warning, "ChannelHandler", channel.Id + " type is unknown.").PrintToConsole();
+				return; // return prevents unknown channels from being entered into the database.
 			}
-
-            Channel.EnsureExists(channel.Id);
+			
+			SocketGuildChannel gChannel = channel as SocketGuildChannel;
+			List<(string, string)> queryParams = new List<(string id, string value)>()
+			{
+				("@channelName", gChannel.Name),
+				("@channelType", gChannel.GetType().Name)
+			};
+				    
+			int rowsUpdated = DatabaseActivity.ExecuteNonQueryCommand(
+				"INSERT IGNORE INTO " +
+				"channels(channelID,inGuildID,channelName,channelType) " +
+				"VALUES (" + gChannel.Id + ", " + gChannel.Guild.Id + ", @channelName, @channelType);", queryParams);
 		}
 
 		public static async Task ChannelDestroyed(SocketChannel channel)
@@ -107,6 +134,21 @@ namespace DiscordBot.Handlers
 
 			    await Configuration.Load().LogChannelId.GetTextChannel().SendMessageAsync("", false, eb.Build());
 			}
+			else if (channel is ICategoryChannel categoryChannelParam)
+			{
+				EmbedBuilder eb = new EmbedBuilder()
+					{
+						Title = "Removed Category Channel",
+						Description = categoryChannelParam.Name,
+						Color = new Color(0xff003c)
+					}
+					.AddField("Channel ID", categoryChannelParam.Id)
+					.AddField("Channel Name", categoryChannelParam.Name)
+					.AddField("Guild ID", categoryChannelParam.GuildId)
+					.AddField("Guild Name", categoryChannelParam.Guild.Name);
+
+				await Configuration.Load().LogChannelId.GetTextChannel().SendMessageAsync("", false, eb.Build());
+			}
 			else if (channel is IPrivateChannel privateChannelParam)
 			{
 			    EmbedBuilder eb = new EmbedBuilder()
@@ -129,6 +171,13 @@ namespace DiscordBot.Handlers
 			{
 				await new LogMessage(LogSeverity.Critical, "UserExtensions", channel.Id + " type is unknown.").PrintToConsole();
 			}
+			
+			//todo: add delete sql command to remove the channel in the database.
+		}
+
+		public static async Task ChannelUpdated(SocketChannel arg1, SocketChannel arg2)
+		{
+			//todo: add update sql command to update the channel in the database.
 		}
 	}
 }
