@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using System.Collections.Generic;
+using System.Text;
 using System.Threading.Tasks;
 
 using Discord;
@@ -7,7 +8,10 @@ using Discord.WebSocket;
 
 using DiscordBot.Common;
 using DiscordBot.Common.Preconditions;
+using DiscordBot.Database;
 using DiscordBot.Extensions;
+using DiscordBot.Objects;
+using MelissaNet;
 
 namespace DiscordBot.Modules.SOwner
 {
@@ -119,8 +123,14 @@ namespace DiscordBot.Modules.SOwner
             }
 
             bool value = !Channel.Load(workingWithChannel.Id).AwardingEXP;
+                
+            List<(string, string)> queryParams = new List<(string, string)>()
+            {
+                ("@awardingEXP", value.ToOneOrZero().ToString())
+            };
+            DatabaseActivity.ExecuteNonQueryCommand("UPDATE channels SET awardingEXP=@awardingEXP WHERE channelID='" + workingWithChannel.Id + "';", queryParams);
 
-            Channel.UpdateChannel(workingWithChannel.Id, awardingEXP: value);
+            //Channel.UpdateChannel(workingWithChannel.Id, awardingEXP: value);
 
             IUserMessage msg;
             if (value)
