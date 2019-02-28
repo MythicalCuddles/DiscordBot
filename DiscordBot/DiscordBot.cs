@@ -352,18 +352,10 @@ namespace DiscordBot
                 {
 	                if (message.Content.Length >= Configuration.Load().MinLengthForEXP)
 	                {
-		                (MySqlDataReader dr, MySqlConnection conn) reader = DatabaseActivity.ExecuteReader("SELECT * FROM channels WHERE channelID=" + message.Channel.Id + ";");
-            
-		                while (reader.dr.Read())
-		                {
-			                if ((bool)reader.dr["awardingEXP"])
-			                {
-				                message.Author.AwardEXPToUser(message.Channel.GetGuild());
-			                }
-		                }
-            
-		                reader.dr.Close();
-		                reader.conn.Close();
+						if (Channel.Load(message.Channel.Id).AwardingEXP)
+						{
+							message.Author.AwardEXPToUser(message.Channel.GetGuild());
+						}
 	                }
                 }
             }
