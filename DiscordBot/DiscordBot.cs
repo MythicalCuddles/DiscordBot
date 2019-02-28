@@ -15,6 +15,7 @@ using Discord.Addons.Interactive;
 using Discord.Commands;
 using Discord.Net.Providers.UDPClient;
 using Discord.Net.Providers.WS4Net;
+using Discord.Rest;
 using Discord.WebSocket;
 
 using DiscordBot.Common;
@@ -164,10 +165,11 @@ namespace DiscordBot
             Console.ForegroundColor = cc;
 	        return Task.CompletedTask;
         }
-
+	    
+	    private static List<Tuple<SocketGuildUser, SocketGuild>> offlineList = new List<Tuple<SocketGuildUser, SocketGuild>>();
         private static async Task Ready()
         {
-            List<Tuple<SocketGuildUser, SocketGuild>> offlineList = new List<Tuple<SocketGuildUser, SocketGuild>>();
+            
 
             await Bot.SetGameAsync(Configuration.Load().StatusText, Configuration.Load().StatusLink,
                 (ActivityType) Configuration.Load().StatusActivity);
@@ -182,68 +184,16 @@ namespace DiscordBot
 			    Console.ResetColor();
 				await new LogMessage(LogSeverity.Info, "Startup", "Attempting to load " + g.Name).PrintToConsole();
 
-				GuildConfiguration.EnsureExists(g.Id);
-
-				//todo: maybe add something like this to add guild bans to a database to be read on a website?
-//				if (g.GetUser(Bot.CurrentUser.Id).IsGuildAdministrator() || g.GetUser(Bot.CurrentUser.Id).GuildPermissions.BanMembers)
-//				{
-//					var bans = await g.GetBansAsync();
-//					foreach (IBan b in bans)
-//					{
-//						await new LogMessage(LogSeverity.Info, g.Name, "@" + b.User.Username + " | Reason: " + b.Reason).PrintToConsole();
-//					}
-//					
-//					await new LogMessage(LogSeverity.Info, "Guild Bans", "Updated Guild Bans Successfully.").PrintToConsole();
-//				}
-//				else
-//				{
-//					await new LogMessage(LogSeverity.Info, "Guild Bans", "Unable to get banned users - Bot doesn't have the required permission(s).").PrintToConsole();
-//				}
-				// end.
-
+				await ReadyAddGuildsToDatabase(g);
 				await new LogMessage(LogSeverity.Info, "Startup", "-----------------------------------------------------------------").PrintToConsole();
 
-				foreach (SocketGuildUser u in g.Users)
-				{
-					//Insert new users into the database by using INSERT IGNORE
-					List<(string, string)> queryParams = new List<(string id, string value)>()
-					{
-						("@username", u.Username),
-						("@avatarUrl", u.GetAvatarUrl())
-					};
-					
-					int rowsUpdated = DatabaseActivity.ExecuteNonQueryCommand(
-						"INSERT IGNORE INTO " +
-						"users(id,username,avatarUrl) " +
-						"VALUES (" + u.Id + ", @username, @avatarUrl);", queryParams);
-					
-					//end.
-					
-					if (rowsUpdated > 0) // If any rows were affected, add the user to the list to be dealt with later.
-					{
-						offlineList.Add(new Tuple<SocketGuildUser, SocketGuild>(u, g));
-					}
-				}
-
+				await ReadyAddChannelsToDatabase(g);
 				await new LogMessage(LogSeverity.Info, "Startup", "-----------------------------------------------------------------").PrintToConsole();
 
-			    foreach (SocketGuildChannel c in g.Channels)
-			    {
-				    //Insert new channels into the database by using INSERT IGNORE
-				    List<(string, string)> queryParams = new List<(string id, string value)>()
-				    {
-					    ("@channelName", c.Name),
-					    ("@channelType", c.GetType().Name)
-				    };
-				    
-				    int rowsUpdated = DatabaseActivity.ExecuteNonQueryCommand(
-					    "INSERT IGNORE INTO " +
-					    "channels(channelID,inGuildID,channelName,channelType) " +
-					    "VALUES (" + c.Id + ", " + g.Id + ", @channelName, @channelType);", queryParams);
-					
-				    //end.
-			    }
+				await ReadyAddUsersToDatabase(g);
+				await new LogMessage(LogSeverity.Info, "Startup", "-----------------------------------------------------------------").PrintToConsole();
 
+				await ReadyAddBansToDatabase(g);
 				await new LogMessage(LogSeverity.Info, "Startup", "-----------------------------------------------------------------").PrintToConsole();
             }
 	        
@@ -284,6 +234,116 @@ namespace DiscordBot
                 }
             }
         }
+
+	    private static async Task ReadyAddGuildsToDatabase(SocketGuild g)
+	    {
+		    SocketGuildUser gBot = g.GetUser(Bot.CurrentUser.Id);
+		    
+		    //Insert new guilds into the database by using INSERT IGNORE
+		    List<(string, string)> queryParams = new List<(string id, string value)>()
+		    {
+			    ("@guildID", g.Id.ToString()),
+			    ("@guildName", g.Name),
+			    ("@guildIcon", g.IconUrl),
+			    ("@ownedBy", g.Owner.Id.ToString()),
+			    ("@dateJoined", gBot.JoinedAt.Value.ToString()),
+			    ("@guildPrefix", "$") 
+		    };
+				    
+		    int rowsUpdated = DatabaseActivity.ExecuteNonQueryCommand(
+			    "INSERT IGNORE INTO " +
+			    "guilds(guildID,guildName,guildIcon,ownedBy,dateJoined,guildPrefix) " +
+			    "VALUES (@guildID, @guildName, @guildIcon, @ownedBy, @dateJoined, @guildPrefix);", queryParams);
+					
+		    //end.
+	    }
+	    private static async Task ReadyAddChannelsToDatabase(SocketGuild g)
+	    {
+		    foreach (SocketGuildChannel c in g.Channels)
+		    {
+			    //Insert new channels into the database by using INSERT IGNORE
+			    List<(string, string)> queryParams = new List<(string id, string value)>()
+			    {
+				    ("@channelName", c.Name),
+				    ("@channelType", c.GetType().Name)
+			    };
+				    
+			    int rowsUpdated = DatabaseActivity.ExecuteNonQueryCommand(
+				    "INSERT IGNORE INTO " +
+				    "channels(channelID,inGuildID,channelName,channelType) " +
+				    "VALUES (" + c.Id + ", " + g.Id + ", @channelName, @channelType);", queryParams);
+					
+			    //end.
+		    }
+	    }
+	    private static async Task ReadyAddUsersToDatabase(SocketGuild g)
+	    {
+		    foreach (SocketGuildUser u in g.Users)
+		    {
+			    //Insert new users into the database by using INSERT IGNORE
+			    List<(string, string)> queryParams = new List<(string id, string value)>()
+			    {
+				    ("@username", u.Username),
+				    ("@avatarUrl", u.GetAvatarUrl())
+			    };
+					
+			    int rowsUpdated = DatabaseActivity.ExecuteNonQueryCommand(
+				    "INSERT IGNORE INTO " +
+				    "users(id,username,avatarUrl) " +
+				    "VALUES (" + u.Id + ", @username, @avatarUrl);", queryParams);
+					
+			    //end.
+					
+			    if (rowsUpdated > 0) // If any rows were affected, add the user to the list to be dealt with later.
+			    {
+				    offlineList.Add(new Tuple<SocketGuildUser, SocketGuild>(u, g));
+			    }
+		    }
+	    }
+	    private static async Task ReadyAddBansToDatabase(SocketGuild g)
+	    {
+			if (g.GetUser(Bot.CurrentUser.Id).IsGuildAdministrator() || g.GetUser(Bot.CurrentUser.Id).GuildPermissions.BanMembers)
+			{
+				var bans = await g.GetBansAsync();
+				foreach (IBan b in bans)
+				{
+					(MySqlDataReader dr, MySqlConnection conn) reader = DatabaseActivity.ExecuteReader("SELECT * FROM bans WHERE issuedTo=" + b.User.Id + " AND inGuild=" + g.Id + ";");
+					int count = 0;
+            
+					while (reader.dr.Read())
+					{
+						count++;
+					}
+            
+					reader.dr.Close();
+					reader.conn.Close();
+
+					if (count == 0)
+					{
+						//Insert banned users into the database by using INSERT IGNORE
+						List<(string, string)> queryParams = new List<(string id, string value)>()
+						{
+							("@issuedTo", b.User.Id.ToString()),
+							("@issuedBy", Bot.CurrentUser.Id.ToString()), // unable to get the issuedBy user ID, so use the Bot's ID instead.
+							("@inGuild", g.Id.ToString()),
+							("@reason", b.Reason),
+							("@date", DateTime.Now.ToString("u"))
+						};
+					
+						int rowsUpdated = DatabaseActivity.ExecuteNonQueryCommand(
+							"INSERT IGNORE INTO " +
+							"bans(issuedTo,issuedBy,inGuild,banDescription,dateIssued) " +
+							"VALUES (@issuedTo, @issuedBy, @inGuild, @reason, @date);", queryParams);
+					
+						//end.
+					}
+				}
+			}
+			else
+			{
+				await new LogMessage(LogSeverity.Info, "Guild Bans", "Unable to get banned users - Bot doesn't have the required permission(s).").PrintToConsole();
+			}
+	    }
 
         private static async Task Disconnected(Exception exception)
         {
