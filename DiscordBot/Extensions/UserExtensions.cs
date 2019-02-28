@@ -170,7 +170,6 @@ namespace DiscordBot.Extensions
                     }
                     
                     var msg = await botChannel.SendMessageAsync("", false, eb.Build());
-                    //msg.DeleteAfter(300); // todo: updated from 120 to don't delete, maybe make configurable?
                 }
                 catch (Exception e)
                 {
