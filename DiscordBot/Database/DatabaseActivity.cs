@@ -237,7 +237,8 @@ namespace DiscordBot.Database
                                    "`websiteName` text COLLATE utf8mb4_unicode_ci," +
                                    "`websiteURL` text COLLATE utf8mb4_unicode_ci," +
                                    "`isBeingIgnored` char(1) NOT NULL DEFAULT 'N'," +
-                                   "PRIMARY KEY (`id`)) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;");
+                                   "PRIMARY KEY (`id`)" +
+                                   ") ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;");
 
             ExecuteNonQueryCommand("CREATE TABLE IF NOT EXISTS `guilds` (" +
                                    "`guildID` bigint(20) UNSIGNED NOT NULL," +
@@ -254,7 +255,15 @@ namespace DiscordBot.Database
                                    "`quotesEnabled` tinyint(1) NOT NULL DEFAULT '1'," +
                                    "`enableNsfwCommands` tinyint(1) NOT NULL DEFAULT '0'," +
                                    "`ruleGambleChannelID` bigint(20) UNSIGNED DEFAULT NULL," +
-                                   "PRIMARY KEY (`guildID`)) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_general_ci;");
+                                   "PRIMARY KEY (`guildID`)" +
+                                   ") ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_general_ci;");
+            
+            ExecuteNonQueryCommand("CREATE TABLE IF NOT EXISTS `channels` (" +
+                                   "`channelID` bigint(20) NOT NULL," +
+                                   "`channelName` text COLLATE utf8mb4_unicode_ci NOT NULL," +
+                                   "`awardingEXP` tinyint(1) NOT NULL DEFAULT '1'," +
+                                   "PRIMARY KEY (`channelID`)" +
+                                   ") ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;");
         }
     }
 }
