@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Discord;
 using DiscordBot.Common;
 using DiscordBot.Extensions;
@@ -208,7 +209,8 @@ namespace DiscordBot.Database
                                    "`userId` bigint(20) UNSIGNED NOT NULL, " +
                                    "`awardText` text COLLATE utf8mb4_unicode_ci NOT NULL, " +
                                    "`dateAwarded` date NOT NULL," +
-                                   "PRIMARY KEY (awardId))");
+                                   "PRIMARY KEY (awardId)" +
+                                   ") ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_general_ci;");
             
             
             ExecuteNonQueryCommand("CREATE TABLE IF NOT EXISTS `users` (" +
@@ -256,7 +258,7 @@ namespace DiscordBot.Database
                                    "`enableNsfwCommands` tinyint(1) NOT NULL DEFAULT '0'," +
                                    "`ruleGambleChannelID` bigint(20) UNSIGNED DEFAULT NULL," +
                                    "PRIMARY KEY (`guildID`)" +
-                                   ") ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_general_ci;");
+                                   ") ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_general_ci;");
             
             ExecuteNonQueryCommand("CREATE TABLE IF NOT EXISTS `channels` (" +
                                    "`channelID` bigint(20) NOT NULL," +
@@ -264,6 +266,16 @@ namespace DiscordBot.Database
                                    "`awardingEXP` tinyint(1) NOT NULL DEFAULT '1'," +
                                    "PRIMARY KEY (`channelID`)" +
                                    ") ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;");
+            
+            ExecuteNonQueryCommand("CREATE TABLE IF NOT EXISTS `bans` (" +
+                                   "`banID` int(11) NOT NULL AUTO_INCREMENT," +
+                                   "`issuedTo` bigint(20) UNSIGNED NOT NULL," +
+                                   "`issuedBy` bigint(20) UNSIGNED NOT NULL," +
+                                   "`inGuild` bigint(20) UNSIGNED NOT NULL," +
+                                   "`banDescription` text COLLATE utf8mb4_unicode_ci NOT NULL," +
+                                   "`dateIssued` datetime NOT NULL," +
+                                   "PRIMARY KEY (`banID`)" +
+                                   ") ENGINE=MyISAM AUTO_INCREMENT=8 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;");
         }
     }
 }
