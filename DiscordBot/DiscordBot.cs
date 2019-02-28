@@ -24,6 +24,7 @@ using DiscordBot.Handlers;
 using DiscordBot.Modules.Mod;
 using DiscordBot.Objects;
 using MelissaNet;
+using MySql.Data.MySqlClient;
 
 namespace DiscordBot
 {
@@ -227,7 +228,19 @@ namespace DiscordBot
 
 			    foreach (SocketGuildChannel c in g.Channels)
 			    {
-			        Channel.EnsureExists(c.Id);
+				    //Insert new users into the database by using INSERT IGNORE
+				    List<(string, string)> queryParams = new List<(string id, string value)>()
+				    {
+					    ("@channelName", c.Name),
+					    ("@channelType", c.GetType().Name)
+				    };
+				    
+				    int rowsUpdated = DatabaseActivity.ExecuteNonQueryCommand(
+					    "INSERT IGNORE INTO " +
+					    "channels(channelID,inGuildID,channelName,channelType) " +
+					    "VALUES (" + c.Id + ", " + g.Id + ", @channelName, @channelType);", queryParams);
+					
+				    //end.
 			    }
 
 				await new LogMessage(LogSeverity.Info, "Startup", "-----------------------------------------------------------------").PrintToConsole();
@@ -298,7 +311,6 @@ namespace DiscordBot
                 return;
             }
 
-	        Console.WriteLine("3");
 	        await new LogMessage(LogSeverity.Info, "MessageReceived", "[" + messageParam.Channel.GetGuild().Name + "/#" + messageParam.Channel.Name + "] " + "[@" + 
 	                                                            messageParam.Author.Username + "] : " + messageParam.Content).PrintToConsole();
 
@@ -339,10 +351,18 @@ namespace DiscordBot
                 {
 	                if (message.Content.Length >= Configuration.Load().MinLengthForEXP)
 	                {
-		                if (Channel.Load(message.Channel.Id).AwardingEXP)
+		                (MySqlDataReader dr, MySqlConnection conn) reader = DatabaseActivity.ExecuteReader("SELECT * FROM channels WHERE channelID=" + message.Channel.Id + ";");
+            
+		                while (reader.dr.Read())
 		                {
-			                message.Author.AwardEXPToUser(message.Channel.GetGuild());
+			                if ((bool)reader.dr["awardingEXP"])
+			                {
+				                message.Author.AwardEXPToUser(message.Channel.GetGuild());
+			                }
 		                }
+            
+		                reader.dr.Close();
+		                reader.conn.Close();
 	                }
                 }
             }
