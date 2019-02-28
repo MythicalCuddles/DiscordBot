@@ -60,6 +60,7 @@ namespace DiscordBot
             
             Bot.ChannelCreated += ChannelHandler.ChannelCreated;
             Bot.ChannelDestroyed += ChannelHandler.ChannelDestroyed;
+	        Bot.ChannelUpdated += ChannelHandler.ChannelUpdated;
             
             Bot.JoinedGuild += GuildHandler.JoinedGuild;
             
