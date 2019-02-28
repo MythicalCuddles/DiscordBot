@@ -228,7 +228,7 @@ namespace DiscordBot
 
 			    foreach (SocketGuildChannel c in g.Channels)
 			    {
-				    //Insert new users into the database by using INSERT IGNORE
+				    //Insert new channels into the database by using INSERT IGNORE
 				    List<(string, string)> queryParams = new List<(string id, string value)>()
 				    {
 					    ("@channelName", c.Name),
