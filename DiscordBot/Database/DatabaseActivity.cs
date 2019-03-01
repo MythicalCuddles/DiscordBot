@@ -247,7 +247,7 @@ namespace DiscordBot.Database
                                    "`guildName` text COLLATE utf8mb4_unicode_ci NOT NULL," +
                                    "`guildIcon` text COLLATE utf8mb4_unicode_ci NOT NULL," +
                                    "`ownedBy` bigint(20) UNSIGNED NOT NULL," +
-                                   "`dateJoined` date NOT NULL," +
+                                   "`dateJoined` datetime NOT NULL," +
                                    "`guildPrefix` text COLLATE utf8mb4_unicode_ci NOT NULL," +
                                    "`welcomeChannelID` bigint(20) UNSIGNED DEFAULT NULL," +
                                    "`welcomeMessage` text COLLATE utf8mb4_unicode_ci," +
