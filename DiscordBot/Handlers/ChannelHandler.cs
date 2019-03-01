@@ -88,16 +88,7 @@ namespace DiscordBot.Handlers
 			}
 			
 			SocketGuildChannel gChannel = channel as SocketGuildChannel;
-			List<(string, string)> queryParams = new List<(string id, string value)>()
-			{
-				("@channelName", gChannel.Name),
-				("@channelType", gChannel.GetType().Name)
-			};
-				    
-			int rowsUpdated = DatabaseActivity.ExecuteNonQueryCommand(
-				"INSERT IGNORE INTO " +
-				"channels(channelID,inGuildID,channelName,channelType) " +
-				"VALUES (" + gChannel.Id + ", " + gChannel.Guild.Id + ", @channelName, @channelType);", queryParams);
+			await InsertChannelToDB(gChannel);
 		}
 
 		public static async Task ChannelDestroyed(SocketChannel channel)
@@ -178,6 +169,21 @@ namespace DiscordBot.Handlers
 		public static async Task ChannelUpdated(SocketChannel arg1, SocketChannel arg2)
 		{
 			//todo: add update sql command to update the channel in the database.
+		}
+		
+		
+		public static async Task InsertChannelToDB(SocketGuildChannel c)
+		{
+			List<(string, string)> queryParams = new List<(string id, string value)>()
+			{
+				("@channelName", c.Name),
+				("@channelType", c.GetType().Name)
+			};
+				    
+			DatabaseActivity.ExecuteNonQueryCommand(
+				"INSERT IGNORE INTO " +
+				"channels(channelID,inGuildID,channelName,channelType) " +
+				"VALUES (" + c.Id + ", " + c.Guild.Id + ", @channelName, @channelType);", queryParams);
 		}
 	}
 }
