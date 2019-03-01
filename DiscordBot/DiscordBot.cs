@@ -64,6 +64,9 @@ namespace DiscordBot
 	        Bot.ChannelUpdated += ChannelHandler.ChannelUpdated;
             
             Bot.JoinedGuild += GuildHandler.JoinedGuild;
+	        Bot.LeftGuild += GuildHandler.LeftGuild;
+	        Bot.GuildUpdated += GuildHandler.GuildUpdated;
+	        Bot.GuildMemberUpdated += GuildHandler.GuildMemberUpdated;
             
             Bot.ReactionAdded += ReactionHandler.ReactionAdded;
             
