@@ -187,10 +187,15 @@ namespace DiscordBot
 			    Console.ResetColor();
 				await new LogMessage(LogSeverity.Info, "Startup", "Attempting to load " + g.Name).PrintToConsole();
 
-				await ReadyAddGuildsToDatabase(g);
+				//await ReadyAddGuildsToDatabase(g);
+				await GuildHandler.InsertGuildToDB(g);
 				await new LogMessage(LogSeverity.Info, "Startup", "-----------------------------------------------------------------").PrintToConsole();
 
-				await ReadyAddChannelsToDatabase(g);
+				//await ReadyAddChannelsToDatabase(g);
+				foreach (SocketGuildChannel c in g.Channels)
+				{
+					await ChannelHandler.InsertChannelToDB(c);
+				}
 				await new LogMessage(LogSeverity.Info, "Startup", "-----------------------------------------------------------------").PrintToConsole();
 
 				await ReadyAddUsersToDatabase(g);
@@ -237,48 +242,7 @@ namespace DiscordBot
                 }
             }
         }
-
-	    private static async Task ReadyAddGuildsToDatabase(SocketGuild g)
-	    {
-		    SocketGuildUser gBot = g.GetUser(Bot.CurrentUser.Id);
-		    
-		    //Insert new guilds into the database by using INSERT IGNORE
-		    List<(string, string)> queryParams = new List<(string id, string value)>()
-		    {
-			    ("@guildID", g.Id.ToString()),
-			    ("@guildName", g.Name),
-			    ("@guildIcon", g.IconUrl),
-			    ("@ownedBy", g.Owner.Id.ToString()),
-			    ("@dateJoined", gBot.JoinedAt.Value.ToString()),
-			    ("@guildPrefix", "$") 
-		    };
-				    
-		    int rowsUpdated = DatabaseActivity.ExecuteNonQueryCommand(
-			    "INSERT IGNORE INTO " +
-			    "guilds(guildID,guildName,guildIcon,ownedBy,dateJoined,guildPrefix) " +
-			    "VALUES (@guildID, @guildName, @guildIcon, @ownedBy, @dateJoined, @guildPrefix);", queryParams);
-					
-		    //end.
-	    }
-	    private static async Task ReadyAddChannelsToDatabase(SocketGuild g)
-	    {
-		    foreach (SocketGuildChannel c in g.Channels)
-		    {
-			    //Insert new channels into the database by using INSERT IGNORE
-			    List<(string, string)> queryParams = new List<(string id, string value)>()
-			    {
-				    ("@channelName", c.Name),
-				    ("@channelType", c.GetType().Name)
-			    };
-				    
-			    int rowsUpdated = DatabaseActivity.ExecuteNonQueryCommand(
-				    "INSERT IGNORE INTO " +
-				    "channels(channelID,inGuildID,channelName,channelType) " +
-				    "VALUES (" + c.Id + ", " + g.Id + ", @channelName, @channelType);", queryParams);
-					
-			    //end.
-		    }
-	    }
+	    
 	    private static async Task ReadyAddUsersToDatabase(SocketGuild g)
 	    {
 		    foreach (SocketGuildUser u in g.Users)
@@ -333,7 +297,7 @@ namespace DiscordBot
 							("@date", DateTime.Now.ToString("u"))
 						};
 					
-						int rowsUpdated = DatabaseActivity.ExecuteNonQueryCommand(
+						DatabaseActivity.ExecuteNonQueryCommand(
 							"INSERT IGNORE INTO " +
 							"bans(issuedTo,issuedBy,inGuild,banDescription,dateIssued) " +
 							"VALUES (@issuedTo, @issuedBy, @inGuild, @reason, @date);", queryParams);
