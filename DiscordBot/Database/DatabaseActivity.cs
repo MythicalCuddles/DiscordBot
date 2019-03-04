@@ -205,12 +205,12 @@ namespace DiscordBot.Database
         private static void CreateTablesIfNotExists()
         {
             ExecuteNonQueryCommand("CREATE TABLE IF NOT EXISTS `awards` (" +
-                                   "`awardId` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, " +
-                                   "`userId` bigint(20) UNSIGNED NOT NULL, " +
+                                   "`awardID` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, " +
+                                   "`userID` bigint(20) UNSIGNED NOT NULL, " +
                                    "`awardText` text COLLATE utf8mb4_unicode_ci NOT NULL, " +
                                    "`dateAwarded` date NOT NULL," +
                                    "PRIMARY KEY (awardId)" +
-                                   ") ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_general_ci;");
+                                   ") ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_general_ci;");
             
             
             ExecuteNonQueryCommand("CREATE TABLE IF NOT EXISTS `users` (" +
@@ -240,14 +240,14 @@ namespace DiscordBot.Database
                                    "`websiteURL` text COLLATE utf8mb4_unicode_ci," +
                                    "`isBeingIgnored` char(1) NOT NULL DEFAULT 'N'," +
                                    "PRIMARY KEY (`id`)" +
-                                   ") ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;");
+                                   ") ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;");
 
             ExecuteNonQueryCommand("CREATE TABLE IF NOT EXISTS `guilds` (" +
                                    "`guildID` bigint(20) UNSIGNED NOT NULL," +
                                    "`guildName` text COLLATE utf8mb4_unicode_ci NOT NULL," +
                                    "`guildIcon` text COLLATE utf8mb4_unicode_ci NOT NULL," +
                                    "`ownedBy` bigint(20) UNSIGNED NOT NULL," +
-                                   "`dateJoined` datetime NOT NULL," +
+                                   "`dateJoined` date NOT NULL," +
                                    "`guildPrefix` text COLLATE utf8mb4_unicode_ci NOT NULL," +
                                    "`welcomeChannelID` bigint(20) UNSIGNED DEFAULT NULL," +
                                    "`welcomeMessage` text COLLATE utf8mb4_unicode_ci," +
@@ -258,7 +258,7 @@ namespace DiscordBot.Database
                                    "`enableNsfwCommands` tinyint(1) NOT NULL DEFAULT '0'," +
                                    "`ruleGambleChannelID` bigint(20) UNSIGNED DEFAULT NULL," +
                                    "PRIMARY KEY (`guildID`)" +
-                                   ") ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_general_ci;");
+                                   ") ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_general_ci;");
             
             ExecuteNonQueryCommand("CREATE TABLE IF NOT EXISTS `channels` (" +
                                    "`channelID` bigint(20) NOT NULL," +
@@ -267,7 +267,7 @@ namespace DiscordBot.Database
                                    "`channelType` enum('SocketTextChannel','SocketVoiceChannel','SocketCategoryChannel') COLLATE utf8mb4_unicode_ci NOT NULL," +
                                    "`awardingEXP` tinyint(1) NOT NULL DEFAULT '1'," +
                                    "PRIMARY KEY (`channelID`)" +
-                                   ") ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;");
+                                   ") ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;");
             
             ExecuteNonQueryCommand("CREATE TABLE IF NOT EXISTS `bans` (" +
                                    "`banID` int(11) NOT NULL AUTO_INCREMENT," +
@@ -277,7 +277,7 @@ namespace DiscordBot.Database
                                    "`banDescription` text COLLATE utf8mb4_unicode_ci NOT NULL," +
                                    "`dateIssued` datetime NOT NULL," +
                                    "PRIMARY KEY (`banID`)" +
-                                   ") ENGINE=MyISAM AUTO_INCREMENT=8 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;");
+                                   ") ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;");
         }
     }
 }
