@@ -10,6 +10,7 @@ using DiscordBot.Database;
 using DiscordBot.Extensions;
 using DiscordBot.Objects;
 using MelissaNet;
+using MySql.Data.MySqlClient;
 
 namespace DiscordBot.Handlers
 {
@@ -138,6 +139,31 @@ namespace DiscordBot.Handlers
                 DatabaseActivity.ExecuteNonQueryCommand("UPDATE users SET username=@username, avatarUrl=@avatarUrl WHERE id='" + user.Id + "';", queryParams);
 
             }
+        }
+
+        public static async Task UserBanned(SocketUser socketUser, SocketGuild socketGuild)
+        {
+            //Insert banned users into the database by using INSERT IGNORE
+            List<(string, string)> queryParams = new List<(string id, string value)>()
+            {
+                ("@issuedTo", socketUser.Id.ToString()),
+                ("@issuedBy", DiscordBot.Bot.CurrentUser.Id.ToString()),
+                ("@inGuild", socketGuild.Id.ToString()),
+                ("@reason", socketGuild.GetBanAsync(socketUser.Id).GetAwaiter().GetResult().Reason),
+                ("@date", DateTime.Now.ToString("u"))
+            };
+
+            DatabaseActivity.ExecuteNonQueryCommand(
+                "INSERT IGNORE INTO " +
+                "bans(issuedTo,issuedBy,inGuild,banDescription,dateIssued) " +
+                "VALUES (@issuedTo, @issuedBy, @inGuild, @reason, @date);", queryParams);
+
+            //end.
+        }
+
+        public static async Task UserUnbanned(SocketUser socketUser, SocketGuild socketGuild)
+        {
+            DatabaseActivity.ExecuteNonQueryCommand("DELETE FROM bans WHERE issuedTo=" + socketUser.Id + " AND inGuild=" + socketGuild.Id + ";");
         }
     }
 }
