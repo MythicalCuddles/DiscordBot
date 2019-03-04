@@ -8,6 +8,7 @@ using Discord.WebSocket;
 using DiscordBot.Common;
 using DiscordBot.Database;
 using DiscordBot.Extensions;
+using Google.Protobuf.WellKnownTypes;
 
 namespace DiscordBot.Handlers
 {
@@ -50,17 +51,22 @@ namespace DiscordBot.Handlers
 
         public static async Task LeftGuild(SocketGuild socketGuild)
         {
-            
+            DatabaseActivity.ExecuteNonQueryCommand("DELETE FROM guilds WHERE guildID=" + socketGuild.Id + ";");
         }
 
         public static async Task GuildUpdated(SocketGuild cachedSocketGuild, SocketGuild socketGuild)
         {
-            
-        }
+            List<(string, string)> queryParams = new List<(string id, string value)>()
+            {
+                ("@guildID", socketGuild.Id.ToString()),
+                ("@guildName", socketGuild.Name),
+                ("@guildIcon", socketGuild.IconUrl),
+                ("@ownedBy", socketGuild.Owner.Id.ToString())
+            };
 
-        public static async Task GuildMemberUpdated(SocketGuildUser cachedSocketGuildUser, SocketGuildUser socketGuildUser)
-        {
-            
+            DatabaseActivity.ExecuteNonQueryCommand(
+                "UPDATE guilds SET guildName=@guildName, guildIcon=@guildIcon, ownedBy=@ownedBy WHERE guildID=@guildID",
+                queryParams);
         }
     }
 }
