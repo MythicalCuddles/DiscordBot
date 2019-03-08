@@ -255,7 +255,7 @@ namespace DiscordBot.Database
                                    "`botChannelID` bigint(20) UNSIGNED DEFAULT NULL," +
                                    "`senpaiEnabled` tinyint(1) NOT NULL DEFAULT '1'," +
                                    "`quotesEnabled` tinyint(1) NOT NULL DEFAULT '1'," +
-                                   "`enableNsfwCommands` tinyint(1) NOT NULL DEFAULT '0'," +
+                                   "`nsfwCommandsEnabled` tinyint(1) NOT NULL DEFAULT '0'," +
                                    "`ruleGambleChannelID` bigint(20) UNSIGNED DEFAULT NULL," +
                                    "PRIMARY KEY (`guildID`)" +
                                    ") ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_general_ci;");
