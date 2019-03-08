@@ -54,7 +54,11 @@ namespace DiscordBot.Common
 
         /// NSFW Variables
         public int MaxRuleXGamble { get; set; } = 2353312;
-
+        
+        /// WEB Variables
+        public string PROFILE_URL_ID_TAGGED { get; } = "https://bot.mythicalcuddles.xyz/profile.php?id=";
+        
+        
         public static void EnsureExists()
         {
             if (!System.IO.File.Exists(File))
