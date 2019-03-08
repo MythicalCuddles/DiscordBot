@@ -31,8 +31,8 @@ namespace DiscordBot.Modules.Admin
         [Command("welcome"), Summary("Send the welcome messages to the user specified.")]
         public async Task SendWelcomeMessage(SocketGuildUser user)
         {
-            await GuildConfiguration.Load(Context.Guild.Id).WelcomeChannelId.GetTextChannel().SendMessageAsync(GuildConfiguration.Load(Context.Guild.Id).WelcomeMessage.ModifyStringFlags(user));
-            await GuildConfiguration.Load(Context.Guild.Id).LogChannelId.GetTextChannel().SendMessageAsync("A welcome message for " + user.Mention + " has been posted. (Forced by: " + Context.User.Mention + ")");
+            await Guild.Load(Context.Guild.Id).WelcomeChannelID.GetTextChannel().SendMessageAsync(Guild.Load(Context.Guild.Id).WelcomeMessage.ModifyStringFlags(user));
+            await Guild.Load(Context.Guild.Id).LogChannelID.GetTextChannel().SendMessageAsync("A welcome message for " + user.Mention + " has been posted. (Forced by: " + Context.User.Mention + ")");
         }
 
         [Command("addquote"), Summary("Add a quote to the list.")]
@@ -124,7 +124,7 @@ namespace DiscordBot.Modules.Admin
             if(QuoteHandler.RequestQuoteList.Any())
             {
                 StringBuilder sb = new StringBuilder()
-                .Append("**Request Quote List** : *Page 1*\nTo accept a quote, type **" + GuildConfiguration.Load(Context.Guild.Id).Prefix + "acceptquote [id]**.\nTo reject a quote, type **" + GuildConfiguration.Load(Context.Guild.Id).Prefix + "denyquote [id]**.\n```");
+                .Append("**Request Quote List** : *Page 1*\nTo accept a quote, type **" + Guild.Load(Context.Guild.Id).Prefix + "acceptquote [id]**.\nTo reject a quote, type **" + Guild.Load(Context.Guild.Id).Prefix + "denyquote [id]**.\n```");
 
                 QuoteHandler.SpliceRequestQuotes();
                 List<string> requestQuotes = QuoteHandler.GetRequestQuotes(1);

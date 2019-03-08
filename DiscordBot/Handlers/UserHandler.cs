@@ -42,10 +42,10 @@ namespace DiscordBot.Handlers
                     ThumbnailUrl = e.GetAvatarUrl()
                 }.WithCurrentTimestamp();
 
-                if (GuildConfiguration.Load(e.Guild.Id).WelcomeMessage != null && GuildConfiguration.Load(e.Guild.Id).WelcomeChannelId != 0)
-                    await GuildConfiguration.Load(e.Guild.Id).WelcomeChannelId.GetTextChannel().SendMessageAsync(GuildConfiguration.Load(e.Guild.Id).WelcomeMessage.ModifyStringFlags(e));
+                if (Guild.Load(e.Guild.Id).WelcomeMessage != null && Guild.Load(e.Guild.Id).WelcomeChannelID != 0)
+                    await Guild.Load(e.Guild.Id).WelcomeChannelID.GetTextChannel().SendMessageAsync(Guild.Load(e.Guild.Id).WelcomeMessage.ModifyStringFlags(e));
 
-                await GuildConfiguration.Load(e.Guild.Id).LogChannelId.GetTextChannel().SendMessageAsync("", false, eb.Build());
+                await Guild.Load(e.Guild.Id).LogChannelID.GetTextChannel().SendMessageAsync("", false, eb.Build());
                 
                 EmbedBuilder lEB = new EmbedBuilder()
                 {
@@ -89,7 +89,7 @@ namespace DiscordBot.Handlers
                 if (!String.IsNullOrEmpty(e.GetGitHubUsername())) eb.AddField("GitHub", "[" + e.GetGitHubUsername() + "](https://github.com/" + e.GetGitHubUsername() + "/)", true);
                 if (!String.IsNullOrEmpty(e.GetFooterText())) eb.AddField("Footer Text", e.GetFooterText(), true);
 
-                await GuildConfiguration.Load(e.Guild.Id).LogChannelId.GetTextChannel().SendMessageAsync("", false, eb.Build());
+                await Guild.Load(e.Guild.Id).LogChannelID.GetTextChannel().SendMessageAsync("", false, eb.Build());
             }
         }
 
@@ -124,7 +124,7 @@ namespace DiscordBot.Handlers
             if (e.GetSnapchatUsername() != null) eb.AddField("Snapchat", "[" + e.GetSnapchatUsername() + "](https://www.snapchat.com/add/" + e.GetSnapchatUsername() + "/)", true);
             if (e.GetFooterText() != null) eb.AddField("Footer Text", e.GetFooterText(), true);
 
-            await GuildConfiguration.Load(e.Guild.Id).LogChannelId.GetTextChannel().SendMessageAsync("", false, eb.Build());
+            await Guild.Load(e.Guild.Id).LogChannelID.GetTextChannel().SendMessageAsync("", false, eb.Build());
         }
 
         public static async Task UserUpdated(SocketUser cachedUser, SocketUser user)

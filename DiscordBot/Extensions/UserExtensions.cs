@@ -143,8 +143,8 @@ namespace DiscordBot.Extensions
                 
                     DatabaseActivity.ExecuteNonQueryCommand("UPDATE users SET level=@level WHERE id='" + user.Id + "';", queryParams);
                     
-                    SocketTextChannel botChannel = GuildConfiguration.Load(guild.Id).BotChannelId.GetTextChannel() ??
-                                                   GuildConfiguration.Load(guild.Id).WelcomeChannelId.GetTextChannel();
+                    SocketTextChannel botChannel = Guild.Load(guild.Id).BotChannelID.GetTextChannel() ??
+                                                   Guild.Load(guild.Id).WelcomeChannelID.GetTextChannel();
                     
                     //botChannel.SendMessageAsync(user.Mention + " has leveled up to " + User.Load(user.Id).Level);
                     

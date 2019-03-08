@@ -6,6 +6,7 @@ using Discord.WebSocket;
 
 using DiscordBot.Common.Preconditions;
 using DiscordBot.Common;
+using DiscordBot.Objects;
 
 namespace DiscordBot.Modules.Admin
 {
@@ -19,7 +20,7 @@ namespace DiscordBot.Modules.Admin
         public async Task Send()
         {
             await ReplyAsync("**Syntax:** " +
-                GuildConfiguration.Load(Context.Guild.Id).Prefix + "send [type] [mention/id] [message]\n```INI\n" +
+                             Guild.Load(Context.Guild.Id).Prefix + "send [type] [mention/id] [message]\n```INI\n" +
                 "Available Commands\n" +
                 "-----------------------------\n" +
                 "[ 1] Channel Message\n" +
@@ -41,7 +42,7 @@ namespace DiscordBot.Modules.Admin
         {
             if(channel == null || message == null)
             {
-                await ReplyAsync("**Syntax:** " + GuildConfiguration.Load(Context.Guild.Id).Prefix + "send channelmessage [Channel ID] [Message]");
+                await ReplyAsync("**Syntax:** " + Guild.Load(Context.Guild.Id).Prefix + "send channelmessage [Channel ID] [Message]");
                 return;
             }
             
@@ -69,7 +70,7 @@ namespace DiscordBot.Modules.Admin
         {
             if (user == null || message == null)
             {
-                await ReplyAsync("**Syntax:** " + GuildConfiguration.Load(Context.Guild.Id).Prefix + "send privatemessage [@User] [Message]");
+                await ReplyAsync("**Syntax:** " + Guild.Load(Context.Guild.Id).Prefix + "send privatemessage [@User] [Message]");
                 return;
             }
 

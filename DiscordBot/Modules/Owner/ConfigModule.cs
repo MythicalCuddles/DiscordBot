@@ -7,6 +7,7 @@ using Discord.WebSocket;
 using DiscordBot.Common.Preconditions;
 using DiscordBot.Common;
 using DiscordBot.Extensions;
+using DiscordBot.Objects;
 using MelissaNet;
 
 namespace DiscordBot.Modules.Owner
@@ -22,7 +23,7 @@ namespace DiscordBot.Modules.Owner
             public async Task SendSyntax()
             {
                 await ReplyAsync("**Syntax:** " +
-                                 GuildConfiguration.Load(Context.Guild.Id).Prefix + "editconfig [command] [command syntax]\n```INI\n" +
+                                 Guild.Load(Context.Guild.Id).Prefix + "editconfig [command] [command syntax]\n```INI\n" +
                                  "Available Commands\n" +
                                  "-----------------------------\n" +
                                  "[ 1] activity [activity type no] [activity message] [activity link]\n" +
@@ -52,7 +53,7 @@ namespace DiscordBot.Modules.Owner
             {
                 if (activityType != -1 && activityMessage == null)
                 {
-                    await ReplyAsync("**Syntax:** " + GuildConfiguration.Load(Context.Guild.Id).Prefix + "editconfig activity [activity type no] [activity message] [activity link]\n\n" +
+                    await ReplyAsync("**Syntax:** " + Guild.Load(Context.Guild.Id).Prefix + "editconfig activity [activity type no] [activity message] [activity link]\n\n" +
                                      "```Activity Types: \n-1 - Disabled\n0 - Playing\n1 - Streaming\n2 - Listening\n3 - Watching");
                     return;
                 }
@@ -241,7 +242,7 @@ namespace DiscordBot.Modules.Owner
             public async Task SendSyntax()
             {
                 await ReplyAsync("**Syntax:** " +
-                                 GuildConfiguration.Load(Context.Guild.Id).Prefix + "editdatabase [variable] [command syntax]\n```" +
+                                 Guild.Load(Context.Guild.Id).Prefix + "editdatabase [variable] [command syntax]\n```" +
                                  "Available Commands\n" +
                                  "-----------------------------\n" +
                                  "-> editdatabase host [host address]\n" +
@@ -295,7 +296,7 @@ namespace DiscordBot.Modules.Owner
             public async Task SendSyntax()
             {
                 await ReplyAsync("**Syntax:** " +
-                                 GuildConfiguration.Load(Context.Guild.Id).Prefix + "editstring [variable] [command syntax]\n```" +
+                                 Guild.Load(Context.Guild.Id).Prefix + "editstring [variable] [command syntax]\n```" +
                                  "Available Commands\n" +
                                  "-----------------------------\n" +
                                  "-> editstring DefaultWebsiteName [name]\n" +

@@ -15,7 +15,7 @@ using Discord.WebSocket;
 using DiscordBot.Common.Preconditions;
 using DiscordBot.Common;
 using DiscordBot.Extensions;
-
+using DiscordBot.Objects;
 using HtmlAgilityPack;
 
 using MelissaNet;
@@ -38,7 +38,7 @@ namespace DiscordBot.Modules.NSFW
         [Alias("34gamble", "rule34")]
         public async Task Rule34Gamble(int postId = 0)
         {
-            if (GuildConfiguration.Load(Context.Guild.Id).EnableNsfwCommands && Context.Channel.Id == GuildConfiguration.Load(Context.Guild.Id).RuleGambleChannelId || Context.User.Id == Configuration.Load().Developer)
+            if (Guild.Load(Context.Guild.Id).NSFWCommandsEnabled && Context.Channel.Id == Guild.Load(Context.Guild.Id).RuleGambleChannelID || Context.User.Id == Configuration.Load().Developer)
             {
                 if (((SocketTextChannel) Context.Channel).IsNsfw)
                 {

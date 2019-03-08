@@ -22,7 +22,7 @@ namespace DiscordBot.Modules.Admin
         public async Task Force()
         {
             await ReplyAsync("**Syntax:** " +
-                GuildConfiguration.Load(Context.Guild.Id).Prefix + "force [command] [user mention / id] [value]\n```INI\n" +
+                             Guild.Load(Context.Guild.Id).Prefix + "force [command] [user mention / id] [value]\n```INI\n" +
                              "Available Commands\n" +
                              "------------------\n" +
                              "[ 1] force about [mention/id] [value]\n" +
