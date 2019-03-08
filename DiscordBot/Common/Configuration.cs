@@ -44,6 +44,7 @@ namespace DiscordBot.Common
         public int SenpaiChanceRate { get; set; } = 5;
         
         public ulong LogChannelId { get; set; } = 447769497344933900;
+        public ulong DefaultUndefinedChannelID { get; set; } = 447769497344933900;
 
         public int Respects { get; set; }
         public int MinLengthForEXP { get; set; }
