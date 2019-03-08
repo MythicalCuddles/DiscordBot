@@ -174,8 +174,6 @@ namespace DiscordBot
 	    private static List<Tuple<SocketGuildUser, SocketGuild>> offlineList = new List<Tuple<SocketGuildUser, SocketGuild>>();
         private static async Task Ready()
         {
-            
-
             await Bot.SetGameAsync(Configuration.Load().StatusText, Configuration.Load().StatusLink,
                 (ActivityType) Configuration.Load().StatusActivity);
 
@@ -345,7 +343,7 @@ namespace DiscordBot
 	                                                            messageParam.Author.Username + "] : " + messageParam.Content).PrintToConsole();
 
             var uPrefix = message.Author.GetCustomPrefix();
-            var gPrefix = GuildConfiguration.Load(message.Channel.GetGuild().Id).Prefix;
+            var gPrefix = Guild.Load(message.Channel.GetGuild().Id).Prefix;
             if (string.IsNullOrEmpty(uPrefix)) { uPrefix = gPrefix; } // Fixes an issue with users not receiving coins due to null prefix.
             var argPos = 0;
             if (message.HasStringPrefix(gPrefix, ref argPos) || 
