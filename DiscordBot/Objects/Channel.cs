@@ -14,11 +14,11 @@ namespace DiscordBot.Objects
             AwardingEXP = awardingEXP ?? AwardingEXP;
         }
         
-        public static Channel Load(ulong cId)
+        public static Channel Load(ulong channelID)
         {
             Channel channel = new Channel();
                 
-            (MySqlDataReader dr, MySqlConnection conn) reader = DatabaseActivity.ExecuteReader("SELECT * FROM channels WHERE channelID=" + cId + ";");
+            (MySqlDataReader dr, MySqlConnection conn) reader = DatabaseActivity.ExecuteReader("SELECT * FROM channels WHERE channelID=" + channelID + ";");
             
             while (reader.dr.Read())
             {
