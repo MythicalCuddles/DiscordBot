@@ -319,6 +319,8 @@ namespace DiscordBot.Modules.Public
             EmbedAuthorBuilder eab = new EmbedAuthorBuilder();
             if(!String.IsNullOrEmpty(userSpecified.Nickname)) eab.WithName("About " + userSpecified.Nickname);
             else eab.WithName("About " + userSpecified.Username);
+            
+            eab.WithUrl(Configuration.Load().PROFILE_URL_ID_TAGGED + userSpecified.Id);
 
             EmbedFooterBuilder efb = new EmbedFooterBuilder();
             if (userSpecified.IsTeamMember()) eab.WithIconUrl(userSpecified.GetEmbedAuthorBuilderIconUrl());
@@ -345,7 +347,7 @@ namespace DiscordBot.Modules.Public
                 eb.AddField("Pronouns", userSpecified.GetPronouns(), true);
             
             eb.AddField("Level", userSpecified.GetLevel(), true);
-            eb.AddField("EXP", userSpecified.GetEXP(), true);
+            eb.AddField("EXP", userSpecified.GetEXP() + " (" + (Math.Round(userSpecified.EXPToLevelUp()) - userSpecified.GetEXP()) + " EXP to level up)", true);
             eb.AddField("Account Created", userSpecified.UserCreateDate(), true);
             eb.AddField("Joined Guild", userSpecified.GuildJoinDate(), true);
             
@@ -369,6 +371,8 @@ namespace DiscordBot.Modules.Public
 
             if (!String.IsNullOrEmpty(userSpecified.GetCustomPrefix()))
                 eb.AddField("Custom Prefix", userSpecified.GetCustomPrefix(), true);
+            
+            eb.AddField("Profile", "[Online Profile](" + Configuration.Load().PROFILE_URL_ID_TAGGED + userSpecified.Id + ")", true);
             
             await ReplyAsync("", false, eb.Build());
         }
