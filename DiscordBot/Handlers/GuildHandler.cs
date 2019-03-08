@@ -29,6 +29,21 @@ namespace DiscordBot.Handlers
                                                               "] : Bot Joined the Guild").PrintToConsole();
         }
 
+        public static async Task LeftGuild(SocketGuild socketGuild)
+        {
+            foreach (SocketGuildChannel c in socketGuild.Channels)
+            {
+                await ChannelHandler.RemoveChannelFromDB(c);
+            }
+
+            await RemoveGuildFromDB(socketGuild);
+        }
+
+        public static async Task GuildUpdated(SocketGuild cachedSocketGuild, SocketGuild socketGuild)
+        {
+            await UpdateGuildInDB(socketGuild);
+        }
+
         public static async Task InsertGuildToDB(SocketGuild g)
         {
             SocketGuildUser gBot = g.GetUser(DiscordBot.Bot.CurrentUser.Id);
@@ -49,19 +64,19 @@ namespace DiscordBot.Handlers
                 "VALUES (@guildID, @guildName, @guildIcon, @ownedBy, @dateJoined, @guildPrefix);", queryParams);
         }
 
-        public static async Task LeftGuild(SocketGuild socketGuild)
+        private static async Task RemoveGuildFromDB(SocketGuild g)
         {
-            DatabaseActivity.ExecuteNonQueryCommand("DELETE FROM guilds WHERE guildID=" + socketGuild.Id + ";");
+            DatabaseActivity.ExecuteNonQueryCommand("DELETE FROM guilds WHERE guildID=" + g.Id + ";");
         }
 
-        public static async Task GuildUpdated(SocketGuild cachedSocketGuild, SocketGuild socketGuild)
+        private static async Task UpdateGuildInDB(SocketGuild g)
         {
             List<(string, string)> queryParams = new List<(string id, string value)>()
             {
-                ("@guildID", socketGuild.Id.ToString()),
-                ("@guildName", socketGuild.Name),
-                ("@guildIcon", socketGuild.IconUrl),
-                ("@ownedBy", socketGuild.Owner.Id.ToString())
+                ("@guildID", g.Id.ToString()),
+                ("@guildName", g.Name),
+                ("@guildIcon", g.IconUrl),
+                ("@ownedBy", g.Owner.Id.ToString())
             };
 
             DatabaseActivity.ExecuteNonQueryCommand(
