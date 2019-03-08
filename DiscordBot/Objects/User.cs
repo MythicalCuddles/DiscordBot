@@ -93,16 +93,16 @@ namespace DiscordBot.Objects
             
             while (reader.dr.Read())
             {
-                user.Level = reader.dr.GetInt32(reader.dr.GetOrdinal("level"));
-                user.EXP = reader.dr.GetInt32(reader.dr.GetOrdinal("exp"));
+                user.Level = reader.dr.GetInt32("level");
+                user.EXP = reader.dr.GetInt32("exp");
                 user.Name = reader.dr["name"].ToString();
                 user.Gender = reader.dr["gender"].ToString();
                 user.Pronouns = reader.dr["pronouns"].ToString();
                 user.About = reader.dr["about"].ToString();
                 user.CustomPrefix = reader.dr["customPrefix"].ToString();
-                user.AboutR = reader.dr.GetByte(reader.dr.GetOrdinal("aboutR"));
-                user.AboutG = reader.dr.GetByte(reader.dr.GetOrdinal("aboutG"));
-                user.AboutB = reader.dr.GetByte(reader.dr.GetOrdinal("aboutB"));
+                user.AboutR = reader.dr.GetByte("aboutR");
+                user.AboutG = reader.dr.GetByte("aboutG");
+                user.AboutB = reader.dr.GetByte("aboutB");
 
                 if (reader.dr["teamMember"].ToString().ToUpper() == "Y")
                     user.TeamMember = true;
