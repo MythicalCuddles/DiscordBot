@@ -161,14 +161,17 @@ namespace DiscordBot.Handlers
             else
 			{
 				await new LogMessage(LogSeverity.Critical, "UserExtensions", channel.Id + " type is unknown.").PrintToConsole();
+				return;
 			}
 			
-			//todo: add delete sql command to remove the channel in the database.
+			SocketGuildChannel gChannel = channel as SocketGuildChannel;
+			await RemoveChannelFromDB(gChannel);
 		}
 
 		public static async Task ChannelUpdated(SocketChannel arg1, SocketChannel arg2)
 		{
-			//todo: add update sql command to update the channel in the database.
+			SocketGuildChannel gChannel = arg2 as SocketGuildChannel;
+			await UpdateChannelInDB(gChannel);
 		}
 		
 		
@@ -184,6 +187,26 @@ namespace DiscordBot.Handlers
 				"INSERT IGNORE INTO " +
 				"channels(channelID,inGuildID,channelName,channelType) " +
 				"VALUES (" + c.Id + ", " + c.Guild.Id + ", @channelName, @channelType);", queryParams);
+		}
+
+		public static async Task RemoveChannelFromDB(SocketGuildChannel c)
+		{
+			DatabaseActivity.ExecuteNonQueryCommand(
+				"DELETE FROM channels WHERE channelID=" + c.Id + ";");
+		}
+
+		private static async Task UpdateChannelInDB(SocketGuildChannel updatedChannel)
+		{
+			List<(string, string)> queryParams = new List<(string id, string value)>()
+			{
+				("@channelID", updatedChannel.Id.ToString()),
+				("@channelName", updatedChannel.Name),
+				("@channelType", updatedChannel.GetType().Name)
+			};
+
+			DatabaseActivity.ExecuteNonQueryCommand(
+				"UPDATE guilds SET channelName=@channelName, channelType=@channelType WHERE channelID=@channelID",
+				queryParams);
 		}
 	}
 }
