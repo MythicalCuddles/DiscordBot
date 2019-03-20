@@ -174,6 +174,8 @@ namespace DiscordBot
 	    private static List<Tuple<SocketGuildUser, SocketGuild>> offlineList = new List<Tuple<SocketGuildUser, SocketGuild>>();
         private static async Task Ready()
         {
+			List<ulong> guildsInDatabase = new List<ulong>();
+	    
             await Bot.SetGameAsync(Configuration.Load().StatusText, Configuration.Load().StatusLink,
                 (ActivityType) Configuration.Load().StatusActivity);
 
@@ -181,14 +183,22 @@ namespace DiscordBot
 
 			ModeratorModule.ActiveForDateTime = DateTime.Now;
 
+	        
+	        (MySqlDataReader dr, MySqlConnection conn) reader = DatabaseActivity.ExecuteReader("SELECT * FROM guilds;");
+	        while (reader.dr.Read())
+	        {
+		        ulong id = reader.dr.GetUInt64("guildID");
+		        guildsInDatabase.Add(id);
+	        }
+	        
 	        await new LogMessage(LogSeverity.Info, "Startup", "-----------------------------------------------------------------").PrintToConsole();
 			foreach (SocketGuild g in Bot.Guilds)
 			{
 			    Console.ResetColor();
 				await new LogMessage(LogSeverity.Info, "Startup", "Attempting to load " + g.Name).PrintToConsole();
 
-				//await ReadyAddGuildsToDatabase(g);
 				await GuildHandler.InsertGuildToDB(g);
+				guildsInDatabase.Remove(g.Id);
 				await new LogMessage(LogSeverity.Info, "Startup", "-----------------------------------------------------------------").PrintToConsole();
 
 				//await ReadyAddChannelsToDatabase(g);
@@ -204,6 +214,13 @@ namespace DiscordBot
 				await ReadyAddBansToDatabase(g);
 				await new LogMessage(LogSeverity.Info, "Startup", "-----------------------------------------------------------------").PrintToConsole();
             }
+
+	        foreach (ulong id in guildsInDatabase)
+	        {
+		        await GuildHandler.RemoveGuildFromDB(id.GetGuild());
+		        DatabaseActivity.ExecuteNonQueryCommand("DELETE FROM channels WHERE inGuildID=" + id);
+		        Console.WriteLine(id + " has been removed from the database.");
+	        }
 	        
             if (offlineList.Any())
             {
