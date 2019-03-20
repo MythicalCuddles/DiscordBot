@@ -70,7 +70,7 @@ namespace DiscordBot.Handlers
             }
         }
 
-        private static async Task RemoveGuildFromDB(SocketGuild g)
+        public static async Task RemoveGuildFromDB(SocketGuild g)
         {
             DatabaseActivity.ExecuteNonQueryCommand("DELETE FROM guilds WHERE guildID=" + g.Id + ";");
         }
