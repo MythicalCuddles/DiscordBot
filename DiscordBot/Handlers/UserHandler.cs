@@ -50,7 +50,7 @@ namespace DiscordBot.Handlers
                 EmbedBuilder lEB = new EmbedBuilder()
                 {
                     Title = "New User - " + e.Username,
-                    Description = e.Id + ".json created successfully.",
+                    Description = e.Id + " added to the database successfully.",
                     Color = new Color(28, 255, 28),
                     ThumbnailUrl = e.GetAvatarUrl()
                 }.WithCurrentTimestamp();
@@ -65,7 +65,7 @@ namespace DiscordBot.Handlers
                     Title = e.Guild.Name + " - User Joined - " + e.Username,
                     Description = "",
                     ThumbnailUrl = e.GetAvatarUrl(),
-                    Color = new Color(255, 28, 28),
+                    Color = new Color(28, 255, 28),
                     Footer = new EmbedFooterBuilder()
                     {
                         Text = "ID: " + e.Id + " • Team Member: " + e.IsTeamMember().ToYesNo()
