@@ -32,7 +32,7 @@ namespace DiscordBot.Handlers
 					
             //end.
             
-            if (rowsUpdated == 0)
+            if (rowsUpdated == 1)
             {
                 EmbedBuilder eb = new EmbedBuilder()
                 {
@@ -41,11 +41,11 @@ namespace DiscordBot.Handlers
                     Color = new Color(28, 255, 28),
                     ThumbnailUrl = e.GetAvatarUrl()
                 }.WithCurrentTimestamp();
+                await Guild.Load(e.Guild.Id).LogChannelID.GetTextChannel().SendMessageAsync("", false, eb.Build());
 
                 if (Guild.Load(e.Guild.Id).WelcomeMessage != null && Guild.Load(e.Guild.Id).WelcomeChannelID != 0)
                     await Guild.Load(e.Guild.Id).WelcomeChannelID.GetTextChannel().SendMessageAsync(Guild.Load(e.Guild.Id).WelcomeMessage.ModifyStringFlags(e));
-
-                await Guild.Load(e.Guild.Id).LogChannelID.GetTextChannel().SendMessageAsync("", false, eb.Build());
+                
                 
                 EmbedBuilder lEB = new EmbedBuilder()
                 {
