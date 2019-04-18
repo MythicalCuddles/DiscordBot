@@ -83,12 +83,12 @@ namespace DiscordBot.Modules.Public
             if (isGuild)
             {
                 eb.WithAuthor("Guild Leaderboard - Top " + listAmount + "");
-                eb.WithFooter("Did you know? You can do \"" + GuildConfiguration.Load(context.Guild.Id).Prefix + "leaderboard global\" to see the global leaderboard!");
+                eb.WithFooter("Did you know? You can do \"" + Guild.Load(context.Guild.Id).Prefix + "leaderboard global\" to see the global leaderboard!");
             }
             else
             {
                 eb.WithAuthor("Global Leaderboard - Top " + listAmount + "");
-                eb.WithFooter("Did you know? You can do \"" + GuildConfiguration.Load(context.Guild.Id).Prefix + "leaderboard guild\" to see the guild leaderboard!");
+                eb.WithFooter("Did you know? You can do \"" + Guild.Load(context.Guild.Id).Prefix + "leaderboard guild\" to see the guild leaderboard!");
             }
 
             Console.WriteLine("2");

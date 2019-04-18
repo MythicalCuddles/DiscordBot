@@ -23,7 +23,7 @@ namespace DiscordBot.Modules.TeamMember
         {
             if (message == null)
             {
-                await ReplyAsync("**Syntax:** " + GuildConfiguration.Load(Context.Guild.Id).Prefix + "globalmessage [message]\n" + 
+                await ReplyAsync("**Syntax:** " + Guild.Load(Context.Guild.Id).Prefix + "globalmessage [message]\n" + 
                                  "This will post an embed message to all guilds. It's main purpose is to inform guild owners of updates and changes.");
                 return;
             }
@@ -37,7 +37,7 @@ namespace DiscordBot.Modules.TeamMember
 
             foreach (SocketGuild g in DiscordBot.Bot.Guilds)
             {
-                await GuildConfiguration.Load(g.Id).LogChannelId.GetTextChannel().SendMessageAsync("", false, eb.Build());
+                await Guild.Load(g.Id).LogChannelID.GetTextChannel().SendMessageAsync("", false, eb.Build());
             }
 
             await Configuration.Load().LogChannelId.GetTextChannel().SendMessageAsync("", false, eb.WithFooter("Message sent to all guilds").Build());

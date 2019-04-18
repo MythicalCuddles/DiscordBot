@@ -10,6 +10,7 @@ using DiscordBot.Database;
 using DiscordBot.Extensions;
 using DiscordBot.Objects;
 using MelissaNet;
+using MySql.Data.MySqlClient;
 
 namespace DiscordBot.Handlers
 {
@@ -31,7 +32,7 @@ namespace DiscordBot.Handlers
 					
             //end.
             
-            if (rowsUpdated == 0)
+            if (rowsUpdated == 1)
             {
                 EmbedBuilder eb = new EmbedBuilder()
                 {
@@ -40,16 +41,16 @@ namespace DiscordBot.Handlers
                     Color = new Color(28, 255, 28),
                     ThumbnailUrl = e.GetAvatarUrl()
                 }.WithCurrentTimestamp();
+                await Guild.Load(e.Guild.Id).LogChannelID.GetTextChannel().SendMessageAsync("", false, eb.Build());
 
-                if (GuildConfiguration.Load(e.Guild.Id).WelcomeMessage != null && GuildConfiguration.Load(e.Guild.Id).WelcomeChannelId != 0)
-                    await GuildConfiguration.Load(e.Guild.Id).WelcomeChannelId.GetTextChannel().SendMessageAsync(GuildConfiguration.Load(e.Guild.Id).WelcomeMessage.ModifyStringFlags(e));
-
-                await GuildConfiguration.Load(e.Guild.Id).LogChannelId.GetTextChannel().SendMessageAsync("", false, eb.Build());
+                if (Guild.Load(e.Guild.Id).WelcomeMessage != null && Guild.Load(e.Guild.Id).WelcomeChannelID != 0)
+                    await Guild.Load(e.Guild.Id).WelcomeChannelID.GetTextChannel().SendMessageAsync(Guild.Load(e.Guild.Id).WelcomeMessage.ModifyStringFlags(e));
+                
                 
                 EmbedBuilder lEB = new EmbedBuilder()
                 {
                     Title = "New User - " + e.Username,
-                    Description = e.Id + ".json created successfully.",
+                    Description = e.Id + " added to the database successfully.",
                     Color = new Color(28, 255, 28),
                     ThumbnailUrl = e.GetAvatarUrl()
                 }.WithCurrentTimestamp();
@@ -64,7 +65,7 @@ namespace DiscordBot.Handlers
                     Title = e.Guild.Name + " - User Joined - " + e.Username,
                     Description = "",
                     ThumbnailUrl = e.GetAvatarUrl(),
-                    Color = new Color(255, 28, 28),
+                    Color = new Color(28, 255, 28),
                     Footer = new EmbedFooterBuilder()
                     {
                         Text = "ID: " + e.Id + " • Team Member: " + e.IsTeamMember().ToYesNo()
@@ -88,7 +89,7 @@ namespace DiscordBot.Handlers
                 if (!String.IsNullOrEmpty(e.GetGitHubUsername())) eb.AddField("GitHub", "[" + e.GetGitHubUsername() + "](https://github.com/" + e.GetGitHubUsername() + "/)", true);
                 if (!String.IsNullOrEmpty(e.GetFooterText())) eb.AddField("Footer Text", e.GetFooterText(), true);
 
-                await GuildConfiguration.Load(e.Guild.Id).LogChannelId.GetTextChannel().SendMessageAsync("", false, eb.Build());
+                await Guild.Load(e.Guild.Id).LogChannelID.GetTextChannel().SendMessageAsync("", false, eb.Build());
             }
         }
 
@@ -123,7 +124,7 @@ namespace DiscordBot.Handlers
             if (e.GetSnapchatUsername() != null) eb.AddField("Snapchat", "[" + e.GetSnapchatUsername() + "](https://www.snapchat.com/add/" + e.GetSnapchatUsername() + "/)", true);
             if (e.GetFooterText() != null) eb.AddField("Footer Text", e.GetFooterText(), true);
 
-            await GuildConfiguration.Load(e.Guild.Id).LogChannelId.GetTextChannel().SendMessageAsync("", false, eb.Build());
+            await Guild.Load(e.Guild.Id).LogChannelID.GetTextChannel().SendMessageAsync("", false, eb.Build());
         }
 
         public static async Task UserUpdated(SocketUser cachedUser, SocketUser user)
@@ -138,6 +139,31 @@ namespace DiscordBot.Handlers
                 DatabaseActivity.ExecuteNonQueryCommand("UPDATE users SET username=@username, avatarUrl=@avatarUrl WHERE id='" + user.Id + "';", queryParams);
 
             }
+        }
+
+        public static async Task UserBanned(SocketUser socketUser, SocketGuild socketGuild)
+        {
+            //Insert banned users into the database by using INSERT IGNORE
+            List<(string, string)> queryParams = new List<(string id, string value)>()
+            {
+                ("@issuedTo", socketUser.Id.ToString()),
+                ("@issuedBy", DiscordBot.Bot.CurrentUser.Id.ToString()),
+                ("@inGuild", socketGuild.Id.ToString()),
+                ("@reason", socketGuild.GetBanAsync(socketUser.Id).GetAwaiter().GetResult().Reason),
+                ("@date", DateTime.Now.ToString("u"))
+            };
+
+            DatabaseActivity.ExecuteNonQueryCommand(
+                "INSERT IGNORE INTO " +
+                "bans(issuedTo,issuedBy,inGuild,banDescription,dateIssued) " +
+                "VALUES (@issuedTo, @issuedBy, @inGuild, @reason, @date);", queryParams);
+
+            //end.
+        }
+
+        public static async Task UserUnbanned(SocketUser socketUser, SocketGuild socketGuild)
+        {
+            DatabaseActivity.ExecuteNonQueryCommand("DELETE FROM bans WHERE issuedTo=" + socketUser.Id + " AND inGuild=" + socketGuild.Id + ";");
         }
     }
 }

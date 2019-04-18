@@ -44,6 +44,7 @@ namespace DiscordBot.Common
         public int SenpaiChanceRate { get; set; } = 5;
         
         public ulong LogChannelId { get; set; } = 447769497344933900;
+        public ulong DefaultUndefinedChannelID { get; set; } = 447769497344933900;
 
         public int Respects { get; set; }
         public int MinLengthForEXP { get; set; }
@@ -53,7 +54,11 @@ namespace DiscordBot.Common
 
         /// NSFW Variables
         public int MaxRuleXGamble { get; set; } = 2353312;
-
+        
+        /// WEB Variables
+        public string PROFILE_URL_ID_TAGGED { get; } = "https://bot.mythicalcuddles.xyz/profile.php?id=";
+        
+        
         public static void EnsureExists()
         {
             if (!System.IO.File.Exists(File))

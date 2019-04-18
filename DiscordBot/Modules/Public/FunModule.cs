@@ -47,7 +47,7 @@ namespace DiscordBot.Modules.Public
 
             eb.AddField("Sum of roll", totalOfRoll);
             eb.WithFooter("Did you know? You can roll more dice by doing \"" +
-                          GuildConfiguration.Load(Context.Guild.Id).Prefix + "rolldice [number of dice]\"!");
+                          Guild.Load(Context.Guild.Id).Prefix + "rolldice [number of dice]\"!");
 
             await ReplyAsync("", false, eb.Build());
         }
@@ -146,7 +146,7 @@ namespace DiscordBot.Modules.Public
         [Command("noticeme"), Summary("Will Senpai notice you?")]
         public async Task Senpai()
         {
-            if (GuildConfiguration.Load(Context.Guild.Id).SenpaiEnabled)
+            if (Guild.Load(Context.Guild.Id).SenpaiEnabled)
             {
                 if (_random.RandomNumber(0, 100) <= Configuration.Load().SenpaiChanceRate)
                 {
@@ -166,7 +166,7 @@ namespace DiscordBot.Modules.Public
         [Command("quote"), Summary("Get a random quote from the list.")]
         public async Task GenerateQuote()
         {
-            if (GuildConfiguration.Load(Context.Guild.Id).QuotesEnabled)
+            if (Guild.Load(Context.Guild.Id).QuotesEnabled)
             {
                 int generatedNumber = _random.Next(0, QuoteHandler.QuoteList.Count);
 
@@ -181,7 +181,7 @@ namespace DiscordBot.Modules.Public
         [Command("buyquote"), Summary("Request a quote to be added for a price.")]
         public async Task RequestToAddQuote([Remainder]string quote = null)
 		{
-		    if (GuildConfiguration.Load(Context.Guild.Id).QuotesEnabled)
+		    if (Guild.Load(Context.Guild.Id).QuotesEnabled)
 		    {
 		        int userLevel = User.Load(Context.User.Id).Level;
 		        int quoteLevelRequirement = Configuration.Load().QuoteLevelRequirement;
@@ -196,7 +196,7 @@ namespace DiscordBot.Modules.Public
                 if (quote == null)
 		        {
 		            await ReplyAsync("**Syntax:** " +
-		                             GuildConfiguration.Load(Context.Guild.Id).Prefix + "buyquote [quote]\n```" +
+		                             Guild.Load(Context.Guild.Id).Prefix + "buyquote [quote]\n```" +
 		                             "**Information:**\n" +
 		                             "-----------------------------\n" +
 		                             "• Your quote will not be added instantly to the list. A staff member must first verify that it is safe to put on the list.\n" +
@@ -208,7 +208,7 @@ namespace DiscordBot.Modules.Public
 		        await ReplyAsync(Context.User.Mention + ", your quote has been added to the list, and should be verified by a staff member shortly.");
 
 		        await Configuration.Load().LogChannelId.GetTextChannel().SendMessageAsync("**New Quote**\nQuote requested by: **" + Context.User.Mention + "**\nQuote: " + quote);
-		        await GuildConfiguration.Load(Context.Guild.Id).LogChannelId.GetTextChannel().SendMessageAsync("**New Quote**\n" + quote + "\n\n*Do " + GuildConfiguration.Load(Context.Guild.Id).Prefix + "listrequestquotes to view the ID and other quotes.*");
+		        await Guild.Load(Context.Guild.Id).LogChannelID.GetTextChannel().SendMessageAsync("**New Quote**\n" + quote + "\n\n*Do " + Guild.Load(Context.Guild.Id).Prefix + "listrequestquotes to view the ID and other quotes.*");
             }
 		    else
 		    {

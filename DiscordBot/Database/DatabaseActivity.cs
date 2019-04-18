@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Discord;
 using DiscordBot.Common;
 using DiscordBot.Extensions;
@@ -193,10 +194,8 @@ namespace DiscordBot.Database
 
         private static void CreateDatabaseIfNotExists()
         {
-            ExecuteNonQueryCommand(string.Format("CREATE DATABASE IF NOT EXISTS {0};", Configuration.Load().DatabaseName));
-            ExecuteNonQueryCommand(string.Format(
-                "ALTER DATABASE {0} CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci;",
-                Configuration.Load().DatabaseName)); // set the charset of the database to allow for 
+            ExecuteNonQueryCommand(string.Format("CREATE DATABASE IF NOT EXISTS {0} CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci;", Configuration.Load().DatabaseName));
+            //ExecuteNonQueryCommand(string.Format("ALTER DATABASE {0} CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci;", Configuration.Load().DatabaseName)); // set the charset of the database to allow for 
             
             databaseExists = true;
         }
@@ -204,40 +203,79 @@ namespace DiscordBot.Database
         private static void CreateTablesIfNotExists()
         {
             ExecuteNonQueryCommand("CREATE TABLE IF NOT EXISTS `awards` (" +
-                                   "`awardId` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, " +
-                                   "`userId` bigint(20) UNSIGNED NOT NULL, " +
-                                   "`awardText` text CHARACTER SET utf8 COLLATE utf8_bin NOT NULL, " +
+                                   "`awardID` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, " +
+                                   "`userID` bigint(20) UNSIGNED NOT NULL, " +
+                                   "`awardText` text COLLATE utf8mb4_unicode_ci NOT NULL, " +
                                    "`dateAwarded` date NOT NULL," +
-                                   "PRIMARY KEY (awardId))");
+                                   "PRIMARY KEY (awardId)" +
+                                   ") ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_general_ci;");
             
             
             ExecuteNonQueryCommand("CREATE TABLE IF NOT EXISTS `users` (" +
                                    "`id` bigint(20) UNSIGNED NOT NULL," +
-                                   "`username` text CHARACTER SET utf8 NOT NULL," +
-                                   "`avatarUrl` text CHARACTER SET utf8," +
+                                   "`username` text COLLATE utf8mb4_unicode_ci NOT NULL," +
+                                   "`avatarUrl` text COLLATE utf8mb4_unicode_ci," +
                                    "`level` int(10) UNSIGNED NOT NULL DEFAULT '0'," +
                                    "`exp` int(10) UNSIGNED NOT NULL DEFAULT '0'," +
-                                   "`name` text CHARACTER SET utf8," +
-                                   "`gender` text CHARACTER SET utf8," +
-                                   "`pronouns` text CHARACTER SET utf8," +
-                                   "`about` text CHARACTER SET utf8," +
-                                   "`customPrefix` text CHARACTER SET utf8," +
+                                   "`name` text COLLATE utf8mb4_unicode_ci," +
+                                   "`gender` text COLLATE utf8mb4_unicode_ci," +
+                                   "`pronouns` text COLLATE utf8mb4_unicode_ci," +
+                                   "`about` text COLLATE utf8mb4_unicode_ci," +
+                                   "`customPrefix` text COLLATE utf8mb4_unicode_ci," +
                                    "`aboutR` tinyint(3) UNSIGNED NOT NULL DEFAULT '140'," +
                                    "`aboutG` tinyint(3) UNSIGNED NOT NULL DEFAULT '90'," +
                                    "`aboutB` tinyint(3) UNSIGNED NOT NULL DEFAULT '210'," +
-                                   "`teamMember` char(1) CHARACTER SET utf8 NOT NULL DEFAULT 'N'," +
-                                   "`authorIconURL` text CHARACTER SET utf8," +
-                                   "`footerIconURL` text CHARACTER SET utf8," +
-                                   "`footerText` text CHARACTER SET utf8," +
-                                   "`pokemonGoFriendCode` text CHARACTER SET utf8," +
-                                   "`minecraftUsername` text CHARACTER SET utf8," +
-                                   "`snapchatUsername` text CHARACTER SET utf8," +
-                                   "`instagramUsername` text CHARACTER SET utf8," +
-                                   "`githubUsername` text CHARACTER SET utf8," +
-                                   "`websiteName` text CHARACTER SET utf8," +
-                                   "`websiteURL` text CHARACTER SET utf8," +
+                                   "`teamMember` char(1) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'N'," +
+                                   "`authorIconURL` text COLLATE utf8mb4_unicode_ci," +
+                                   "`footerIconURL` text COLLATE utf8mb4_unicode_ci," +
+                                   "`footerText` text COLLATE utf8mb4_unicode_ci," +
+                                   "`pokemonGoFriendCode` text COLLATE utf8mb4_unicode_ci," +
+                                   "`minecraftUsername` text COLLATE utf8mb4_unicode_ci," +
+                                   "`snapchatUsername` text COLLATE utf8mb4_unicode_ci," +
+                                   "`instagramUsername` text COLLATE utf8mb4_unicode_ci," +
+                                   "`githubUsername` text COLLATE utf8mb4_unicode_ci," +
+                                   "`websiteName` text COLLATE utf8mb4_unicode_ci," +
+                                   "`websiteURL` text COLLATE utf8mb4_unicode_ci," +
                                    "`isBeingIgnored` char(1) NOT NULL DEFAULT 'N'," +
-                                   "PRIMARY KEY (`id`)) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_general_ci;");
+                                   "PRIMARY KEY (`id`)" +
+                                   ") ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;");
+
+            ExecuteNonQueryCommand("CREATE TABLE IF NOT EXISTS `guilds` (" +
+                                   "`guildID` bigint(20) UNSIGNED NOT NULL," +
+                                   "`guildName` text COLLATE utf8mb4_unicode_ci NOT NULL," +
+                                   "`guildIcon` text COLLATE utf8mb4_unicode_ci NOT NULL," +
+                                   "`ownedBy` bigint(20) UNSIGNED NOT NULL," +
+                                   "`dateJoined` date NOT NULL," +
+                                   "`guildPrefix` text COLLATE utf8mb4_unicode_ci NOT NULL," +
+                                   "`welcomeChannelID` bigint(20) UNSIGNED DEFAULT NULL," +
+                                   "`welcomeMessage` text COLLATE utf8mb4_unicode_ci," +
+                                   "`logChannelID` bigint(20) UNSIGNED DEFAULT NULL," +
+                                   "`botChannelID` bigint(20) UNSIGNED DEFAULT NULL," +
+                                   "`senpaiEnabled` tinyint(1) NOT NULL DEFAULT '1'," +
+                                   "`quotesEnabled` tinyint(1) NOT NULL DEFAULT '1'," +
+                                   "`nsfwCommandsEnabled` tinyint(1) NOT NULL DEFAULT '0'," +
+                                   "`ruleGambleChannelID` bigint(20) UNSIGNED DEFAULT NULL," +
+                                   "PRIMARY KEY (`guildID`)" +
+                                   ") ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_general_ci;");
+            
+            ExecuteNonQueryCommand("CREATE TABLE IF NOT EXISTS `channels` (" +
+                                   "`channelID` bigint(20) NOT NULL," +
+                                   "`inGuildID` bigint(20) NOT NULL," +
+                                   "`channelName` text COLLATE utf8mb4_unicode_ci NOT NULL," +
+                                   "`channelType` enum('SocketTextChannel','SocketVoiceChannel','SocketCategoryChannel') COLLATE utf8mb4_unicode_ci NOT NULL," +
+                                   "`awardingEXP` tinyint(1) NOT NULL DEFAULT '1'," +
+                                   "PRIMARY KEY (`channelID`)" +
+                                   ") ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;");
+            
+            ExecuteNonQueryCommand("CREATE TABLE IF NOT EXISTS `bans` (" +
+                                   "`banID` int(11) NOT NULL AUTO_INCREMENT," +
+                                   "`issuedTo` bigint(20) UNSIGNED NOT NULL," +
+                                   "`issuedBy` bigint(20) UNSIGNED NOT NULL," +
+                                   "`inGuild` bigint(20) UNSIGNED NOT NULL," +
+                                   "`banDescription` text COLLATE utf8mb4_unicode_ci NOT NULL," +
+                                   "`dateIssued` datetime NOT NULL," +
+                                   "PRIMARY KEY (`banID`)" +
+                                   ") ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;");
         }
     }
 }

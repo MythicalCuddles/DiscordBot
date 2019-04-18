@@ -7,6 +7,7 @@ using Discord.Commands;
 
 using DiscordBot.Common;
 using DiscordBot.Common.Preconditions;
+using DiscordBot.Objects;
 
 namespace DiscordBot.Modules.Public
 {
@@ -29,7 +30,7 @@ namespace DiscordBot.Modules.Public
         {
             if(command == null)
             {
-                string prefix = GuildConfiguration.Load(Context.Guild.Id).Prefix;
+                string prefix = Guild.Load(Context.Guild.Id).Prefix;
                 var builder = new EmbedBuilder()
                 {
                     Color = new Color(114, 137, 218),
@@ -79,7 +80,7 @@ namespace DiscordBot.Modules.Public
                     return;
                 }
 
-                string prefix = GuildConfiguration.Load(Context.Guild.Id).Prefix;
+                string prefix = Guild.Load(Context.Guild.Id).Prefix;
                 var builder = new EmbedBuilder()
                 {
                     Color = new Color(114, 137, 218),

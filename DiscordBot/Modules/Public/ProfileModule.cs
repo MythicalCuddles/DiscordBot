@@ -30,7 +30,7 @@ namespace DiscordBot.Modules.Public
             public async Task SendSyntax()
             {
                 await ReplyAsync("**Syntax:** " +
-                                 GuildConfiguration.Load(Context.Guild.Id).Prefix + "editprofile [command] [value]\n```INI\n" +
+                                 Guild.Load(Context.Guild.Id).Prefix + "editprofile [command] [value]\n```INI\n" +
                                  "Available Commands\n" +
                                  "-----------------------------\n" +
                                  "[ 1] editprofile name [value]\n" +
@@ -113,7 +113,7 @@ namespace DiscordBot.Modules.Public
             {
                 if (prefix == null)
                 {
-                    await ReplyAsync("**Syntax:** " + GuildConfiguration.Load(Context.Guild.Id).Prefix + "editprofile customprefix [prefix]\n\n`This feature requires you to be level " + Configuration.Load().PrefixLevelRequirement + "!`");
+                    await ReplyAsync("**Syntax:** " + Guild.Load(Context.Guild.Id).Prefix + "editprofile customprefix [prefix]\n\n`This feature requires you to be level " + Configuration.Load().PrefixLevelRequirement + "!`");
                     return;
                 }
                 
@@ -127,7 +127,7 @@ namespace DiscordBot.Modules.Public
                     };
                     DatabaseActivity.ExecuteNonQueryCommand("UPDATE users SET customPrefix=@customPrefix WHERE id='" + Context.User.Id + "';", queryParams);
 
-                    await ReplyAsync(Context.User.Mention + ", you have set `" + prefix + "` as a custom prefix for yourself. Please do take note that the following prefixes will work for you:\n```KEY: [Prefix][Command]\n" + prefix + " - User Set Prefix\n" + GuildConfiguration.Load(Context.Guild.Id).Prefix + " - Guild Set Prefix\n@" + DiscordBot.Bot.CurrentUser.Username + " - Global Prefix```");
+                    await ReplyAsync(Context.User.Mention + ", you have set `" + prefix + "` as a custom prefix for yourself. Please do take note that the following prefixes will work for you:\n```KEY: [Prefix][Command]\n" + prefix + " - User Set Prefix\n" + Guild.Load(Context.Guild.Id).Prefix + " - Guild Set Prefix\n@" + DiscordBot.Bot.CurrentUser.Username + " - Global Prefix```");
                 }
                 else
                 {
@@ -141,7 +141,7 @@ namespace DiscordBot.Modules.Public
                 if (r < 0 || r > 255 || g < 0 || g > 255 || b < 0 || b > 255)
                 {
                     await ReplyAsync(Context.User.Mention + ", you have entered an invalid value. You can use this website to help get your RGB values - <http://www.colorhexa.com/>\n\n" +
-                        "**Syntax:** " + GuildConfiguration.Load(Context.Guild.Id).Prefix + "editprofile customrgb [R value] [G value] [B value]\n**Example:** " + GuildConfiguration.Load(Context.Guild.Id).Prefix + "setcustomrgb 140 90 210");
+                        "**Syntax:** " + Guild.Load(Context.Guild.Id).Prefix + "editprofile customrgb [R value] [G value] [B value]\n**Example:** " + Guild.Load(Context.Guild.Id).Prefix + "setcustomrgb 140 90 210");
                     return;
                 }
 
@@ -319,6 +319,8 @@ namespace DiscordBot.Modules.Public
             EmbedAuthorBuilder eab = new EmbedAuthorBuilder();
             if(!String.IsNullOrEmpty(userSpecified.Nickname)) eab.WithName("About " + userSpecified.Nickname);
             else eab.WithName("About " + userSpecified.Username);
+            
+            eab.WithUrl(Configuration.Load().PROFILE_URL_ID_TAGGED + userSpecified.Id);
 
             EmbedFooterBuilder efb = new EmbedFooterBuilder();
             if (userSpecified.IsTeamMember()) eab.WithIconUrl(userSpecified.GetEmbedAuthorBuilderIconUrl());
@@ -345,7 +347,7 @@ namespace DiscordBot.Modules.Public
                 eb.AddField("Pronouns", userSpecified.GetPronouns(), true);
             
             eb.AddField("Level", userSpecified.GetLevel(), true);
-            eb.AddField("EXP", userSpecified.GetEXP(), true);
+            eb.AddField("EXP", userSpecified.GetEXP() + " (" + (Math.Round(userSpecified.EXPToLevelUp()) - userSpecified.GetEXP()) + " EXP to level up)", true);
             eb.AddField("Account Created", userSpecified.UserCreateDate(), true);
             eb.AddField("Joined Guild", userSpecified.GuildJoinDate(), true);
             
@@ -369,6 +371,8 @@ namespace DiscordBot.Modules.Public
 
             if (!String.IsNullOrEmpty(userSpecified.GetCustomPrefix()))
                 eb.AddField("Custom Prefix", userSpecified.GetCustomPrefix(), true);
+            
+            eb.AddField("Profile", "[Online Profile](" + Configuration.Load().PROFILE_URL_ID_TAGGED + userSpecified.Id + ")", true);
             
             await ReplyAsync("", false, eb.Build());
         }

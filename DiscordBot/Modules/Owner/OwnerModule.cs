@@ -61,7 +61,7 @@ namespace DiscordBot.Modules.Owner
         {
             if(user == null || footer == null)
             {
-                await ReplyAsync("**Syntax:** " + GuildConfiguration.Load(Context.Guild.Id).Prefix + "editfooter [@User] [Footer]");
+                await ReplyAsync("**Syntax:** " + Guild.Load(Context.Guild.Id).Prefix + "editfooter [@User] [Footer]");
                 return;
             }
             
@@ -87,7 +87,7 @@ namespace DiscordBot.Modules.Owner
         {
             if (user == null || position == null)
             {
-                await ReplyAsync("**Syntax:** " + GuildConfiguration.Load(Context.Guild.Id).Prefix + "editiconurl [@User] [Author/Footer] [Link to Icon/Image]");
+                await ReplyAsync("**Syntax:** " + Guild.Load(Context.Guild.Id).Prefix + "editiconurl [@User] [Author/Footer] [Link to Icon/Image]");
                 return;
             }
 
@@ -167,7 +167,7 @@ namespace DiscordBot.Modules.Owner
         {
             if (confirmation.ToUpper() != "CONFIRM")
             {
-                await ReplyAsync("**Please confirm by entering the TwoAuth code as follows:** " + GuildConfiguration.Load(Context.Guild.Id).Prefix + "die confirm\n" +
+                await ReplyAsync("**Please confirm by entering the TwoAuth code as follows:** " + Guild.Load(Context.Guild.Id).Prefix + "die confirm\n" +
                                  "Issuing this command will log the Bot out and terminate the process.");
                 return;
             }
@@ -193,7 +193,7 @@ namespace DiscordBot.Modules.Owner
             if (id == null || emote == null)
             {
                 await ReplyAsync("**Syntax:** " +
-                                 GuildConfiguration.Load(Context.Guild.Id).Prefix + "addreaction [message id] [emote]");
+                                 Guild.Load(Context.Guild.Id).Prefix + "addreaction [message id] [emote]");
                 return;
             }
 

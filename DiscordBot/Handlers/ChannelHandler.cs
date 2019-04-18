@@ -1,10 +1,12 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 using Discord;
 using Discord.WebSocket;
 
 using DiscordBot.Common;
+using DiscordBot.Database;
 using DiscordBot.Extensions;
 
 namespace DiscordBot.Handlers
@@ -13,7 +15,6 @@ namespace DiscordBot.Handlers
 	{
 		public static async Task ChannelCreated(SocketChannel channel)
 		{
-
 			if (channel is ITextChannel textChannelParam)
 			{
 			    EmbedBuilder eb = new EmbedBuilder()
@@ -46,6 +47,21 @@ namespace DiscordBot.Handlers
 
 			    await Configuration.Load().LogChannelId.GetTextChannel().SendMessageAsync("", false, eb.Build());
 			}
+			else if (channel is ICategoryChannel categoryChannelParam)
+			{
+				EmbedBuilder eb = new EmbedBuilder()
+				{
+					Title = "New Category Channel",
+					Description = categoryChannelParam.Name,
+					Color = new Color(0x52cf35)
+				}
+				.AddField("Channel ID", categoryChannelParam.Id)
+				.AddField("Channel Name", categoryChannelParam.Name)
+				.AddField("Guild ID", categoryChannelParam.GuildId)
+				.AddField("Guild Name", categoryChannelParam.Guild.Name);
+
+				await Configuration.Load().LogChannelId.GetTextChannel().SendMessageAsync("", false, eb.Build());
+			}
             else if (channel is IPrivateChannel privateChannelParam)
 			{
 			    EmbedBuilder eb = new EmbedBuilder()
@@ -63,14 +79,16 @@ namespace DiscordBot.Handlers
 			    }
 
 			    await Configuration.Load().LogChannelId.GetTextChannel().SendMessageAsync("", false, eb.Build());
-			    return;
+				return; // return prevents private messages from being entered into the database.
 			}
             else 
 			{
 				await new LogMessage(LogSeverity.Warning, "ChannelHandler", channel.Id + " type is unknown.").PrintToConsole();
+				return; // return prevents unknown channels from being entered into the database.
 			}
-
-            Channel.EnsureExists(channel.Id);
+			
+			SocketGuildChannel gChannel = channel as SocketGuildChannel;
+			await InsertChannelToDB(gChannel);
 		}
 
 		public static async Task ChannelDestroyed(SocketChannel channel)
@@ -107,6 +125,21 @@ namespace DiscordBot.Handlers
 
 			    await Configuration.Load().LogChannelId.GetTextChannel().SendMessageAsync("", false, eb.Build());
 			}
+			else if (channel is ICategoryChannel categoryChannelParam)
+			{
+				EmbedBuilder eb = new EmbedBuilder()
+					{
+						Title = "Removed Category Channel",
+						Description = categoryChannelParam.Name,
+						Color = new Color(0xff003c)
+					}
+					.AddField("Channel ID", categoryChannelParam.Id)
+					.AddField("Channel Name", categoryChannelParam.Name)
+					.AddField("Guild ID", categoryChannelParam.GuildId)
+					.AddField("Guild Name", categoryChannelParam.Guild.Name);
+
+				await Configuration.Load().LogChannelId.GetTextChannel().SendMessageAsync("", false, eb.Build());
+			}
 			else if (channel is IPrivateChannel privateChannelParam)
 			{
 			    EmbedBuilder eb = new EmbedBuilder()
@@ -128,7 +161,52 @@ namespace DiscordBot.Handlers
             else
 			{
 				await new LogMessage(LogSeverity.Critical, "UserExtensions", channel.Id + " type is unknown.").PrintToConsole();
+				return;
 			}
+			
+			SocketGuildChannel gChannel = channel as SocketGuildChannel;
+			await RemoveChannelFromDB(gChannel);
+		}
+
+		public static async Task ChannelUpdated(SocketChannel arg1, SocketChannel arg2)
+		{
+			SocketGuildChannel gChannel = arg2 as SocketGuildChannel;
+			await UpdateChannelInDB(gChannel);
+		}
+		
+		
+		public static async Task InsertChannelToDB(SocketGuildChannel c)
+		{
+			List<(string, string)> queryParams = new List<(string id, string value)>()
+			{
+				("@channelName", c.Name),
+				("@channelType", c.GetType().Name)
+			};
+				    
+			DatabaseActivity.ExecuteNonQueryCommand(
+				"INSERT IGNORE INTO " +
+				"channels(channelID,inGuildID,channelName,channelType) " +
+				"VALUES (" + c.Id + ", " + c.Guild.Id + ", @channelName, @channelType);", queryParams);
+		}
+
+		public static async Task RemoveChannelFromDB(SocketGuildChannel c)
+		{
+			DatabaseActivity.ExecuteNonQueryCommand(
+				"DELETE FROM channels WHERE channelID=" + c.Id + ";");
+		}
+
+		private static async Task UpdateChannelInDB(SocketGuildChannel updatedChannel)
+		{
+			List<(string, string)> queryParams = new List<(string id, string value)>()
+			{
+				("@channelID", updatedChannel.Id.ToString()),
+				("@channelName", updatedChannel.Name),
+				("@channelType", updatedChannel.GetType().Name)
+			};
+
+			DatabaseActivity.ExecuteNonQueryCommand(
+				"UPDATE guilds SET channelName=@channelName, channelType=@channelType WHERE channelID=@channelID",
+				queryParams);
 		}
 	}
 }

@@ -10,6 +10,7 @@ using DiscordBot.Common.Preconditions;
 using DiscordBot.Common;
 using DiscordBot.Extensions;
 using DiscordBot.Handlers;
+using DiscordBot.Objects;
 
 namespace DiscordBot.Modules.Mod
 {
@@ -25,7 +26,7 @@ namespace DiscordBot.Modules.Mod
         public async Task SendEmbedCommands()
         {
             await ReplyAsync("**Syntax:** " +
-                             GuildConfiguration.Load(Context.Guild.Id).Prefix + "embed [subcommand] [parameters...] \n" +
+                             Guild.Load(Context.Guild.Id).Prefix + "embed [subcommand] [parameters...] \n" +
                              "Available Commands\n" +
                              "```ini\n" +
                              "[1] embed new\n" +
@@ -53,7 +54,7 @@ namespace DiscordBot.Modules.Mod
                 Users.Add(Context.User);
                 UserEmbeds.Add(new EmbedBuilder());
 
-                var message = await ReplyAsync("Your embed has been created. Please type `" + GuildConfiguration.Load(Context.Guild.Id).Prefix + "embed` to see the available commands.");
+                var message = await ReplyAsync("Your embed has been created. Please type `" + Guild.Load(Context.Guild.Id).Prefix + "embed` to see the available commands.");
                 message.DeleteAfter(5);
             }
         }
@@ -121,7 +122,7 @@ namespace DiscordBot.Modules.Mod
             if (r < 0 || r > 255 || g < 0 || g > 255 || b < 0 || b > 255)
             {
                 await ReplyAsync(Context.User.Mention + ", you have entered an invalid value. You can use this website to help get your RGB values - <http://www.colorhexa.com/>\n\n" +
-                                 "**Syntax:** " + GuildConfiguration.Load(Context.Guild.Id).Prefix + "embed withcolor [R value] [G value] [B value]\n**Example:** " + GuildConfiguration.Load(Context.Guild.Id).Prefix + "embed withcolor 140 90 210");
+                                 "**Syntax:** " + Guild.Load(Context.Guild.Id).Prefix + "embed withcolor [R value] [G value] [B value]\n**Example:** " + Guild.Load(Context.Guild.Id).Prefix + "embed withcolor 140 90 210");
                 return;
             }
 

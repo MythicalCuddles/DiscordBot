@@ -7,6 +7,7 @@ using Discord.WebSocket;
 
 using DiscordBot.Common;
 using DiscordBot.Extensions;
+using DiscordBot.Objects;
 using DiscordBot.Other;
 
 namespace DiscordBot.Handlers
@@ -107,7 +108,7 @@ namespace DiscordBot.Handlers
             }
 
             StringBuilder sb = new StringBuilder()
-            .Append("**Request Quote List** : *Page " + QuoteHandler.RequestPageNumber[QuoteHandler.RequestQuoteMessages.IndexOf(message.Id)] + "*\nTo accept a quote, type **" + GuildConfiguration.Load(channel.GetGuild().Id).Prefix + "acceptquote[id]**.\nTo reject a quote, type **" + GuildConfiguration.Load(channel.GetGuild().Id).Prefix + "denyquote[id]**.\n```");
+            .Append("**Request Quote List** : *Page " + QuoteHandler.RequestPageNumber[QuoteHandler.RequestQuoteMessages.IndexOf(message.Id)] + "*\nTo accept a quote, type **" + Guild.Load(channel.GetGuild().Id).Prefix + "acceptquote[id]**.\nTo reject a quote, type **" + Guild.Load(channel.GetGuild().Id).Prefix + "denyquote[id]**.\n```");
 
             List<string> requestQuotes = QuoteHandler.GetRequestQuotes(QuoteHandler.RequestPageNumber[QuoteHandler.RequestQuoteMessages.IndexOf(message.Id)]);
 

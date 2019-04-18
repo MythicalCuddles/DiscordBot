@@ -4,6 +4,7 @@ using System.Text.RegularExpressions;
 using Discord.WebSocket;
 
 using DiscordBot.Common;
+using DiscordBot.Objects;
 
 namespace DiscordBot.Extensions
 {
@@ -27,7 +28,7 @@ namespace DiscordBot.Extensions
             msg = Regex.Replace(msg, "{GUILD.OWNER.USERNAME}", e.Guild.Owner.Username, RegexOptions.IgnoreCase);
             msg = Regex.Replace(msg, "{GUILD.OWNER.MENTION}", e.Guild.Owner.Mention, RegexOptions.IgnoreCase);
             msg = Regex.Replace(msg, "{GUILD.OWNER.ID}", e.Guild.Owner.Id.ToString(), RegexOptions.IgnoreCase);
-			msg = Regex.Replace(msg, "{GUILD.PREFIX}", GuildConfiguration.Load(e.Guild.Id).Prefix, RegexOptions.IgnoreCase);
+			msg = Regex.Replace(msg, "{GUILD.PREFIX}", Guild.Load(e.Guild.Id).Prefix, RegexOptions.IgnoreCase);
 
             msg = Regex.Replace(msg, "{GUILD.OWNER.CUSTOMS.NAME}", (e.Guild.Owner.GetName() ?? "[NAME NOT SET]"), RegexOptions.IgnoreCase);
             msg = Regex.Replace(msg, "{GUILD.OWNER.CUSTOMS.MINECRAFTUSERNAME}", (e.Guild.Owner.GetMinecraftUsername() ?? "[MINECRAFT USERNAME NOT SET]"), RegexOptions.IgnoreCase);

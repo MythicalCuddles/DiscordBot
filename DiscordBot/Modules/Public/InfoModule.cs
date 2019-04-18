@@ -40,7 +40,7 @@ namespace DiscordBot.Modules.Public
         public async Task PrefixInfo()
         {
             var userPrefix = User.Load(Context.User.Id).CustomPrefix;
-            var guildPrefix = GuildConfiguration.Load(Context.Guild.Id).Prefix;
+            var guildPrefix = Guild.Load(Context.Guild.Id).Prefix;
 
             EmbedBuilder eb = new EmbedBuilder()
                 .WithAuthor(new EmbedAuthorBuilder().WithName("Available Prefixes for " + Context.User.Username).WithIconUrl(Context.User.GetAvatarUrl()))
