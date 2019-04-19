@@ -37,7 +37,7 @@ namespace DiscordBot
             Console.WriteLine(@"Web: www.mythicalcuddles.xyz");
             Console.WriteLine(@"Contact: staff@mythicalcuddles.xyz");
             
-            Console.WriteLine(@"Copyright 2017 - 2018 Melissa Brennan | Licensed under the MIT License.");
+            Console.WriteLine(@"Copyright 2017 - 2019 Melissa Brennan | Licensed under the MIT License.");
             Console.WriteLine(@"-----------------------------------------------------------------");
             
             MelissaNet.MelissaNet.Initialize();
