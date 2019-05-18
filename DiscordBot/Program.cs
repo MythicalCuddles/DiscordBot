@@ -2,11 +2,13 @@
 using System.Reflection;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-
+using Discord;
 using DiscordBot.Common;
 using DiscordBot.Database;
+using DiscordBot.Extensions;
 using DiscordBot.Other;
 
+using MythicalCore;
 using MelissaNet;
 
 namespace DiscordBot
@@ -42,12 +44,41 @@ namespace DiscordBot
             
             MelissaNet.MelissaNet.Initialize();
 
+            /*    Update Checker via MythicalCore    */
+            var updateCheck = MythicalCore.Updater.CheckForUpdate("DiscordBot", ProgramVersion);
+            if (updateCheck.Item1)
+            {
+                Console.WriteLine(@"-----------------------------------------------------------------");
+                LogMessage lm = new LogMessage(LogSeverity.Info, "MythicalCore", "A new update has been found. Would you like to download?");
+                lm.PrintToConsole();
+                Console.WriteLine(@"-----------------------------------------------------------------");
+                
+                DialogResult result = MessageBox.Show("A new update is available. Would you like to update?", "DiscordBot Update Available", MessageBoxButtons.YesNo, MessageBoxIcon.Information);
+
+                if (result == DialogResult.Yes)
+                {
+                    System.Diagnostics.Process.Start(updateCheck.Item2);
+                    Environment.Exit(0);
+                }
+            }
+            /*    Update End    */
+            
             Configuration.EnsureExists();
             StringConfiguration.EnsureExists();
             QuoteHandler.EnsureExists();
             VoteLinkHandler.EnsureExists();
-            
-            DatabaseActivity.CheckForDatabase();
+
+            try
+            {
+                DatabaseActivity.CheckForDatabase();
+            }
+            catch (Exception e)
+            {
+                LogMessage lm = new LogMessage(LogSeverity.Critical, "MySQL Database", "Unable to connect to database. Is it currently running?", e);
+                lm.PrintToConsole();
+                Environment.Exit(0);
+            }
+           
             
             Console.WriteLine(@"-----------------------------------------------------------------");
             
