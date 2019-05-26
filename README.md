@@ -1,6 +1,6 @@
 ![discordbot0](http://imgserv.mythicalcuddles.xyz/DiscordBot/DiscordBot.png)
 
-# DiscordBot ![GitHub release](https://img.shields.io/github/release/MythicalCuddles/DiscordBot.svg) ![GitHub Release Date](https://img.shields.io/github/release-date/MythicalCuddles/DiscordBot.svg) ![GitHub last commit](https://img.shields.io/github/last-commit/MythicalCuddles/DiscordBot.svg) [![GitHub](https://img.shields.io/github/license/MythicalCuddles/DiscordBot.svg)](https://github.com/MythicalCuddles/DiscordBot/blob/master/LICENSE.md)
+# DiscordBot ![GitHub release](https://img.shields.io/github/release/MythicalCuddles/DiscordBot.svg) ![GitHub Release Date](https://img.shields.io/github/release-date/MythicalCuddles/DiscordBot.svg) ![GitHub last commit](https://img.shields.io/github/last-commit/MythicalCuddles/DiscordBot.svg) ![GitHub issues](https://img.shields.io/github/issues/MythicalCuddles/DiscordBot.svg) ![GitHub](https://img.shields.io/github/license/MythicalCuddles/DiscordBot.svg)
 
 DiscordBot (originally called [MogiiBot3](https://github.com/MythicalCuddles/MogiiBot3)) is a C# Bot for DiscordApp which includes many different features such as allowing users to create their own profiles, earn EXP to Level Up and compete for #1 on the leaderboard, and many more features. DiscordBot uses MySQL to store user, channel and guild data to be used via commands through DiscordBot or to be viewed using the Web Application (which can be seen in the Additional Applications section below).
 
@@ -13,10 +13,10 @@ DiscordBot (originally called [MogiiBot3](https://github.com/MythicalCuddles/Mog
 
 For this part, I will run through how to install onto Windows OS. This project has not been tested with any other OS and may not work with them.
 
-## Prerequisites
+## Requirements / Prerequisites
 - Windows Operating System
 - .NET Framework 4.6 Runtime or later
-- A MySQL Server/Database
+- A MySQL Database
 
 ### Additional Requirements
 - AppData Edit Permissions
