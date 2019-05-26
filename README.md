@@ -13,10 +13,10 @@ DiscordBot (originally called [MogiiBot3](https://github.com/MythicalCuddles/Mog
 
 For this part, I will run through how to install onto Windows OS. This project has not been tested with any other OS and may not work with them.
 
-## Requirements / Prerequisites
+## Prerequisites
 - Windows Operating System
 - .NET Framework 4.6 Runtime or later
-- A MySQL Database
+- A MySQL Server/Database
 
 ### Additional Requirements
 - AppData Edit Permissions
