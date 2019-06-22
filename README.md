@@ -8,12 +8,27 @@ DiscordBot (originally called [MogiiBot3](https://github.com/MythicalCuddles/Mog
 
 [DiscordBot Web](https://bot.mythicalcuddles.xyz) (not yet released) works with DiscordBot and adds new features such as viewing the leaderboard on the web, viewing user profiles, viewing guild bans and searching for users. I will be releasing this in the future for use, but for now, you may create your own by working with the data DiscordBot stores in the MySQL database.
 
+# Table of Contents
+
+* [DiscordBot](#discordbot-----)
+  * [Additional Applications](#additional-applications)
+* [Getting Started](#getting-started)
+  * [Prerequisites](#prerequisites)
+    * [Additional Requirements](#additional-requirements)
+  * [Setting Up & Running](#setting-up--running)
+    * [MySQL Setup](#mysql-setup)
+    * [DiscordBot API Token](#discordbot-api-token)
+    * [DiscordBot Setup](#discordbot-setup)
+* [Additional Information](#additional-information)
+  * [What I learned from this project](#what-i-learned-from-this-project)
+  * [Final Notes](#final-notes)
+
 
 # Getting Started
 
 For this part, I will run through how to install onto Windows OS. This project has not been tested with any other OS and may not work with them.
 
-## Requirements / Prerequisites
+## Prerequisites
 - Windows Operating System
 - .NET Framework 4.6 Runtime or later
 - A MySQL Database
@@ -81,7 +96,7 @@ DiscordBot should then attempt to create all the tables required to store inform
 ---
 # Additional Information
 
-## What I have learned from working on this project
+## What I learned from this project
 
 - Using libraries to interface with APIs
 - Using JSON to store data
