@@ -14,12 +14,6 @@ namespace DiscordBot.Extensions
 {
 	public static class Extensions
     {
-        //public static EmbedBuilder AddInlineField(this EmbedBuilder eb, object name, object value)
-        //{
-        //    eb.AddField(name.ToString(), value.ToString(), true);
-        //    return eb;
-        //}
-
 		#region Variables
 		//public const String arrow_left = "⬅", arrow_right = "➡";
 		public static Emoji
