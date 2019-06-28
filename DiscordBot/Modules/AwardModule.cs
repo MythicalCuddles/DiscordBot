@@ -48,17 +48,17 @@ namespace DiscordBot.Modules
             {
                 awards.Add(new Award()
                 {
-                    awardId = (ulong) reader.dr["awardID"],
-                    userId = (ulong) reader.dr["userID"],
-                    awardText = reader.dr["awardText"].ToString(),
-                    dateAwarded = (DateTime)reader.dr["dateAwarded"]
+                    AwardId = (ulong) reader.dr["awardID"],
+                    UserId = (ulong) reader.dr["userID"],
+                    AwardText = reader.dr["awardText"].ToString(),
+                    DateAwarded = (DateTime)reader.dr["dateAwarded"]
                 });
             }
             
             reader.dr.Close();
             reader.conn.Close();
             
-            awards.Sort((x, y) => x.dateAwarded.CompareTo(y.dateAwarded)); // newest awards will appear first
+            awards.Sort((x, y) => x.DateAwarded.CompareTo(y.DateAwarded)); // newest awards will appear first
             //awards.Sort((x, y) => y.dateAwarded.CompareTo(x.dateAwarded)); // oldest awards will appear first
             
             StringBuilder sb = new StringBuilder();
@@ -76,17 +76,17 @@ namespace DiscordBot.Modules
                 {
                     if (!showAllAwards)
                     {
-                        int result = DateTime.Compare(date, a.dateAwarded);
+                        int result = DateTime.Compare(date, a.DateAwarded);
                         // result : -1:Future Date, 1:Past Date, 1:Today
                         
                         if (result >= 0)
                         {
-                            sb.Append(a.awardText + " - " + a.dateAwarded.ToString("dd/MM/yyyy") + "\n");
+                            sb.Append(a.AwardText + " - " + a.DateAwarded.ToString("dd/MM/yyyy") + "\n");
                         }
                     }
                     else
                     {
-                        sb.Append(a.awardText + " - " + a.dateAwarded.ToString("dd/MM/yyyy") + "\n");
+                        sb.Append(a.AwardText + " - " + a.DateAwarded.ToString("dd/MM/yyyy") + "\n");
                     }
                 }
             }
