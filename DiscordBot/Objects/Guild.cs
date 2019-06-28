@@ -20,8 +20,6 @@ namespace DiscordBot.Objects
         public bool NSFWCommandsEnabled { get; set; }
         public ulong RuleGambleChannelID { get; set; }
         
-        public Guild() {}
-
         public Guild(string prefix = null, string welcomeMessage = null, ulong? welcomeChannelID = null,
             ulong? logChannelID = null, ulong? botChannelID = null, bool? senpaiEnabled = null, bool? quotesEnabled = null,
             bool? nsfwCommandsEnabled = null, ulong? ruleGambleChannelID = null)
