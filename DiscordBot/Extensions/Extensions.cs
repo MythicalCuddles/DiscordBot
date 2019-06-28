@@ -218,40 +218,25 @@ namespace DiscordBot.Extensions
 
         #region User Extensions
 		public static bool IsBotOwner(this IUser user)
-		{
-			if (Configuration.Load().Developer == user.Id)
-				return true;
-			else
-				return false;
-		}
+        {
+            return Configuration.Load().Developer == user.Id;
+        }
 		public static bool IsTeamMember(this IUser user)
-		{
-			if (User.Load(user.Id).TeamMember)
-				return true;
-			else
-				return false;
-		}
+        {
+            return User.Load(user.Id).TeamMember;
+        }
 		public static bool IsGuildOwner(this SocketGuildUser user, IGuild guild)
-		{
-			if (guild.OwnerId == user.Id)
-				return true;
-			else
-				return false;
-		}
+        {
+            return guild.OwnerId == user.Id;
+        }
 		public static bool IsGuildAdministrator(this SocketGuildUser user)
-		{
-			if (user.GuildPermissions.Administrator)
-				return true;
-			else
-				return false;
-		}
+        {
+            return user.GuildPermissions.Administrator;
+        }
 		public static bool IsGuildModerator(this SocketGuildUser user)
-		{
-			if (user.GuildPermissions.KickMembers || user.GuildPermissions.BanMembers || user.GuildPermissions.ManageMessages || user.GuildPermissions.ManageChannels)
-				return true;
-			else
-				return false;
-		}
+        {
+            return (user.GuildPermissions.KickMembers || user.GuildPermissions.BanMembers || user.GuildPermissions.ManageMessages || user.GuildPermissions.ManageChannels);
+        }
         public static string UserCreateDate(this IUser user)
         {
             return user.CreatedAt.Day + " " + user.CreatedAt.Month.GetMonthText() + " " + user.CreatedAt.Year;
@@ -271,36 +256,47 @@ namespace DiscordBot.Extensions
         public static int GetUserPermissionLevel(this SocketGuildUser user)
         {
             if (user.IsBotOwner())
+            {
                 return 10;
+            }
 
             if (user.IsTeamMember())
+            {
                 return 9;
+            }
 
             if (user.IsTeamMember())
+            {
                 return 8;
+            }
 
             if (user.IsGuildOwner(user.Guild))
+            {
                 return 7;
+            }
 
             if (user.IsGuildAdministrator())
+            {
                 return 6;
+            }
 
             if (user.IsGuildModerator())
+            {
                 return 5;
+            }
 
             if (user.IsBot)
+            {
                 return 8;
+            }
 
             return 1;
         }
 
         public static bool HasHigherPermissionLevel(this IUser contextUser, IUser userMentioned)
         {
-            if ((contextUser as SocketGuildUser).GetUserPermissionLevel() >=
-                (userMentioned as SocketGuildUser).GetUserPermissionLevel())
-                return true;
-
-            return false;
+            return ((contextUser as SocketGuildUser).GetUserPermissionLevel() >=
+                   (userMentioned as SocketGuildUser).GetUserPermissionLevel());
         }
 
         #region SocketUser Gets
