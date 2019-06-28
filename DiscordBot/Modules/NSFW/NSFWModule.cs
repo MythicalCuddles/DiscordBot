@@ -42,8 +42,6 @@ namespace DiscordBot.Modules.NSFW
             {
                 if (((SocketTextChannel) Context.Channel).IsNsfw)
                 {
-                    //var message = await ReplyAsync("Please wait while we draw your lucky number! (This shouldn't take long)");
-
                     try
                     {
                         if (postId != 0 && Context.User.IsBotOwner())
@@ -68,17 +66,8 @@ namespace DiscordBot.Modules.NSFW
                             images.Add(node.Attributes["src"].Value);
                         }
                         
-                        // for debugging
-						//Console.Write(@"[");
-						//Console.ForegroundColor = ConsoleColor.Cyan;
-						//Console.Write(@"RULE34 GAMBLE");
-						//Console.ResetColor();
-						//Console.WriteLine(@"]: " + Context.User.Username + @" got the Gamble Id: " + _id.ToString() + Environment.NewLine + @"The following images were gathered using that Id:");
-                        
                         foreach (string s in images)
 						{
-						    // for debugging
-							//Console.WriteLine(s);
 
 						    if (s.Contains("thumbnails") || s.Contains("samples"))
 						    {
@@ -90,9 +79,6 @@ namespace DiscordBot.Modules.NSFW
                         string link = images[3].FindAndReplaceFirstInstance("//", "temp");
                         link = link.FindAndReplaceFirstInstance("//", "/");
                         link = link.FindAndReplaceFirstInstance("temp", "//");
-                        
-                        // for debugging
-                        //Console.WriteLine(@"[Final] " + link);
 
                         await new LogMessage(LogSeverity.Info, "Rule34Gamble", Context.User.Username + " got " + _id).PrintToConsole();
                         
@@ -107,7 +93,6 @@ namespace DiscordBot.Modules.NSFW
                             }
                         }.WithCurrentTimestamp();
                         
-                        //await ReplyAsync(Context.User.Mention + ", congratulations, you won the following image: \n" + link);
                         await ReplyAsync("", false, eb.Build());
                     }
                     catch (Exception ex)

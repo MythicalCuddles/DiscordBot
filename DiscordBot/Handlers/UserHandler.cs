@@ -55,7 +55,6 @@ namespace DiscordBot.Handlers
                     ThumbnailUrl = e.GetAvatarUrl()
                 }.WithCurrentTimestamp();
                 
-                //await Configuration.Load().LogChannelId.GetTextChannel().SendMessageAsync(e.Username + " was successfully added to the database. [" + e.Id + "]");
                 await Configuration.Load().LogChannelId.GetTextChannel().SendMessageAsync("", false, lEB.Build());
             }
             else

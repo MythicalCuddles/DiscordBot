@@ -220,24 +220,15 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Common\Channel.cs" />
     <Compile Include="Common\Configuration.cs" />
-    <Compile Include="Common\GuildConfiguration.cs" />
     <Compile Include="Common\PermissionLevel.cs" />
     <Compile Include="Common\Preconditions\MinPermissionsAttribute.cs" />
     <Compile Include="Common\Preconditions\RequireGuildAttribute.cs" />
     <Compile Include="Common\StringConfiguration.cs" />
-    <Compile Include="Common\User.cs" />
     <Compile Include="Database\DatabaseActivity.cs" />
     <Compile Include="Extensions\Extensions.cs" />
     <Compile Include="Extensions\StringExtensions.cs" />
     <Compile Include="Extensions\UserExtensions.cs" />
-    <Compile Include="frmAuth.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="frmAuth.Designer.cs">
-      <DependentUpon>frmAuth.cs</DependentUpon>
-    </Compile>
     <Compile Include="Handlers\ChannelHandler.cs" />
     <Compile Include="Handlers\ConsoleHandler.cs" />
     <Compile Include="Handlers\GuildHandler.cs" />
@@ -254,8 +245,6 @@
     <Compile Include="Modules\Mod\EmbedModule.cs" />
     <Compile Include="Modules\Owner\OwnerModule.cs" />
     <Compile Include="Modules\Public\FunModule.cs" />
-    <Compile Include="Modules\Public\Games\HigherLowerGameModule.cs" />
-    <Compile Include="Modules\Public\Games\SlotsGameModule.cs" />
     <Compile Include="Modules\Public\HelpModule.cs" />
     <Compile Include="Modules\Public\InfoModule.cs" />
     <Compile Include="Modules\Public\LeaderboardModule.cs" />
@@ -301,11 +290,6 @@
   </ItemGroup>
   <ItemGroup>
     <WCFMetadata Include="Connected Services\" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="frmAuth.resx">
-      <DependentUpon>frmAuth.cs</DependentUpon>
-    </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="..\packages\NETStandard.Library.2.0.1\build\NETStandard.Library.targets" Condition="Exists('..\packages\NETStandard.Library.2.0.1\build\NETStandard.Library.targets')" />
