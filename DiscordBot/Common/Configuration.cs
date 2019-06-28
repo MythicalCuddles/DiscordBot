@@ -129,7 +129,7 @@ namespace DiscordBot.Common
             int? quoteLevelRequirement = null, int? prefixLevelRequirement = null, int? senpaiChanceRate = null, int? rgbLevelRequirement = null,
             ulong? logChannelId = null, int? respects = null, int? minLengthForEXP = null, int? maxRuleXGamble = null)
         {
-            var config = new Configuration()
+            var config = new Configuration
             {
                 BotToken = botToken ?? Load().BotToken,
                 Developer = developer ?? Load().Developer,
