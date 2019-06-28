@@ -20,13 +20,13 @@ namespace DiscordBot.Database
             // Running through the configuration file - checking for database information.
             if (String.IsNullOrEmpty(Configuration.Load().DatabaseHost))
             {
-                new LogMessage(LogSeverity.Info, "Database Configuration", "Enter Database Hostname (default: 127.0.0.1):").PrintToConsole();
+                new LogMessage(LogSeverity.Info, "Database Configuration", "Enter Database Hostname (default: localhost/127.0.0.1):").PrintToConsole();
                 string host = Console.ReadLine();
 
                 if (string.IsNullOrEmpty(host))
                 {
-                    host = "127.0.0.1";
-                    new LogMessage(LogSeverity.Warning, "Database Configuration", "No value was entered for the database host. Using default (127.0.0.1)").PrintToConsole();
+                    host = "localhost";
+                    new LogMessage(LogSeverity.Warning, "Database Configuration", "No value was entered for the database host. Using default (localhost/127.0.0.1)").PrintToConsole();
                 }
                 
                 Configuration.UpdateConfiguration(databaseHost:host);
