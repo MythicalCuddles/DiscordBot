@@ -166,7 +166,7 @@ namespace DiscordBot.Modules.Owner
         [Command("die")]
         public async Task KillProgram(string confirmation = null)
         {
-            if (confirmation.ToUpper() != "CONFIRM")
+            if(confirmation != null && confirmation.ToUpperInvariant() != "CONFIRM")
             {
                 await ReplyAsync("**Please confirm by entering the TwoAuth code as follows:** " +
                                  Guild.Load(Context.Guild.Id).Prefix + "die confirm\n" +
