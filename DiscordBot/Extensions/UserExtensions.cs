@@ -99,8 +99,6 @@ namespace DiscordBot.Extensions
         {
             try
             {
-                //User.UpdateUser(user.Id, exp:(user.GetEXP() + exp));
-
                 int updatedEXP = user.GetEXP() + exp;
                 
                 List<(string, string)> queryParams = new List<(string, string)>()
@@ -131,9 +129,6 @@ namespace DiscordBot.Extensions
             {
                 try
                 {
-                    //User.UpdateUser(user.Id, level: (user.GetLevel() + 1));
-                    //User.UpdateUser(user.Id, exp: 0); // reset exp every level up, resulting in longer times to level up (?) (eval: don't add, seems to be more difficult the higher levels)
-                    
                     int updatedLevel = user.GetLevel() + 1;
                 
                     List<(string, string)> queryParams = new List<(string, string)>()
@@ -145,8 +140,6 @@ namespace DiscordBot.Extensions
                     
                     SocketTextChannel botChannel = Guild.Load(guild.Id).BotChannelID.GetTextChannel() ??
                                                    Guild.Load(guild.Id).WelcomeChannelID.GetTextChannel();
-                    
-                    //botChannel.SendMessageAsync(user.Mention + " has leveled up to " + User.Load(user.Id).Level);
                     
                     EmbedBuilder eb = new EmbedBuilder()
                     {
