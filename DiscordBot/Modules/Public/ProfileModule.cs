@@ -55,8 +55,6 @@ namespace DiscordBot.Modules.Public
             [Command("name"), Summary("")]
             public async Task SetName([Remainder]string name)
             {
-                //User.UpdateUser(Context.User.Id, name: name);
-                
                 List<(string, string)> queryParams = new List<(string, string)>()
                 {
                     ("@name", name)
@@ -69,8 +67,6 @@ namespace DiscordBot.Modules.Public
             [Command("gender"), Summary("")]
             public async Task SetGender([Remainder]string gender)
             {
-                //User.UpdateUser(Context.User.Id, gender: gender);
-                
                 List<(string, string)> queryParams = new List<(string, string)>()
                 {
                     ("@gender", gender)
@@ -83,8 +79,6 @@ namespace DiscordBot.Modules.Public
             [Command("pronouns"), Summary("Set your pronouns!")]
             public async Task SetUserPronouns([Remainder]string pronouns)
             {
-                //User.UpdateUser(Context.User.Id, pronouns: pronouns);
-                
                 List<(string, string)> queryParams = new List<(string, string)>()
                 {
                     ("@pronouns", pronouns)
@@ -97,8 +91,6 @@ namespace DiscordBot.Modules.Public
             [Command("about"), Summary("Set your about message!")]
             public async Task SetUserAbout([Remainder]string aboutMessage)
             {
-                //User.UpdateUser(Context.User.Id, about: aboutMessage);
-                
                 List<(string, string)> queryParams = new List<(string, string)>()
                 {
                     ("@aboutMessage", aboutMessage)
@@ -119,8 +111,6 @@ namespace DiscordBot.Modules.Public
                 
                 if (Context.User.GetLevel() >= Configuration.Load().PrefixLevelRequirement)
                 {
-                    //User.UpdateUser(Context.User.Id, customPrefix: prefix);
-                
                     List<(string, string)> queryParams = new List<(string, string)>()
                     {
                         ("@customPrefix", prefix)
@@ -161,11 +151,7 @@ namespace DiscordBot.Modules.Public
                         await ReplyAsync("An unexpected error has happened. Please ensure that you have passed through a byte value! (A number between 0 and 255)");
                         return;
                     }
-    
-                    //User.UpdateUser(Context.User.Id, aboutR: rValue);
-                    //User.UpdateUser(Context.User.Id, aboutG: gValue);
-                    //User.UpdateUser(Context.User.Id, aboutB: bValue);
-                
+                    
                     List<(string, string)> queryParams = new List<(string, string)>()
                     {
                         ("@aboutR", rValue.ToString()),
@@ -193,8 +179,6 @@ namespace DiscordBot.Modules.Public
             [Alias("minecraftusername", "mcreg", "mcregister")]
             public async Task SetMinecraftUsername([Remainder]string username)
             {
-                //User.UpdateUser(Context.User.Id, minecraftUsername:username);
-                
                 List<(string, string)> queryParams = new List<(string, string)>()
                 {
                     ("@minecraft", username)
@@ -207,8 +191,6 @@ namespace DiscordBot.Modules.Public
             [Command("snapchat"), Summary("")]
             public async Task SetSnapchatUsername([Remainder]string username)
             {
-                //User.UpdateUser(Context.User.Id, snapchat:username);
-                
                 List<(string, string)> queryParams = new List<(string, string)>()
                 {
                     ("@snapchat", username)
@@ -221,8 +203,6 @@ namespace DiscordBot.Modules.Public
             [Command("instagram"), Summary("")]
             public async Task SetInstagramUsername([Remainder]string username)
             {
-                //User.UpdateUser(Context.User.Id, instagram:username);
-                
                 List<(string, string)> queryParams = new List<(string, string)>()
                 {
                     ("@instagram", username)
@@ -235,8 +215,6 @@ namespace DiscordBot.Modules.Public
             [Command("github"), Summary("")]
             public async Task SetGitHubUsername([Remainder]string username)
             {
-                //User.UpdateUser(Context.User.Id, github:username);
-                
                 List<(string, string)> queryParams = new List<(string, string)>()
                 {
                     ("@github", username)
@@ -276,8 +254,6 @@ namespace DiscordBot.Modules.Public
             [Command("websitename"), Summary("")]
             public async Task SetWebsiteName([Remainder]string name)
             {
-                //User.UpdateUser(Context.User.Id, websiteName: name);
-                
                 List<(string, string)> queryParams = new List<(string, string)>()
                 {
                     ("@websiteName", name)
@@ -290,8 +266,6 @@ namespace DiscordBot.Modules.Public
             [Command("websiteurl"), Summary("")]
             public async Task SetWebsiteUrl([Remainder]string url)
             {
-                //User.UpdateUser(Context.User.Id, websiteUrl: url);
-                
                 List<(string, string)> queryParams = new List<(string, string)>()
                 {
                     ("@websiteUrl", url)
