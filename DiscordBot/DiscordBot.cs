@@ -31,26 +31,22 @@ namespace DiscordBot
 {
     public class DiscordBot
     {
-        public static DiscordSocketClient Bot;
-	    public static CommandService _commandService;
-	    public static IServiceProvider _serviceProvider;
+        public static DiscordSocketClient Bot = new DiscordSocketClient(new DiscordSocketConfig
+        {
+	        LogLevel = LogSeverity.Debug,
+	        MessageCacheSize = 1000,
+	        WebSocketProvider = WS4NetProvider.Instance,
+	        UdpSocketProvider = UDPClientProvider.Instance,
+	        DefaultRetryMode = RetryMode.AlwaysRetry,
+	        AlwaysDownloadUsers = true,
+	        ConnectionTimeout = int.MaxValue,
+
+        });
+	    public static CommandService _commandService = new CommandService();
+	    public static IServiceProvider _serviceProvider = ConfigureServices();
 
         public async Task RunBotAsync()
         {
-            Bot = new DiscordSocketClient(new DiscordSocketConfig
-            {
-                LogLevel = LogSeverity.Debug,
-                MessageCacheSize = 1000,
-                WebSocketProvider = WS4NetProvider.Instance,
-                UdpSocketProvider = UDPClientProvider.Instance,
-                DefaultRetryMode = RetryMode.AlwaysRetry,
-                AlwaysDownloadUsers = true,
-                ConnectionTimeout = int.MaxValue,
-
-            });
-            _commandService = new CommandService();
-            _serviceProvider = ConfigureServices();
-
             // Create Tasks for Bot Events
             #region Events
             Bot.Log += Log;

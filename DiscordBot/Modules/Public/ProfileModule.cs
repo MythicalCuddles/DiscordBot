@@ -55,9 +55,7 @@ namespace DiscordBot.Modules.Public
             [Command("name"), Summary("")]
             public async Task SetName([Remainder]string name)
             {
-                //User.UpdateUser(Context.User.Id, name: name);
-                
-                List<(string, string)> queryParams = new List<(string, string)>()
+                List<(string, string)> queryParams = new List<(string, string)>
                 {
                     ("@name", name)
                 };
@@ -69,9 +67,7 @@ namespace DiscordBot.Modules.Public
             [Command("gender"), Summary("")]
             public async Task SetGender([Remainder]string gender)
             {
-                //User.UpdateUser(Context.User.Id, gender: gender);
-                
-                List<(string, string)> queryParams = new List<(string, string)>()
+                List<(string, string)> queryParams = new List<(string, string)>
                 {
                     ("@gender", gender)
                 };
@@ -83,9 +79,7 @@ namespace DiscordBot.Modules.Public
             [Command("pronouns"), Summary("Set your pronouns!")]
             public async Task SetUserPronouns([Remainder]string pronouns)
             {
-                //User.UpdateUser(Context.User.Id, pronouns: pronouns);
-                
-                List<(string, string)> queryParams = new List<(string, string)>()
+                List<(string, string)> queryParams = new List<(string, string)>
                 {
                     ("@pronouns", pronouns)
                 };
@@ -97,9 +91,7 @@ namespace DiscordBot.Modules.Public
             [Command("about"), Summary("Set your about message!")]
             public async Task SetUserAbout([Remainder]string aboutMessage)
             {
-                //User.UpdateUser(Context.User.Id, about: aboutMessage);
-                
-                List<(string, string)> queryParams = new List<(string, string)>()
+                List<(string, string)> queryParams = new List<(string, string)>
                 {
                     ("@aboutMessage", aboutMessage)
                 };
@@ -119,9 +111,7 @@ namespace DiscordBot.Modules.Public
                 
                 if (Context.User.GetLevel() >= Configuration.Load().PrefixLevelRequirement)
                 {
-                    //User.UpdateUser(Context.User.Id, customPrefix: prefix);
-                
-                    List<(string, string)> queryParams = new List<(string, string)>()
+                    List<(string, string)> queryParams = new List<(string, string)>
                     {
                         ("@customPrefix", prefix)
                     };
@@ -161,11 +151,7 @@ namespace DiscordBot.Modules.Public
                         await ReplyAsync("An unexpected error has happened. Please ensure that you have passed through a byte value! (A number between 0 and 255)");
                         return;
                     }
-    
-                    //User.UpdateUser(Context.User.Id, aboutR: rValue);
-                    //User.UpdateUser(Context.User.Id, aboutG: gValue);
-                    //User.UpdateUser(Context.User.Id, aboutB: bValue);
-                
+                    
                     List<(string, string)> queryParams = new List<(string, string)>()
                     {
                         ("@aboutR", rValue.ToString()),
@@ -193,9 +179,7 @@ namespace DiscordBot.Modules.Public
             [Alias("minecraftusername", "mcreg", "mcregister")]
             public async Task SetMinecraftUsername([Remainder]string username)
             {
-                //User.UpdateUser(Context.User.Id, minecraftUsername:username);
-                
-                List<(string, string)> queryParams = new List<(string, string)>()
+                List<(string, string)> queryParams = new List<(string, string)>
                 {
                     ("@minecraft", username)
                 };
@@ -207,9 +191,7 @@ namespace DiscordBot.Modules.Public
             [Command("snapchat"), Summary("")]
             public async Task SetSnapchatUsername([Remainder]string username)
             {
-                //User.UpdateUser(Context.User.Id, snapchat:username);
-                
-                List<(string, string)> queryParams = new List<(string, string)>()
+                List<(string, string)> queryParams = new List<(string, string)>
                 {
                     ("@snapchat", username)
                 };
@@ -221,9 +203,7 @@ namespace DiscordBot.Modules.Public
             [Command("instagram"), Summary("")]
             public async Task SetInstagramUsername([Remainder]string username)
             {
-                //User.UpdateUser(Context.User.Id, instagram:username);
-                
-                List<(string, string)> queryParams = new List<(string, string)>()
+                List<(string, string)> queryParams = new List<(string, string)>
                 {
                     ("@instagram", username)
                 };
@@ -235,9 +215,7 @@ namespace DiscordBot.Modules.Public
             [Command("github"), Summary("")]
             public async Task SetGitHubUsername([Remainder]string username)
             {
-                //User.UpdateUser(Context.User.Id, github:username);
-                
-                List<(string, string)> queryParams = new List<(string, string)>()
+                List<(string, string)> queryParams = new List<(string, string)>
                 {
                     ("@github", username)
                 };
@@ -253,12 +231,16 @@ namespace DiscordBot.Modules.Public
                 if (friendCode.All(char.IsDigit))
                 {
                     if (friendCode[4] != ' ')
+                    {
                         friendCode = friendCode.Insert(4, " ");
+                    }
 
                     if (friendCode[9] != ' ')
+                    {
                         friendCode = friendCode.Insert(9, " ");
+                    }
                     
-                    List<(string, string)> queryParams = new List<(string, string)>()
+                    List<(string, string)> queryParams = new List<(string, string)>
                     {
                         ("@code", friendCode)
                     };
@@ -276,8 +258,6 @@ namespace DiscordBot.Modules.Public
             [Command("websitename"), Summary("")]
             public async Task SetWebsiteName([Remainder]string name)
             {
-                //User.UpdateUser(Context.User.Id, websiteName: name);
-                
                 List<(string, string)> queryParams = new List<(string, string)>()
                 {
                     ("@websiteName", name)
@@ -290,8 +270,6 @@ namespace DiscordBot.Modules.Public
             [Command("websiteurl"), Summary("")]
             public async Task SetWebsiteUrl([Remainder]string url)
             {
-                //User.UpdateUser(Context.User.Id, websiteUrl: url);
-                
                 List<(string, string)> queryParams = new List<(string, string)>()
                 {
                     ("@websiteUrl", url)
@@ -338,13 +316,19 @@ namespace DiscordBot.Modules.Public
                 .WithColor(userSpecified.GetCustomRGB());
 
             if (!String.IsNullOrEmpty(userSpecified.GetName()))
+            {
                 eb.AddField("Name", userSpecified.GetName(), true);
+            }
 
             if (!String.IsNullOrEmpty(userSpecified.GetGender()))
+            {
                 eb.AddField("Gender", userSpecified.GetGender(), true);
+            }
             
             if (!String.IsNullOrEmpty(userSpecified.GetPronouns()))
+            {
                 eb.AddField("Pronouns", userSpecified.GetPronouns(), true);
+            }
             
             eb.AddField("Level", userSpecified.GetLevel(), true);
             eb.AddField("EXP", userSpecified.GetEXP() + " (" + (Math.Round(userSpecified.EXPToLevelUp()) - userSpecified.GetEXP()) + " EXP to level up)", true);
@@ -352,25 +336,50 @@ namespace DiscordBot.Modules.Public
             eb.AddField("Joined Guild", userSpecified.GuildJoinDate(), true);
             
             if (!String.IsNullOrEmpty(userSpecified.GetMinecraftUsername()))
+            {
                 eb.AddField("Minecraft Username", userSpecified.GetMinecraftUsername(), true);
+            }
 
             if (!String.IsNullOrEmpty(userSpecified.GetWebsiteUrl()))
-                eb.AddField(StringConfiguration.Load().DefaultWebsiteName, "[" + (userSpecified.GetWebsiteName() ?? StringConfiguration.Load().DefaultWebsiteName) + "](" + userSpecified.GetWebsiteUrl() + ")", true);
+            {
+                eb.AddField(StringConfiguration.Load().DefaultWebsiteName,
+                    "[" + (userSpecified.GetWebsiteName() ?? StringConfiguration.Load().DefaultWebsiteName) + "](" +
+                    userSpecified.GetWebsiteUrl() + ")", true);
+            }
 
             if (!String.IsNullOrEmpty(userSpecified.GetInstagramUsername()))
-                eb.AddField("Instagram", "[" + userSpecified.GetInstagramUsername() + "](https://www.instagram.com/" + userSpecified.GetInstagramUsername() + "/)", true);
+            {
+                eb.AddField("Instagram",
+                    "[" + userSpecified.GetInstagramUsername() + "](https://www.instagram.com/" +
+                    userSpecified.GetInstagramUsername() + "/)", true);
+            }
 
             if (!String.IsNullOrEmpty(userSpecified.GetSnapchatUsername()))
-                eb.AddField("Snapchat", "[" + userSpecified.GetSnapchatUsername() + "](https://www.snapchat.com/add/" + userSpecified.GetSnapchatUsername() + "/)", true);
+            {
+                eb.AddField("Snapchat",
+                    "[" + userSpecified.GetSnapchatUsername() + "](https://www.snapchat.com/add/" +
+                    userSpecified.GetSnapchatUsername() + "/)", true);
+            }
 
             if (!String.IsNullOrEmpty(userSpecified.GetGitHubUsername()))
-                eb.AddField("GitHub", "[" + userSpecified.GetGitHubUsername() + "](https://github.com/" + userSpecified.GetGitHubUsername() + "/)", true);
+            {
+                eb.AddField("GitHub",
+                    "[" + userSpecified.GetGitHubUsername() + "](https://github.com/" +
+                    userSpecified.GetGitHubUsername() + "/)", true);
+            }
 
             if (!String.IsNullOrEmpty(userSpecified.GetPokemonGoFriendCode()))
-                eb.AddField("Pokémon Go Friend Code", "[" + userSpecified.GetPokemonGoFriendCode() + "](https://chart.googleapis.com/chart?chs=300x300&cht=qr&" + userSpecified.GetPokemonGoFriendCode().Replace(" ", "") + "&choe=UTF-8)", true);
+            {
+                eb.AddField("Pokémon Go Friend Code",
+                    "[" + userSpecified.GetPokemonGoFriendCode() +
+                    "](https://chart.googleapis.com/chart?chs=300x300&cht=qr&" +
+                    userSpecified.GetPokemonGoFriendCode().Replace(" ", "") + "&choe=UTF-8)", true);
+            }
 
             if (!String.IsNullOrEmpty(userSpecified.GetCustomPrefix()))
+            {
                 eb.AddField("Custom Prefix", userSpecified.GetCustomPrefix(), true);
+            }
             
             eb.AddField("Profile", "[Online Profile](" + Configuration.Load().PROFILE_URL_ID_TAGGED + userSpecified.Id + ")", true);
             

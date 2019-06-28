@@ -37,7 +37,6 @@ namespace DiscordBot
             Console.WriteLine(@")");
             
             Console.WriteLine(@"Web: www.mythicalcuddles.xyz");
-            Console.WriteLine(@"Contact: staff@mythicalcuddles.xyz");
             
             Console.WriteLine(@"Copyright 2017 - 2019 Melissa Brennan | Licensed under the MIT License.");
             Console.WriteLine(@"-----------------------------------------------------------------");
@@ -45,21 +44,34 @@ namespace DiscordBot
             MelissaNet.MelissaNet.Initialize();
 
             /*    Update Checker via MythicalCore    */
-            var updateCheck = MythicalCore.Updater.CheckForUpdate("DiscordBot", ProgramVersion);
-            if (updateCheck.Item1)
+            try
+            {
+                var updateCheck = Updater.CheckForUpdate("DiscordBot", ProgramVersion);
+                if (updateCheck.Item1)
+                {
+                    Console.WriteLine(@"-----------------------------------------------------------------");
+                    LogMessage lm = new LogMessage(LogSeverity.Info, "MythicalCore",
+                        "A new update has been found. Would you like to download?");
+                    lm.PrintToConsole();
+                    Console.WriteLine(@"-----------------------------------------------------------------");
+
+                    DialogResult result = MessageBox.Show("A new update is available. Would you like to update?",
+                        "DiscordBot Update Available", MessageBoxButtons.YesNo, MessageBoxIcon.Information);
+
+                    if (result == DialogResult.Yes)
+                    {
+                        System.Diagnostics.Process.Start(updateCheck.Item2);
+                        Environment.Exit(0);
+                    }
+                }
+            }
+            catch (Exception e)
             {
                 Console.WriteLine(@"-----------------------------------------------------------------");
-                LogMessage lm = new LogMessage(LogSeverity.Info, "MythicalCore", "A new update has been found. Would you like to download?");
+                LogMessage lm = new LogMessage(LogSeverity.Error, "MythicalCore",
+                    "Unable to check for new updates.");
                 lm.PrintToConsole();
                 Console.WriteLine(@"-----------------------------------------------------------------");
-                
-                DialogResult result = MessageBox.Show("A new update is available. Would you like to update?", "DiscordBot Update Available", MessageBoxButtons.YesNo, MessageBoxIcon.Information);
-
-                if (result == DialogResult.Yes)
-                {
-                    System.Diagnostics.Process.Start(updateCheck.Item2);
-                    Environment.Exit(0);
-                }
             }
             /*    Update End    */
             

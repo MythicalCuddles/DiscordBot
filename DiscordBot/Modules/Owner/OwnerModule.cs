@@ -27,10 +27,8 @@ namespace DiscordBot.Modules.Owner
         {
             if (!User.Load(user.Id).TeamMember)
             {
-                //User.UpdateUser(user.Id, teamMember:true);
-                
                 DatabaseActivity.ExecuteNonQueryCommand("UPDATE users SET teamMember='Y' WHERE id='" + user.Id + "';");
-                
+
                 await ReplyAsync(user.Mention + " has been added to the team by " + Context.User.Mention);
             }
             else
@@ -44,10 +42,8 @@ namespace DiscordBot.Modules.Owner
         {
             if (User.Load(user.Id).TeamMember)
             {
-                //User.UpdateUser(user.Id, teamMember:false);
-                
                 DatabaseActivity.ExecuteNonQueryCommand("UPDATE users SET teamMember='N' WHERE id='" + user.Id + "';");
-                
+
                 await ReplyAsync(user.Mention + " has been removed from the team by " + Context.User.Mention);
             }
             else
@@ -57,21 +53,20 @@ namespace DiscordBot.Modules.Owner
         }
 
         [Command("editfooter")]
-        public async Task EditFooter(IUser user, [Remainder]string footer)
+        public async Task EditFooter(IUser user, [Remainder] string footer)
         {
-            if(user == null || footer == null)
+            if (user == null || footer == null)
             {
                 await ReplyAsync("**Syntax:** " + Guild.Load(Context.Guild.Id).Prefix + "editfooter [@User] [Footer]");
                 return;
             }
-            
-            //User.UpdateUser(user.Id, footerText:footer);
-                
+
             List<(string, string)> queryParams = new List<(string, string)>()
             {
                 ("@footerText", footer)
             };
-            DatabaseActivity.ExecuteNonQueryCommand("UPDATE users SET footerText=@footerText WHERE id='" + user.Id + "';", queryParams);
+            DatabaseActivity.ExecuteNonQueryCommand(
+                "UPDATE users SET footerText=@footerText WHERE id='" + user.Id + "';", queryParams);
 
             var eb = new EmbedBuilder()
                 .WithDescription(Context.User.Username + " updated " + user.Mention + "'s footer successfully.")
@@ -87,7 +82,8 @@ namespace DiscordBot.Modules.Owner
         {
             if (user == null || position == null)
             {
-                await ReplyAsync("**Syntax:** " + Guild.Load(Context.Guild.Id).Prefix + "editiconurl [@User] [Author/Footer] [Link to Icon/Image]");
+                await ReplyAsync("**Syntax:** " + Guild.Load(Context.Guild.Id).Prefix +
+                                 "editiconurl [@User] [Author/Footer] [Link to Icon/Image]");
                 return;
             }
 
@@ -104,31 +100,35 @@ namespace DiscordBot.Modules.Owner
             {
                 case "AUTHOR":
                     oldLink = User.Load(user.Id).EmbedAuthorBuilderIconUrl;
-                    //User.UpdateUser(user.Id, embedAuthorBuilderIconUrl:newLink);
-                
+
                     List<(string, string)> authorQueryParams = new List<(string, string)>()
                     {
                         ("@embedAuthorBuilderIconUrl", newLink)
                     };
-                    DatabaseActivity.ExecuteNonQueryCommand("UPDATE users SET authorIconURL=@embedAuthorBuilderIconUrl WHERE id='" + user.Id + "';", authorQueryParams);
-                    
+                    DatabaseActivity.ExecuteNonQueryCommand(
+                        "UPDATE users SET authorIconURL=@embedAuthorBuilderIconUrl WHERE id='" + user.Id + "';",
+                        authorQueryParams);
+
                     eb.WithColor(Color.DarkGreen);
-                    eb.WithDescription(Context.User.Username + " successfully updated " + user.Mention + "'s Author Icon to: " + url);
+                    eb.WithDescription(Context.User.Username + " successfully updated " + user.Mention +
+                                       "'s Author Icon to: " + url);
                     eb.WithFooter("Old Link: " + oldLink);
                     await ReplyAsync("", false, eb.Build());
                     break;
                 case "FOOTER":
                     oldLink = User.Load(user.Id).EmbedAuthorBuilderIconUrl;
-                    //User.UpdateUser(user.Id, embedFooterBuilderIconUrl:newLink);
-                    
+
                     List<(string, string)> footerQueryParams = new List<(string, string)>()
                     {
                         ("@embedFooterBuilderIconUrl", newLink)
                     };
-                    DatabaseActivity.ExecuteNonQueryCommand("UPDATE users SET footerIconURL=@embedFooterBuilderIconUrl WHERE id='" + user.Id + "';", footerQueryParams);
-                    
+                    DatabaseActivity.ExecuteNonQueryCommand(
+                        "UPDATE users SET footerIconURL=@embedFooterBuilderIconUrl WHERE id='" + user.Id + "';",
+                        footerQueryParams);
+
                     eb.WithColor(Color.DarkGreen);
-                    eb.WithDescription(Context.User.Username + " successfully updated " + user.Mention + "'s Footer Icon to: " + url);
+                    eb.WithDescription(Context.User.Username + " successfully updated " + user.Mention +
+                                       "'s Footer Icon to: " + url);
                     eb.WithFooter("Old Link: " + oldLink);
                     await ReplyAsync("", false, eb.Build());
                     break;
@@ -143,41 +143,44 @@ namespace DiscordBot.Modules.Owner
         [Command("botignore"), Summary("Make the bot ignore a user.")]
         public async Task BotIgnore(IUser user)
         {
-            //User.UpdateUser(user.Id, isBotIgnoringUser:!User.Load(user.Id).IsBotIgnoringUser);
-
             char ignoreUser = (!User.Load(user.Id).IsBotIgnoringUser).ToYesNo()[0];
             List<(string, string)> queryParams = new List<(string, string)>()
             {
                 ("@botIgnoringUser", ignoreUser.ToString())
             };
-            DatabaseActivity.ExecuteNonQueryCommand("UPDATE users SET isBeingIgnored=@botIgnoringUser WHERE id='" + user.Id + "';", queryParams);
+            DatabaseActivity.ExecuteNonQueryCommand(
+                "UPDATE users SET isBeingIgnored=@botIgnoringUser WHERE id='" + user.Id + "';", queryParams);
 
-            if(User.Load(user.Id).IsBotIgnoringUser)
+            if (User.Load(user.Id).IsBotIgnoringUser)
             {
-                await ReplyAsync(Context.User.Mention + ", " + DiscordBot.Bot.CurrentUser.Username + " will start ignoring " + user.Mention);
+                await ReplyAsync(Context.User.Mention + ", " + DiscordBot.Bot.CurrentUser.Username +
+                                 " will start ignoring " + user.Mention);
             }
             else
             {
-                await ReplyAsync(Context.User.Mention + ", " + DiscordBot.Bot.CurrentUser.Username + " will start to listen to " + user.Mention);
+                await ReplyAsync(Context.User.Mention + ", " + DiscordBot.Bot.CurrentUser.Username +
+                                 " will start to listen to " + user.Mention);
             }
         }
 
         [Command("die")]
         public async Task KillProgram(string confirmation = null)
         {
-            if (confirmation.ToUpper() != "CONFIRM")
+            if(confirmation.ToUpperInvariant() != "CONFIRM")
             {
-                await ReplyAsync("**Please confirm by entering the TwoAuth code as follows:** " + Guild.Load(Context.Guild.Id).Prefix + "die confirm\n" +
+                await ReplyAsync("**Please confirm by entering the TwoAuth code as follows:** " +
+                                 Guild.Load(Context.Guild.Id).Prefix + "die confirm\n" +
                                  "Issuing this command will log the Bot out and terminate the process.");
                 return;
             }
 
             Context.Message.DeleteAfter(1);
 
-            EmbedBuilder eb = new EmbedBuilder()
+            EmbedBuilder eb = new EmbedBuilder
             {
                 Title = "",
-                Color = new Color(User.Load(Context.User.Id).AboutR, User.Load(Context.User.Id).AboutG, User.Load(Context.User.Id).AboutB),
+                Color = new Color(User.Load(Context.User.Id).AboutR, User.Load(Context.User.Id).AboutG,
+                    User.Load(Context.User.Id).AboutB),
                 Description = ""
             }.AddField("", "");
 
@@ -202,7 +205,7 @@ namespace DiscordBot.Modules.Owner
                 foreach (var c in g.TextChannels)
                 {
                     var msgs = c.GetMessagesAsync().GetEnumerator().Current;
-                    
+
                     foreach (var m in msgs)
                     {
                         var msg = c.GetMessageAsync(m.Id).GetAwaiter().GetResult() as SocketUserMessage;
@@ -210,64 +213,13 @@ namespace DiscordBot.Modules.Owner
                         if (msg.Id == id)
                         {
                             await msg.AddReactionAsync(new Emoji(emote));
-                            await ReplyAsync(Context.User.Mention + ", if that message exists in my cache, I've added a reaction to it.");
+                            await ReplyAsync(Context.User.Mention +
+                                             ", if that message exists in my cache, I've added a reaction to it.");
                             return;
                         }
                     }
                 }
             }
         }
-
-        // Added and Removed to quickly merge the JSON data from Common/User into SQL for Objects/User
-//        [Command("adduserstodb")]
-//        public async Task AddAllUsersToDatabase()
-//        {
-//            foreach (SocketGuild g in DiscordBot.Bot.Guilds)
-//            {
-//                foreach (SocketUser u in g.Users)
-//                {
-//                    User usr = User.Load(u.Id);
-//                    char teamMember = usr.TeamMember.ToYesNo()[0];
-//                    char ignoredByBot = usr.IsBotIgnoringUser.ToYesNo()[0];
-//                    List<(string, string)> queryParams = new List<(string id, string value)>()
-//                    {
-//                        ("@username", u.Username),
-//                        ("@avatarUrl", u.GetAvatarUrl() ?? u.GetDefaultAvatarUrl()),
-//                        ("@level", usr.Level.ToString()),
-//                        ("@exp", usr.EXP.ToString()),
-//                        ("@name", usr.Name),
-//                        ("@gender", usr.Gender),
-//                        ("@pronouns", usr.Pronouns),
-//                        ("@about", usr.About),
-//                        ("@customPrefix", usr.CustomPrefix),
-//                        ("@aboutR", usr.AboutR.ToString()),
-//                        ("@aboutG", usr.AboutG.ToString()),
-//                        ("@aboutB", usr.AboutB.ToString()),
-//                        ("@teamMember", teamMember.ToString()),
-//                        ("@authorIconURL", usr.EmbedAuthorBuilderIconUrl),
-//                        ("@footerIconURL", usr.EmbedFooterBuilderIconUrl),
-//                        ("@footerText", usr.FooterText),
-//                        ("@pokemonGoFriendCode", usr.PokemonGoFriendCode),
-//                        ("@minecraftUsername", usr.MinecraftUsername),
-//                        ("@snapchatUsername", usr.Snapchat),
-//                        ("@instagramUsername", usr.InstagramUsername),
-//                        ("@githubUsername", usr.GitHubUsername),
-//                        ("@websiteName", usr.WebsiteName),
-//                        ("@websiteURL", usr.WebsiteUrl),
-//                        ("@ignoredByBot", ignoredByBot.ToString())
-//                    };
-//					
-//                    DatabaseActivity.ExecuteNonQueryCommand(
-//                        "INSERT IGNORE INTO users" +
-//                        "(`id`, `username`, `avatarUrl`, `level`, `exp`, `name`, `gender`, `pronouns`, `about`, `customPrefix`, `aboutR`, `aboutG`, `aboutB`, `teamMember`, " +
-//                        "`authorIconURL`, `footerIconURL`, `footerText`, `pokemonGoFriendCode`, `minecraftUsername`, `snapchatUsername`, `instagramUsername`, `githubUsername`, " +
-//                        "`websiteName`, `websiteURL`, `isBeingIgnored`) " +
-//                        "VALUES ( " + 
-//                        u.Id + ", @username, @avatarUrl, @level, @exp, @name, @gender, @pronouns, @about, @customPrefix, @aboutR, @aboutG, @aboutB, @teamMember, " +
-//                        "@authorIconURL, @footerIconURL, @footerText, @pokemonGoFriendCode, @minecraftUsername, @snapchatUsername, @instagramUsername, @githubUsername, " +
-//                        "@websiteName, @websiteURL, @ignoredByBot);", queryParams);
-//                }
-//            }
-//        }
     }
 }

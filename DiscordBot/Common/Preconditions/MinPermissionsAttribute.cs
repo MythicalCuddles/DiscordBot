@@ -30,22 +30,34 @@ namespace DiscordBot.Common.Preconditions
             var user = (SocketGuildUser)context.User;
 
             if (user.IsBot)
+            {
                 return PermissionLevel.Bot;
+            }
 
 			if (user.IsBotOwner())
-				return PermissionLevel.BotOwner;
+            {
+                return PermissionLevel.BotOwner;
+            }
 
 			if (user.IsTeamMember())
-				return PermissionLevel.TeamMember;
+            {
+                return PermissionLevel.TeamMember;
+            }
 
             if (user.IsGuildOwner(context.Guild))
+            {
                 return PermissionLevel.ServerOwner;
+            }
 
             if (user.IsGuildAdministrator())
+            {
                 return PermissionLevel.ServerAdmin;
+            }
 
             if (user.IsGuildModerator())
+            {
                 return PermissionLevel.ServerMod;
+            }
 
             return PermissionLevel.User;
         }

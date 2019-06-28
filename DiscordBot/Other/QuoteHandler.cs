@@ -7,7 +7,7 @@ using DiscordBot.Extensions;
 
 namespace DiscordBot.Other
 {
-    public class QuoteHandler
+    public static class QuoteHandler
     {
         private const string FileName = "MythicalCuddles/DiscordBot/common/quotes.txt";
         private const string RequestQuotesFileName = "MythicalCuddles/DiscordBot/common/requestquotes.txt";
@@ -15,13 +15,13 @@ namespace DiscordBot.Other
         public static List<string> QuoteList = new List<string>();
         public static List<string> RequestQuoteList = new List<string>();
 
-        public static List<List<string>> SplicedQuoteList = new List<List<string>>();
-        public static List<List<string>> SplicedRequestQuoteList = new List<List<string>>();
+        private static List<List<string>> SplicedQuoteList = new List<List<string>>();
+        private static List<List<string>> SplicedRequestQuoteList = new List<List<string>>();
 
-        public static List<ulong> QuoteMessages = new List<ulong>();
+        public static readonly List<ulong> QuoteMessages = new List<ulong>();
         public static List<ulong> RequestQuoteMessages = new List<ulong>();
 
-        public static List<int> PageNumber = new List<int>();
+        public static readonly List<int> PageNumber = new List<int>();
         public static List<int> RequestPageNumber = new List<int>();
 
         private static void LoadAllQuotes()

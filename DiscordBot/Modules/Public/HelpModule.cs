@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 
 using Discord;
@@ -31,7 +32,7 @@ namespace DiscordBot.Modules.Public
             if(command == null)
             {
                 string prefix = Guild.Load(Context.Guild.Id).Prefix;
-                var builder = new EmbedBuilder()
+                var builder = new EmbedBuilder
                 {
                     Color = new Color(114, 137, 218),
                     Description = "These are the commands you can use."
@@ -39,7 +40,7 @@ namespace DiscordBot.Modules.Public
 
                 foreach (var module in Service.Modules)
                 {
-                    string description = null;
+                    var description = new StringBuilder();
                     foreach (var cmd in module.Commands)
                     {
                         var result = await cmd.CheckPreconditionsAsync(Context);
@@ -47,16 +48,16 @@ namespace DiscordBot.Modules.Public
                         {
                             if (string.IsNullOrEmpty(cmd.Summary))
                             {
-                                description += $"{prefix}{cmd.Aliases.First()}\n";
+                                description.Append($"{prefix}{cmd.Aliases.First()}\n");
                             }
                             else
                             {
-                                description += $"{prefix}{cmd.Aliases.First()} - {cmd.Summary}\n";
+                                description.Append($"{prefix}{cmd.Aliases.First()} - {cmd.Summary}\n");
                             }
                         }
                     }
 
-                    if (!string.IsNullOrWhiteSpace(description))
+                    if (!string.IsNullOrWhiteSpace(description.ToString()))
                     {
                         builder.AddField(x =>
                         {
@@ -81,7 +82,7 @@ namespace DiscordBot.Modules.Public
                 }
 
                 string prefix = Guild.Load(Context.Guild.Id).Prefix;
-                var builder = new EmbedBuilder()
+                var builder = new EmbedBuilder
                 {
                     Color = new Color(114, 137, 218),
                     Description = $"Here are some commands like **{command}**"

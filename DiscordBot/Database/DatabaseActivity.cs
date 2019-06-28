@@ -20,13 +20,13 @@ namespace DiscordBot.Database
             // Running through the configuration file - checking for database information.
             if (String.IsNullOrEmpty(Configuration.Load().DatabaseHost))
             {
-                new LogMessage(LogSeverity.Info, "Database Configuration", "Enter Database Hostname (default: 127.0.0.1):").PrintToConsole();
+                new LogMessage(LogSeverity.Info, "Database Configuration", "Enter Database Hostname (default: localhost/127.0.0.1):").PrintToConsole();
                 string host = Console.ReadLine();
 
                 if (string.IsNullOrEmpty(host))
                 {
-                    host = "127.0.0.1";
-                    new LogMessage(LogSeverity.Warning, "Database Configuration", "No value was entered for the database host. Using default (127.0.0.1)").PrintToConsole();
+                    host = "localhost";
+                    new LogMessage(LogSeverity.Warning, "Database Configuration", "No value was entered for the database host. Using default (localhost/127.0.0.1)").PrintToConsole();
                 }
                 
                 Configuration.UpdateConfiguration(databaseHost:host);
@@ -133,19 +133,21 @@ namespace DiscordBot.Database
 
         public static int ExecuteNonQueryCommand(string query, List<(string name, string value)> queryParams = null)
         {
-            using (MySqlConnection conn = GetDatabaseConnection())
+            using (var conn = GetDatabaseConnection())
             {
                 conn.Open();
-                MySqlCommand cmd = new MySqlCommand(query, conn);
+                var cmd = new MySqlCommand(query, conn);
                 cmd.Prepare();
             
                 if (queryParams != null)
                 {
-                    foreach(var s in queryParams)
+                    foreach(var (name, value) in queryParams)
                     {
-                        MySqlParameter param = new MySqlParameter();
-                        param.ParameterName = s.name;
-                        param.Value = s.value;
+                        var param = new MySqlParameter
+                        {
+                            ParameterName = name, 
+                            Value = value
+                        };
 
                         cmd.Parameters.Add(param);
                     }
@@ -156,8 +158,7 @@ namespace DiscordBot.Database
                     int rows = cmd.ExecuteNonQuery();
                     conn.CloseAsync();
 
-                    new LogMessage(LogSeverity.Info, "Database Command",
-                        "Command: " + cmd.CommandText + " | Rows affected: " + rows).PrintToConsole();
+                    new LogMessage(LogSeverity.Info, "Database Command","Command: " + cmd.CommandText + " | Rows affected: " + rows).PrintToConsole();
 
                     return rows;
                 }
@@ -178,11 +179,7 @@ namespace DiscordBot.Database
             
             try
             {
-                MySqlDataReader dr = cmd.ExecuteReader();
-
-                //new LogMessage(LogSeverity.Info, "Database Command", "Command: " + cmd.CommandText).PrintToConsole();
-
-                return (dr, conn);
+                return (cmd.ExecuteReader(), conn);
             }
             catch (Exception e)
             {
