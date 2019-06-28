@@ -166,7 +166,7 @@ namespace DiscordBot.Modules.Owner
         [Command("die")]
         public async Task KillProgram(string confirmation = null)
         {
-            if(confirmation != null && confirmation.ToUpperInvariant() != "CONFIRM")
+            if(confirmation.ToUpperInvariant() != "CONFIRM")
             {
                 await ReplyAsync("**Please confirm by entering the TwoAuth code as follows:** " +
                                  Guild.Load(Context.Guild.Id).Prefix + "die confirm\n" +
@@ -176,7 +176,7 @@ namespace DiscordBot.Modules.Owner
 
             Context.Message.DeleteAfter(1);
 
-            EmbedBuilder eb = new EmbedBuilder()
+            EmbedBuilder eb = new EmbedBuilder
             {
                 Title = "",
                 Color = new Color(User.Load(Context.User.Id).AboutR, User.Load(Context.User.Id).AboutG,
