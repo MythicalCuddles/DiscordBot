@@ -31,7 +31,7 @@ namespace DiscordBot.Modules.Public
             if(command == null)
             {
                 string prefix = Guild.Load(Context.Guild.Id).Prefix;
-                var builder = new EmbedBuilder()
+                var builder = new EmbedBuilder
                 {
                     Color = new Color(114, 137, 218),
                     Description = "These are the commands you can use."
@@ -81,7 +81,7 @@ namespace DiscordBot.Modules.Public
                 }
 
                 string prefix = Guild.Load(Context.Guild.Id).Prefix;
-                var builder = new EmbedBuilder()
+                var builder = new EmbedBuilder
                 {
                     Color = new Color(114, 137, 218),
                     Description = $"Here are some commands like **{command}**"
