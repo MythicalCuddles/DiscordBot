@@ -197,7 +197,6 @@ namespace DiscordBot
 				guildsInDatabase.Remove(g.Id);
 				await new LogMessage(LogSeverity.Info, "Startup", "-----------------------------------------------------------------").PrintToConsole();
 
-				//await ReadyAddChannelsToDatabase(g);
 				foreach (SocketGuildChannel c in g.Channels)
 				{
 					await ChannelHandler.InsertChannelToDB(c);
@@ -241,7 +240,6 @@ namespace DiscordBot
 					.WithThumbnailUrl(Bot.CurrentUser.GetAvatarUrl())
 					.WithDescription("**" + Bot.CurrentUser.Username + "** : ready event executed.")
                     .AddField("Version", v.Major + "." + v.Minor + "." + v.Build + "." + v.Revision, true)
-                    //.AddField("Latest Version", MelissaNet.Modules.Updater.CheckForNewVersion("MogiiBot3").Item1, true)
                     .AddField("MelissaNet", VersionInfo.Version, true)
 					.AddField("Latency", Bot.Latency + "ms", true)
                     .WithCurrentTimestamp();

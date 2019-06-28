@@ -18,11 +18,6 @@ namespace DiscordBot.Other
             string file = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), FileName);
             VoteLinkList = File.ReadAllLines(file).ToList();
 
-            //Console.Write(@"status: [");
-            //Console.ForegroundColor = ConsoleColor.DarkGreen;
-            //Console.Write(@"ok");
-            //Console.ResetColor();
-            //Console.WriteLine(@"]    " + FileName + @": loaded.");
             new LogMessage(LogSeverity.Info, "VoteLinkHandler", FileName + " loaded.").PrintToConsole();
         }
 
@@ -37,11 +32,6 @@ namespace DiscordBot.Other
 
                 SaveLinks();
 
-                //Console.Write(@"status: [");
-                //Console.ForegroundColor = ConsoleColor.DarkGreen;
-                //Console.Write(@"ok");
-                //Console.ResetColor();
-                //Console.WriteLine(@"]    " + FileName + @": created.");
                 new LogMessage(LogSeverity.Info, "VoteLinkHandler", FileName + " created.").PrintToConsole();
             }
             LoadQuotes();

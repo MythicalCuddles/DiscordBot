@@ -45,8 +45,6 @@ namespace DiscordBot.Modules.Admin
         {
             if (Context.User.HasHigherPermissionLevel(user))
             {
-                //User.UpdateUser(user.Id, about: about);
-                
                 List<(string, string)> queryParams = new List<(string, string)>()
                 {
                     ("@about", about)
@@ -70,8 +68,6 @@ namespace DiscordBot.Modules.Admin
         {
             if (Context.User.HasHigherPermissionLevel(user))
             {
-                //User.UpdateUser(user.Id, name:name);
-                
                 List<(string, string)> queryParams = new List<(string, string)>()
                 {
                     ("@name", name)
@@ -95,8 +91,6 @@ namespace DiscordBot.Modules.Admin
         {
             if (Context.User.HasHigherPermissionLevel(user))
             {
-                //User.UpdateUser(user.Id, gender:gender);
-                
                 List<(string, string)> queryParams = new List<(string, string)>()
                 {
                     ("@gender", gender)
@@ -120,8 +114,6 @@ namespace DiscordBot.Modules.Admin
         {
             if (Context.User.HasHigherPermissionLevel(user))
             {
-                //User.UpdateUser(user.Id, pronouns:pronouns);
-                
                 List<(string, string)> queryParams = new List<(string, string)>()
                 {
                     ("@pronouns", pronouns)
@@ -145,8 +137,6 @@ namespace DiscordBot.Modules.Admin
         {
             if (Context.User.HasHigherPermissionLevel(user))
             {
-                //User.UpdateUser(user.Id, minecraftUsername:username);
-                
                 List<(string, string)> queryParams = new List<(string, string)>()
                 {
                     ("@minecraftUsername", username)
@@ -170,8 +160,6 @@ namespace DiscordBot.Modules.Admin
         {
             if (Context.User.HasHigherPermissionLevel(user))
             {
-                //User.UpdateUser(user.Id, instagram:username);
-                
                 List<(string, string)> queryParams = new List<(string, string)>()
                 {
                     ("@instagramUsername", username)
@@ -218,8 +206,6 @@ namespace DiscordBot.Modules.Admin
         {
             if (Context.User.HasHigherPermissionLevel(user))
             {
-                //User.UpdateUser(user.Id, snapchat:username);
-                
                 List<(string, string)> queryParams = new List<(string, string)>()
                 {
                     ("@snapchatUsername", username)
@@ -243,8 +229,6 @@ namespace DiscordBot.Modules.Admin
         {
             if (Context.User.HasHigherPermissionLevel(user))
             {
-                //User.UpdateUser(user.Id, github:username);
-                
                 List<(string, string)> queryParams = new List<(string, string)>()
                 {
                     ("@githubUsername", username)
@@ -268,8 +252,6 @@ namespace DiscordBot.Modules.Admin
         {
             if (Context.User.HasHigherPermissionLevel(user))
             {
-                //User.UpdateUser(user.Id, customPrefix:prefix);
-                
                 List<(string, string)> queryParams = new List<(string, string)>()
                 {
                     ("@customPrefix", prefix)
@@ -293,8 +275,6 @@ namespace DiscordBot.Modules.Admin
         {
             if (Context.User.HasHigherPermissionLevel(user))
             {
-                //User.UpdateUser(user.Id, websiteUrl: url);
-                
                 List<(string, string)> queryParams = new List<(string, string)>()
                 {
                     ("@websiteUrl", url)
@@ -318,8 +298,6 @@ namespace DiscordBot.Modules.Admin
         {
             if (Context.User.HasHigherPermissionLevel(user))
             {
-                //User.UpdateUser(user.Id, websiteName: name);
-                
                 List<(string, string)> queryParams = new List<(string, string)>()
                 {
                     ("@websiteName", name)

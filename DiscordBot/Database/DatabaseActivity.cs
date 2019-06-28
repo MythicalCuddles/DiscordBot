@@ -119,7 +119,6 @@ namespace DiscordBot.Database
             
             try
             {
-                //connection.Open();
                 return connection;
             }
             catch (Exception e)
@@ -192,7 +191,6 @@ namespace DiscordBot.Database
         private static void CreateDatabaseIfNotExists()
         {
             ExecuteNonQueryCommand(string.Format("CREATE DATABASE IF NOT EXISTS {0} CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci;", Configuration.Load().DatabaseName));
-            //ExecuteNonQueryCommand(string.Format("ALTER DATABASE {0} CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci;", Configuration.Load().DatabaseName)); // set the charset of the database to allow for 
             
             databaseExists = true;
         }

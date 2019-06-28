@@ -100,7 +100,6 @@ namespace DiscordBot.Modules.Admin
 			{
 				string quote = QuoteHandler.QuoteList[quoteId - 1];
 				QuoteHandler.RemoveAndUpdateQuotes(quoteId - 1);
-				//await ReplyAsync("Quote " + quoteID + " removed successfully, " + Context.User.Mention + "\n**Quote:** " + quote);
 
 				EmbedBuilder eb = new EmbedBuilder()
 					.WithDescription(Context.User.Mention + " Quote Removed\nQuote: " + quote)
@@ -214,8 +213,6 @@ namespace DiscordBot.Modules.Admin
 					.WithColor(210, 47, 33);
 
 			await ReplyAsync("", false, eb.Build());
-
-			//await ReplyAsync("Link " + linkID + " removed successfully, " + Context.User.Mention + "\n**Link:** " + link);
 
 			await ListVotingLinks();
         }

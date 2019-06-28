@@ -58,8 +58,8 @@ namespace DiscordBot.Modules
             reader.dr.Close();
             reader.conn.Close();
             
-            awards.Sort((x, y) => x.DateAwarded.CompareTo(y.DateAwarded)); // newest awards will appear first
-            //awards.Sort((x, y) => y.dateAwarded.CompareTo(x.dateAwarded)); // oldest awards will appear first
+            // Swapping variables x and y in comparison will display oldest awards first - y.dateAwarded.CompareTo(x.dateAwarded)
+            awards.Sort((x, y) => x.DateAwarded.CompareTo(y.DateAwarded));
             
             StringBuilder sb = new StringBuilder();
 

@@ -15,7 +15,6 @@ namespace DiscordBot.Extensions
 	public static class Extensions
     {
 		#region Variables
-		//public const String arrow_left = "⬅", arrow_right = "➡";
 		public static readonly Emoji
 			ArrowLeft = EmojiExtensions.FromText(":arrow_left:"),
 			ArrowRight = EmojiExtensions.FromText(":arrow_right:"),
