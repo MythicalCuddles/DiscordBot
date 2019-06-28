@@ -16,11 +16,11 @@ namespace DiscordBot.Extensions
     {
 		#region Variables
 		//public const String arrow_left = "⬅", arrow_right = "➡";
-		public static Emoji
+		public static readonly Emoji
 			ArrowLeft = EmojiExtensions.FromText(":arrow_left:"),
 			ArrowRight = EmojiExtensions.FromText(":arrow_right:"),
-
-			LetterA = EmojiExtensions.FromText(":regional_indicator_a:"),
+            
+            LetterA = EmojiExtensions.FromText(":regional_indicator_a:"),
 			LetterB = EmojiExtensions.FromText(":regional_indicator_b:"),
 			LetterC = EmojiExtensions.FromText(":regional_indicator_c:"),
 			LetterD = EmojiExtensions.FromText(":regional_indicator_d:"),
