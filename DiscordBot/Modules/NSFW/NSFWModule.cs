@@ -96,12 +96,12 @@ namespace DiscordBot.Modules.NSFW
 
                         await new LogMessage(LogSeverity.Info, "Rule34Gamble", Context.User.Username + " got " + _id).PrintToConsole();
                         
-                        EmbedBuilder eb = new EmbedBuilder()
+                        EmbedBuilder eb = new EmbedBuilder
                         {
                             Title = "Congratulations! You won the following image.",
                             ImageUrl = link,
                             Color = Context.User.GetCustomRGB(),
-                            Footer = new EmbedFooterBuilder()
+                            Footer = new EmbedFooterBuilder
                             {
                                 Text = "ID: " + _id
                             }
