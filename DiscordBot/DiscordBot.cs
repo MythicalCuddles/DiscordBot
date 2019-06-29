@@ -100,7 +100,7 @@ namespace DiscordBot
             }
             catch (CryptographicException exception)
             {
-	            await new LogMessage(LogSeverity.Warning, "Startup", "Exception Caught: " + exception.ToString()).PrintToConsole();
+	            await new LogMessage(LogSeverity.Warning, "Startup", "Exception Caught: " + exception.Message).PrintToConsole();
 	            await ReEnterToken();
             }
             catch (Discord.Net.HttpException exception)

@@ -45,17 +45,20 @@ namespace DiscordBot.Modules.Public
 
             foreach (var g in DiscordBot.Bot.Guilds)
             {
-                if (isGuild && g.Id == context.Guild.Id)
+                if (isGuild)
                 {
-                    foreach (var u in g.Users)
+                    if (g.Id == context.Guild.Id)
                     {
-                        if (userList.All(i => i.Item2.Id != u.Id) && !u.IsBot)
+                        foreach (var u in g.Users)
                         {
-                            userList.Add(new Tuple<int, SocketGuildUser>(u.GetEXP(), u));
+                            if (userList.All(i => i.Item2.Id != u.Id) && !u.IsBot)
+                            {
+                                userList.Add(new Tuple<int, SocketGuildUser>(u.GetEXP(), u));
+                            }
                         }
                     }
                 }
-                else if (!isGuild)
+                else
                 {
                     foreach (var u in g.Users)
                     {

@@ -65,7 +65,9 @@ namespace DiscordBot.Common
             {
                 string path = Path.GetDirectoryName(File);
                 if (!Directory.Exists(path))
+                {
                     Directory.CreateDirectory(path);
+                }
 
                 var config = new Configuration();
 

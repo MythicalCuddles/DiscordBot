@@ -264,11 +264,6 @@ namespace DiscordBot.Extensions
                 return 9;
             }
 
-            if (user.IsTeamMember())
-            {
-                return 8;
-            }
-
             if (user.IsGuildOwner(user.Guild))
             {
                 return 7;
@@ -376,8 +371,6 @@ namespace DiscordBot.Extensions
         {
             switch (no)
             {
-                case -1:
-                    return null;
                 case 0:
                     return ActivityType.Playing;
                 case 1:

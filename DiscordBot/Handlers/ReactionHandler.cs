@@ -21,7 +21,7 @@ namespace DiscordBot.Handlers
 
             if (QuoteHandler.QuoteMessages.Contains(message.Id))
             {
-                await HandleQuoteReactions(message, channel, reaction);
+                await HandleQuoteReactions(message, reaction);
                 return;
             }
 
@@ -41,7 +41,7 @@ namespace DiscordBot.Handlers
                                                                 "] : " + reaction.Emote.Name).PrintToConsole();
         }
 
-        private static async Task HandleQuoteReactions(Cacheable<IUserMessage, ulong> message, ISocketMessageChannel channel, SocketReaction reaction)
+        private static async Task HandleQuoteReactions(Cacheable<IUserMessage, ulong> message, SocketReaction reaction)
         {
             // Check to see if the next page or previous page was clicked.
             if (reaction.Emote.Name == Extensions.Extensions.ArrowLeft.Name)

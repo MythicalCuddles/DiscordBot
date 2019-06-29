@@ -11,7 +11,7 @@ namespace DiscordBot.Database
 {
     public static class DatabaseActivity
     {
-        private static bool databaseExists;
+        private static bool _databaseExists = false;
         
         public static void CheckForDatabase()
         {
@@ -106,7 +106,7 @@ namespace DiscordBot.Database
         public static MySqlConnection GetDatabaseConnection()
         {
             string connectionString;
-            if (databaseExists)
+            if (_databaseExists)
             {
                 connectionString = String.Format("server={0};port={1};user id={2}; password={3}; database={4}; CharSet=utf8mb4", Configuration.Load().DatabaseHost, Configuration.Load().DatabasePort.ToString(), Configuration.Load().DatabaseUser, Configuration.Load().DatabasePassword, Configuration.Load().DatabaseName);
             }
@@ -192,7 +192,7 @@ namespace DiscordBot.Database
         {
             ExecuteNonQueryCommand(string.Format("CREATE DATABASE IF NOT EXISTS {0} CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci;", Configuration.Load().DatabaseName));
             
-            databaseExists = true;
+            _databaseExists = true;
         }
 
         private static void CreateTablesIfNotExists()

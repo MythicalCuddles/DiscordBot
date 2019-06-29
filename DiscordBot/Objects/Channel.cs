@@ -7,8 +7,6 @@ namespace DiscordBot.Objects
     {
         public bool AwardingEXP = true;
         
-        public Channel() { }
-
         public Channel(bool? awardingEXP = null)
         {
             AwardingEXP = awardingEXP ?? AwardingEXP;

@@ -36,8 +36,6 @@ namespace DiscordBot.Objects
 
         public bool IsBotIgnoringUser { get; set; } = false;
         
-        public User() { }
-
         public User(int? level = null,
             int? exp = null,
             string name = null,

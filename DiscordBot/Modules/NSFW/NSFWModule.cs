@@ -30,33 +30,34 @@ namespace DiscordBot.Modules.NSFW
         private readonly Random _random = new Random();
 
         // Rule 34 Gamble for NSFW Server - Contains NSFW Links
-        private readonly WebClient _client = new WebClient();
-        private readonly HtmlDocument _doc = new HtmlDocument();
-        private string _html, _url;
-        private int _id;
+        
         [Command("rule34gamble"), Summary("Head to #nsfw-rule34gamble and read the description for more information.")]
         [Alias("34gamble", "rule34")]
         public async Task Rule34Gamble(int postId = 0)
         {
+            WebClient client = new WebClient();
+            HtmlDocument doc = new HtmlDocument();
+
             if (Guild.Load(Context.Guild.Id).NSFWCommandsEnabled && Context.Channel.Id == Guild.Load(Context.Guild.Id).RuleGambleChannelID || Context.User.Id == Configuration.Load().Developer)
             {
                 if (((SocketTextChannel) Context.Channel).IsNsfw)
                 {
                     try
                     {
+                        int id;
                         if (postId != 0 && Context.User.IsBotOwner())
                         {
-                            _id = postId;
+                            id = postId;
                         }
                         else
                         {
-                            _id = _random.Next(1, Configuration.Load().MaxRuleXGamble);
+                            id = _random.Next(1, Configuration.Load().MaxRuleXGamble);
                         }
-                        _url = "https://rule34.xxx/index.php?page=post&s=view&id=" + _id.ToString();
-                        _html = _client.DownloadString(_url);
-                        _doc.LoadHtml(_html);
+                        var url = "https://rule34.xxx/index.php?page=post&s=view&id=" + id.ToString();
+                        var html = client.DownloadString(url);
+                        doc.LoadHtml(html);
 
-                        List<HtmlNode> imageNodes = (from HtmlNode node in _doc.DocumentNode.SelectNodes("//img")
+                        List<HtmlNode> imageNodes = (from HtmlNode node in doc.DocumentNode.SelectNodes("//img")
                                       where node.Name == "img"
                                       select node).ToList();
 
@@ -80,7 +81,7 @@ namespace DiscordBot.Modules.NSFW
                         link = link.FindAndReplaceFirstInstance("//", "/");
                         link = link.FindAndReplaceFirstInstance("temp", "//");
 
-                        await new LogMessage(LogSeverity.Info, "Rule34Gamble", Context.User.Username + " got " + _id).PrintToConsole();
+                        await new LogMessage(LogSeverity.Info, "Rule34Gamble", Context.User.Username + " got " + id).PrintToConsole();
                         
                         EmbedBuilder eb = new EmbedBuilder
                         {
@@ -89,7 +90,7 @@ namespace DiscordBot.Modules.NSFW
                             Color = Context.User.GetCustomRGB(),
                             Footer = new EmbedFooterBuilder
                             {
-                                Text = "ID: " + _id
+                                Text = "ID: " + id
                             }
                         }.WithCurrentTimestamp();
                         

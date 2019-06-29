@@ -121,7 +121,7 @@ namespace DiscordBot.Extensions
             int userLevel = level ?? (user.GetLevel() + 1);
             return (0.04 * (Math.Pow(userLevel, 3))) + (0.8 * (Math.Pow(userLevel, 2))) + (2 * userLevel);   
         }
-        public static async void AttemptLevelUp(this IUser user, SocketGuild guild)
+        public static async Task AttemptLevelUp(this IUser user, SocketGuild guild)
         {
             double requiredEXP = user.EXPToLevelUp();
             

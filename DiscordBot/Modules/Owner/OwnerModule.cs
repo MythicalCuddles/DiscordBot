@@ -96,7 +96,7 @@ namespace DiscordBot.Modules.Owner
                 newLink = newLink.FindAndReplaceFirstInstance(">", "");
             }
 
-            switch (position.ToUpper())
+            switch (position.ToUpperInvariant())
             {
                 case "AUTHOR":
                     oldLink = User.Load(user.Id).EmbedAuthorBuilderIconUrl;

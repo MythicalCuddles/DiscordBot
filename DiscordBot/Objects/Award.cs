@@ -4,50 +4,50 @@ namespace DiscordBot.Objects
 {
     public class Award
     {
-        private ulong awardId;
-        private ulong userId;
-        private string awardText;
-        private DateTime dateAwarded;
+        private ulong _awardId;
+        private ulong _userId;
+        private string _awardText;
+        private DateTime _dateAwarded;
 
         public Award() { }
 
         public Award(ulong awardId, ulong userId, string awardText)
         {
-            this.awardId = awardId;
-            this.userId = userId;
-            this.awardText = awardText;
+            _awardId = awardId;
+            _userId = userId;
+            _awardText = awardText;
         }
         
         public Award(ulong awardId, ulong userId, string awardText, DateTime dateAwarded)
         {
-            this.awardId = awardId;
-            this.userId = userId;
-            this.awardText = awardText;
-            this.dateAwarded = dateAwarded;
+            _awardId = awardId;
+            _userId = userId;
+            _awardText = awardText;
+            _dateAwarded = dateAwarded;
         }
 
         public ulong AwardId
         {
-            get => awardId;
-            set => awardId = value;
+            get => _awardId;
+            set => _awardId = value;
         }
 
         public ulong UserId
         {
-            get => userId;
-            set => userId = value;
+            get => _userId;
+            set => _userId = value;
         }
 
         public string AwardText
         {
-            get => awardText;
-            set => awardText = value;
+            get => _awardText;
+            set => _awardText = value;
         }
 
         public DateTime DateAwarded
         {
-            get => dateAwarded;
-            set => dateAwarded = value;
+            get => _dateAwarded;
+            set => _dateAwarded = value;
         }
     }
 }
