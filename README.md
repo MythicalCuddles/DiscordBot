@@ -8,38 +8,39 @@ DiscordBot (originally called [MogiiBot3](https://github.com/MythicalCuddles/Mog
 
 [DiscordBot Web](https://bot.mythicalcuddles.xyz) (not yet released) works with DiscordBot and adds new features such as viewing the leaderboard on the web, viewing user profiles, viewing guild bans and searching for users. I will be releasing this in the future for use, but for now, you may create your own by working with the data DiscordBot stores in the MySQL database.
 
-# Table of Contents
+## Table of Contents
 
 * [DiscordBot](#discordbot-----)
   * [Additional Applications](#additional-applications)
-* [Getting Started](#getting-started)
-  * [Prerequisites](#prerequisites)
+  * [Getting Started](#getting-started)
+    * [Prerequisites](#prerequisites)
     * [Additional Requirements](#additional-requirements)
   * [Setting Up & Running](#setting-up--running)
     * [MySQL Setup](#mysql-setup)
     * [DiscordBot API Token](#discordbot-api-token)
     * [DiscordBot Setup](#discordbot-setup)
-* [Additional Information](#additional-information)
-  * [What I learned from this project](#what-i-learned-from-this-project)
-  * [Final Notes](#final-notes)
+  * [Additional Information](#additional-information)
+    * [What I learned from this project](#what-i-learned-from-this-project)
+    * [Final Notes](#final-notes)
 
-
-# Getting Started
+## Getting Started
 
 For this part, I will run through how to install onto Windows OS. This project has not been tested with any other OS and may not work with them.
 
-## Prerequisites
-- Windows Operating System
-- .NET Framework 4.6 Runtime or later
-- A MySQL Database
+### Prerequisites
 
-### Additional Requirements
-- AppData Edit Permissions
-- Access to `root` user account on MySQL Database (or any other account with permission to optionally create a new user and create a database).
+* Windows Operating System
+* .NET Framework 4.6 Runtime or later
+* A MySQL Database
 
-## Setting Up & Running
+#### Additional Requirements
 
-### MySQL Setup
+* AppData Edit Permissions
+* Access to `root` user account on MySQL Database (or any other account with permission to optionally create a new user and create a database).
+
+### Setting Up & Running
+
+#### MySQL Setup
 Firstly, we're going to need a MySQL database to store our data, and a user account to access the database. MySQL by default creates a user, 'root' which we will need access to in order to create our own user and database.
 
 1. Start the MySQL Console and log in as 'root'. You may need to specify a password if you have changed it, or blank if you have not set one.
@@ -48,8 +49,7 @@ Firstly, we're going to need a MySQL database to store our data, and a user acco
 
 That should be the database ready to go. DiscordBot runs multiple SQL Scripts on startup to create tables within the database so we won't need to worry about creating them here.
 
-
-### DiscordBot API Token
+#### DiscordBot API Token
 In order to get a bot account, we're going to need to head to the [Developer Portal on DiscordApp](https://discordapp.com/developers) and login. Once logged in:
 
 1. Create a New Application and give it a name. Don't worry about the name as you can change it later if you wish.
@@ -62,8 +62,7 @@ From here, you can head back to your Bot Application and move onto the next step
 
 Please Note: In order for DiscordBot to completely work, it needs the `Administrator` Permission or the `Manage Bans` Permission along with all the other general permissions. This is due to DiscordBot storing information in the database such as the guild bans to be used on the Web Application.
 
-
-### DiscordBot Setup
+#### DiscordBot Setup
 To install DiscordBot, we're going to need the executable files.
 
 1. Head over to [releases and download the latest release](https://github.com/MythicalCuddles/DiscordBot/releases).
@@ -71,7 +70,7 @@ To install DiscordBot, we're going to need the executable files.
 3. Run the executable `DiscordBot.exe`. From here, we have the application running, now we just need to set it up.
 4. Read through the message prompts, completing the information as shown.
 
-```
+```TEXT
 When asked for Bot Token: Head back to the Bot Application on the Developer Portal, and copy the `TOKEN` in the `Bot` setting and paste it into the console.
 Console should clear after the Bot Token has been provided.
 
@@ -94,26 +93,26 @@ If you haven't created a database, DiscordBot will automatically default to the 
 DiscordBot should then attempt to create all the tables required to store information for the bot. After this process is completed, DiscordBot will start to run. Congratulations, you have successfully setup DiscordBot!
 
 ---
-# Additional Information
+## Additional Information
 
-## What I learned from this project
+### What I learned from this project
 
-- Using libraries to interface with APIs
-- Using JSON to store data
-- Creating files to write and read from
-- Using GitHub as a version control platform to manage the project
-- Creating extension methods
-- Using attributes to manage permissions and required conditions
-- Using a module base to manage bot commands
-- Using async and Task to allow code to execute and return
-- Using branches and push requests to easily manage what is being worked on and test each new feature separately
-- MySQL Databases to store data
-- MySQL Commands to create a database and tables, and populate the tables with data which needs to be updated constantly
-- Creating objects to easily manage data
+* Using libraries to interface with APIs
+* Using JSON to store data
+* Creating files to write and read from
+* Using GitHub as a version control platform to manage the project
+* Creating extension methods
+* Using attributes to manage permissions and required conditions
+* Using a module base to manage bot commands
+* Using async and Task to allow code to execute and return
+* Using branches and push requests to easily manage what is being worked on and test each new feature separately
+* MySQL Databases to store data
+* MySQL Commands to create a database and tables, and populate the tables with data which needs to be updated constantly
+* Creating objects to easily manage data
 
-## Final Notes
+### Final Notes
 
-- This project is still being added to as I continue to learn and think of new ideas and how to approach and execute them.
+* This project is still being added to as I continue to learn and think of new ideas and how to approach and execute them.
 
 ---
 
