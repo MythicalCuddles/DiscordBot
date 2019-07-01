@@ -204,7 +204,7 @@ namespace DiscordBot.Extensions
         {
             Task.Run(async () =>
             {
-                await Task.Delay(seconds * 1000);
+                await Task.Delay(seconds * 1000).ConfigureAwait(false);
                 try { await msg.ModifyAsync(x => x.Content = message).ConfigureAwait(false); }
                 catch
                 {
@@ -298,7 +298,10 @@ namespace DiscordBot.Extensions
         #region SocketUser Gets
         public static SocketUser GetUser(this ulong id)
         {
-            if (!(DiscordBot.Bot.GetUser(id) is SocketUser user)) return null;
+            if (!(DiscordBot.Bot.GetUser(id) is SocketUser user))
+            {
+                return null;
+            }
             return user;
         }
         #endregion

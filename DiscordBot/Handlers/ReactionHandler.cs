@@ -23,13 +23,13 @@ namespace DiscordBot.Handlers
 
             if (QuoteHandler.QuoteMessages.Contains(message.Id))
             {
-                await HandleQuoteReactions(message, reaction);
+                await HandleQuoteReactions(message, reaction).ConfigureAwait(false);
                 return;
             }
 
             if (QuoteHandler.RequestQuoteMessages.Contains(message.Id))
             {
-                await HandleRequestQuoteReactions(message, channel, reaction);
+                await HandleRequestQuoteReactions(message, channel, reaction).ConfigureAwait(false);
                 return;
             }
 

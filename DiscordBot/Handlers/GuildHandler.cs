@@ -17,7 +17,7 @@ namespace DiscordBot.Handlers
     {
         public static async Task JoinedGuild(SocketGuild socketGuild)
         {
-            await InsertGuildToDB(socketGuild);
+            await InsertGuildToDB(socketGuild).ConfigureAwait(false);
             
             foreach (SocketGuildChannel c in socketGuild.Channels)
             {
@@ -37,12 +37,12 @@ namespace DiscordBot.Handlers
                 await ChannelHandler.RemoveChannelFromDB(c);
             }
 
-            await RemoveGuildFromDB(socketGuild);
+            await RemoveGuildFromDB(socketGuild).ConfigureAwait(false);
         }
 
         public static async Task GuildUpdated(SocketGuild cachedSocketGuild, SocketGuild socketGuild)
         {
-            await UpdateGuildInDB(socketGuild);
+            await UpdateGuildInDB(socketGuild).ConfigureAwait(false);
         }
 
         public static async Task InsertGuildToDB(SocketGuild g)
@@ -66,7 +66,7 @@ namespace DiscordBot.Handlers
 
             if (rowsUpdated == 1)
             {
-                await SendMessageToGuild(g);
+                await SendMessageToGuild(g).ConfigureAwait(false);
             }
         }
 

@@ -74,7 +74,10 @@ namespace DiscordBot.Handlers
                     }
                 }.WithCurrentTimestamp();
 
-                if (e.GetAbout() != null) eb.AddField("About " + e.Username, e.GetAbout());
+                if (e.GetAbout() != null)
+                {
+                    eb.AddField("About " + e.Username, e.GetAbout());
+                }
 
                 eb.AddField("Username", "@" + e.Username + "#" + e.DiscriminatorValue, true);
                 eb.AddField("Level", e.GetLevel(), true);

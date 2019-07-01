@@ -44,7 +44,9 @@ namespace DiscordBot.Other
             {
                 string path = Path.GetDirectoryName(file);
                 if (!Directory.Exists(path))
+                {
                     Directory.CreateDirectory(path);
+                }
 
                 SaveQuotes();
                 

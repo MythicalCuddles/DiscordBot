@@ -88,7 +88,7 @@ namespace DiscordBot.Handlers
 			}
 			
 			SocketGuildChannel gChannel = channel as SocketGuildChannel;
-			await InsertChannelToDB(gChannel);
+			await InsertChannelToDB(gChannel).ConfigureAwait(false);
 		}
 
 		public static async Task ChannelDestroyed(SocketChannel channel)
@@ -171,7 +171,7 @@ namespace DiscordBot.Handlers
 		public static async Task ChannelUpdated(SocketChannel arg1, SocketChannel arg2)
 		{
 			SocketGuildChannel gChannel = arg2 as SocketGuildChannel;
-			await UpdateChannelInDB(gChannel);
+			await UpdateChannelInDB(gChannel).ConfigureAwait(false);
 		}
 		
 		

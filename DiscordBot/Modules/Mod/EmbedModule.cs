@@ -72,8 +72,8 @@ namespace DiscordBot.Modules.Mod
             }
             else
             {
-                await NewEmbed();
-                await EmbedWithTitle(title);
+                await NewEmbed().ConfigureAwait(false);
+                await EmbedWithTitle(title).ConfigureAwait(false);
             }
         }
 
@@ -91,8 +91,8 @@ namespace DiscordBot.Modules.Mod
             }
             else
             {
-                await NewEmbed();
-                await EmbedWithDescription(description);
+                await NewEmbed().ConfigureAwait(false);
+                await EmbedWithDescription(description).ConfigureAwait(false);
             }
         }
 
@@ -110,8 +110,8 @@ namespace DiscordBot.Modules.Mod
             }
             else
             {
-                await NewEmbed();
-                await EmbedWithFooter(footerText, footerURL);
+                await NewEmbed().ConfigureAwait(false);
+                await EmbedWithFooter(footerText, footerURL).ConfigureAwait(false);
             }
         }
 
@@ -152,8 +152,8 @@ namespace DiscordBot.Modules.Mod
             }
             else
             {
-                await NewEmbed();
-                await EmbedWithColor(r, g, b);
+                await NewEmbed().ConfigureAwait(false);
+                await EmbedWithColor(r, g, b).ConfigureAwait(false);
             }
         }
 
@@ -176,8 +176,8 @@ namespace DiscordBot.Modules.Mod
             }
             else
             {
-                await NewEmbed();
-                await SendEmbed(channel);
+                await NewEmbed().ConfigureAwait(false);
+                await SendEmbed(channel).ConfigureAwait(false);
             }
         }
     }

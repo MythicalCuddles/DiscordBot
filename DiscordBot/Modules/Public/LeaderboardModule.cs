@@ -23,19 +23,19 @@ namespace DiscordBot.Modules.Public
         [Command("")]
         public async Task Leaderboard()
         {
-            await GetGuildCoinLeaderboard();
+            await GetGuildCoinLeaderboard().ConfigureAwait(false);
         }
 
         [Command("global"), Summary("Global Leaderboard for the coins system.")]
         public async Task GetGlobalCoinLeaderboard()
         {
-            await ShowLeaderboard(Context);
+            await ShowLeaderboard(Context).ConfigureAwait(false);
         }
 
         [Command("guild"), Summary("Guild Leaderboard for the coins system.")]
         public async Task GetGuildCoinLeaderboard()
         {
-            await ShowLeaderboard(Context, isGuild:true);
+            await ShowLeaderboard(Context, isGuild:true).ConfigureAwait(false);
         }
 
         private async Task ShowLeaderboard(ICommandContext context, bool isGuild = false)

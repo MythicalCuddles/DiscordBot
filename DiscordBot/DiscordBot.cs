@@ -77,10 +77,10 @@ namespace DiscordBot
 	        
             await _commandService.AddModulesAsync(Assembly.GetEntryAssembly(), _serviceProvider);
 
-            await LoginAndStart();
+            await LoginAndStart().ConfigureAwait(false);
 
             // Keep the program running.
-            await Task.Delay(-1);
+            await Task.Delay(-1).ConfigureAwait(false);
         }
 
         private static IServiceProvider ConfigureServices()
@@ -101,18 +101,18 @@ namespace DiscordBot
             catch (CryptographicException exception)
             {
 	            await new LogMessage(LogSeverity.Warning, "Startup", "Exception Caught: " + exception.Message).PrintToConsole();
-	            await ReEnterToken();
+	            await ReEnterToken().ConfigureAwait(false);
             }
             catch (Discord.Net.HttpException exception)
             {
                 if (exception.HttpCode == HttpStatusCode.Unauthorized || exception.HttpCode == HttpStatusCode.Forbidden)
                 {
-	                await ReEnterToken();
+	                await ReEnterToken().ConfigureAwait(false);
                 }
             }
             catch (FormatException)
             {
-	            await ReEnterToken();
+	            await ReEnterToken().ConfigureAwait(false);
             }
             catch (Exception)
             {
@@ -203,10 +203,10 @@ namespace DiscordBot
 				}
 				await new LogMessage(LogSeverity.Info, "Startup", "-----------------------------------------------------------------").PrintToConsole();
 
-				await ReadyAddUsersToDatabase(g);
+				await ReadyAddUsersToDatabase(g).ConfigureAwait(false);
 				await new LogMessage(LogSeverity.Info, "Startup", "-----------------------------------------------------------------").PrintToConsole();
 
-				await ReadyAddBansToDatabase(g);
+				await ReadyAddBansToDatabase(g).ConfigureAwait(false);
 				await new LogMessage(LogSeverity.Info, "Startup", "-----------------------------------------------------------------").PrintToConsole();
             }
 
