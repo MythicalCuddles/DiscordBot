@@ -17,7 +17,9 @@ namespace DiscordBot.Handlers
         public static async Task ReactionAdded(Cacheable<IUserMessage, ulong> message, ISocketMessageChannel channel, SocketReaction reaction)
         {
             if (reaction.User.Value.IsBot)
+            {
                 return;
+            }
 
             if (QuoteHandler.QuoteMessages.Contains(message.Id))
             {
@@ -47,14 +49,18 @@ namespace DiscordBot.Handlers
             if (reaction.Emote.Name == Extensions.Extensions.ArrowLeft.Name)
             {
                 if (QuoteHandler.PageNumber[QuoteHandler.QuoteMessages.IndexOf(message.Id)] == 1)
+                {
                     return;
+                }
 
                 QuoteHandler.PageNumber[QuoteHandler.QuoteMessages.IndexOf(message.Id)]--;
             }
             else if (reaction.Emote.Name == Extensions.Extensions.ArrowRight.Name)
             {
                 if (QuoteHandler.PageNumber[QuoteHandler.QuoteMessages.IndexOf(message.Id)] == QuoteHandler.GetQuotesListLength)
+                {
                     return;
+                }
 
                 QuoteHandler.PageNumber[QuoteHandler.QuoteMessages.IndexOf(message.Id)]++;
             }
@@ -95,14 +101,18 @@ namespace DiscordBot.Handlers
             if (reaction.Emote.Name == Extensions.Extensions.ArrowLeft.Name)
             {
                 if (QuoteHandler.RequestPageNumber[QuoteHandler.RequestQuoteMessages.IndexOf(message.Id)] == 1)
+                {
                     return;
+                }
 
                 QuoteHandler.RequestPageNumber[QuoteHandler.RequestQuoteMessages.IndexOf(message.Id)]--;
             }
             else if (reaction.Emote.Name == Extensions.Extensions.ArrowRight.Name)
             {
                 if (QuoteHandler.RequestPageNumber[QuoteHandler.RequestQuoteMessages.IndexOf(message.Id)] == QuoteHandler.GetRequestQuotesListLength)
+                {
                     return;
+                }
 
                 QuoteHandler.RequestPageNumber[QuoteHandler.RequestQuoteMessages.IndexOf(message.Id)]++;
             }

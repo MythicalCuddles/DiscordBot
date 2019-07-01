@@ -125,8 +125,8 @@ namespace DiscordBot.Modules.SOwner
             }
 
             bool value = !Channel.Load(workingWithChannel.Id).AwardingEXP;
-                
-            List<(string, string)> queryParams = new List<(string, string)>()
+
+            var queryParams = new List<(string, string)>()
             {
                 ("@awardingEXP", value.ToOneOrZero().ToString())
             };

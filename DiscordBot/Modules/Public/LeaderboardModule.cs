@@ -75,7 +75,9 @@ namespace DiscordBot.Modules.Public
                 userList.OrderByDescending(intTuple => intTuple.Item1).ToList();
 
             if (sortedList.Count < listAmount)
+            {
                 listAmount = sortedList.Count;
+            }
 
             var eb = new EmbedBuilder()
             {

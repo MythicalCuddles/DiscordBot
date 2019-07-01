@@ -12,17 +12,17 @@ namespace DiscordBot.Other
         private const string FileName = "MythicalCuddles/DiscordBot/common/quotes.txt";
         private const string RequestQuotesFileName = "MythicalCuddles/DiscordBot/common/requestquotes.txt";
 
-        public static List<string> QuoteList = new List<string>();
-        public static List<string> RequestQuoteList = new List<string>();
+        internal static List<string> QuoteList = new List<string>();
+        internal static List<string> RequestQuoteList = new List<string>();
 
         private static List<List<string>> SplicedQuoteList = new List<List<string>>();
         private static List<List<string>> SplicedRequestQuoteList = new List<List<string>>();
 
-        public static readonly List<ulong> QuoteMessages = new List<ulong>();
-        public static List<ulong> RequestQuoteMessages = new List<ulong>();
+        internal static List<ulong> QuoteMessages = new List<ulong>();
+        internal static List<ulong> RequestQuoteMessages = new List<ulong>();
 
-        public static readonly List<int> PageNumber = new List<int>();
-        public static List<int> RequestPageNumber = new List<int>();
+        internal static List<int> PageNumber = new List<int>();
+        internal static List<int> RequestPageNumber = new List<int>();
 
         private static void LoadAllQuotes()
         {
@@ -56,7 +56,9 @@ namespace DiscordBot.Other
             {
                 string path = Path.GetDirectoryName(file);
                 if (!Directory.Exists(path))
+                {
                     Directory.CreateDirectory(path);
+                }
 
                 SaveRequestQuotes();
                 

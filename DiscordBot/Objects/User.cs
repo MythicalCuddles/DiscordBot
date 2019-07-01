@@ -103,7 +103,9 @@ namespace DiscordBot.Objects
                 user.AboutB = reader.dr.GetByte("aboutB");
 
                 if (reader.dr["teamMember"].ToString().ToUpper() == "Y")
+                {
                     user.TeamMember = true;
+                }
 
                 user.EmbedAuthorBuilderIconUrl = reader.dr["authorIconURL"].ToString();
                 user.EmbedFooterBuilderIconUrl = reader.dr["footerIconURL"].ToString();
@@ -117,7 +119,9 @@ namespace DiscordBot.Objects
                 user.WebsiteUrl = reader.dr["websiteURL"].ToString();
 
                 if (reader.dr["isBeingIgnored"].ToString().ToUpper() == "Y")
+                {
                     user.IsBotIgnoringUser = true;
+                }
             }
             
             reader.dr.Close();

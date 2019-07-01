@@ -44,7 +44,10 @@ namespace DiscordBot.Handlers
                 await Guild.Load(e.Guild.Id).LogChannelID.GetTextChannel().SendMessageAsync("", false, eb.Build());
 
                 if (Guild.Load(e.Guild.Id).WelcomeMessage != null && Guild.Load(e.Guild.Id).WelcomeChannelID != 0)
-                    await Guild.Load(e.Guild.Id).WelcomeChannelID.GetTextChannel().SendMessageAsync(Guild.Load(e.Guild.Id).WelcomeMessage.ModifyStringFlags(e));
+                {
+                    await Guild.Load(e.Guild.Id).WelcomeChannelID.GetTextChannel()
+                        .SendMessageAsync(Guild.Load(e.Guild.Id).WelcomeMessage.ModifyStringFlags(e));
+                }
                 
                 
                 EmbedBuilder lEB = new EmbedBuilder()
@@ -79,14 +82,43 @@ namespace DiscordBot.Handlers
                 eb.AddField("Account Created", e.UserCreateDate(), true);
                 eb.AddField("Joined Guild", e.GuildJoinDate(), true);
 
-                if (!String.IsNullOrEmpty(e.GetName())) eb.AddField("Name", e.GetName(), true);
-                if (!String.IsNullOrEmpty(e.GetGender())) eb.AddField("Gender", e.GetGender(), true);
-                if (!String.IsNullOrEmpty(e.GetPronouns())) eb.AddField("Pronouns", e.GetPronouns(), true);
-                if (!String.IsNullOrEmpty(e.GetMinecraftUsername())) eb.AddField("Minecraft Username", e.GetMinecraftUsername(), true);
-                if (!String.IsNullOrEmpty(e.GetInstagramUsername())) eb.AddField("Instagram", "[" + e.GetInstagramUsername() + "](https://www.instagram.com/" + e.GetInstagramUsername() + "/)", true);
-                if (!String.IsNullOrEmpty(e.GetSnapchatUsername())) eb.AddField("Snapchat", "[" + e.GetSnapchatUsername() + "](https://www.snapchat.com/add/" + e.GetSnapchatUsername() + "/)", true);
-                if (!String.IsNullOrEmpty(e.GetGitHubUsername())) eb.AddField("GitHub", "[" + e.GetGitHubUsername() + "](https://github.com/" + e.GetGitHubUsername() + "/)", true);
-                if (!String.IsNullOrEmpty(e.GetFooterText())) eb.AddField("Footer Text", e.GetFooterText(), true);
+                if (!String.IsNullOrEmpty(e.GetName()))
+                {
+                    eb.AddField("Name", e.GetName(), true);
+                }
+                if (!String.IsNullOrEmpty(e.GetGender()))
+                {
+                    eb.AddField("Gender", e.GetGender(), true);
+                }
+                if (!String.IsNullOrEmpty(e.GetPronouns()))
+                {
+                    eb.AddField("Pronouns", e.GetPronouns(), true);
+                }
+                if (!String.IsNullOrEmpty(e.GetMinecraftUsername()))
+                {
+                    eb.AddField("Minecraft Username", e.GetMinecraftUsername(), true);
+                }
+                if (!String.IsNullOrEmpty(e.GetInstagramUsername()))
+                {
+                    eb.AddField("Instagram",
+                        "[" + e.GetInstagramUsername() + "](https://www.instagram.com/" + e.GetInstagramUsername() +
+                        "/)", true);
+                }
+                if (!String.IsNullOrEmpty(e.GetSnapchatUsername()))
+                {
+                    eb.AddField("Snapchat",
+                        "[" + e.GetSnapchatUsername() + "](https://www.snapchat.com/add/" + e.GetSnapchatUsername() +
+                        "/)", true);
+                }
+                if (!String.IsNullOrEmpty(e.GetGitHubUsername()))
+                {
+                    eb.AddField("GitHub",
+                        "[" + e.GetGitHubUsername() + "](https://github.com/" + e.GetGitHubUsername() + "/)", true);
+                }
+                if (!String.IsNullOrEmpty(e.GetFooterText()))
+                {
+                    eb.AddField("Footer Text", e.GetFooterText(), true);
+                }
 
                 await Guild.Load(e.Guild.Id).LogChannelID.GetTextChannel().SendMessageAsync("", false, eb.Build());
             }
@@ -105,10 +137,19 @@ namespace DiscordBot.Handlers
                 }
             }.WithCurrentTimestamp();
 
-            if (e.Nickname != null) eb.WithTitle(e.Guild.Name + " - User Left - " + e.Nickname);
-            else eb.WithTitle(e.Guild.Name + " - User Left - " + e.Username);
+            if (e.Nickname != null)
+            {
+                eb.WithTitle(e.Guild.Name + " - User Left - " + e.Nickname);
+            }
+            else
+            {
+                eb.WithTitle(e.Guild.Name + " - User Left - " + e.Username);
+            }
 
-            if (e.GetAbout() != null) eb.AddField("About " + e.Username, e.GetAbout());
+            if (e.GetAbout() != null)
+            {
+                eb.AddField("About " + e.Username, e.GetAbout());
+            }
 
             eb.AddField("Username", "@" + e.Username + "#" + e.DiscriminatorValue, true);
             eb.AddField("Level", e.GetLevel(), true);
@@ -116,12 +157,32 @@ namespace DiscordBot.Handlers
             eb.AddField("Account Created", e.UserCreateDate(), true);
             eb.AddField("Joined Guild", e.GuildJoinDate(), true);
 
-            if (e.GetName() != null) eb.AddField("Name", e.GetName(), true);
-            if (e.GetGender() != null) eb.AddField("Gender", e.GetGender(), true);
-            if (e.GetPronouns() != null) eb.AddField("Pronouns", e.GetPronouns(), true);
-            if (e.GetMinecraftUsername() != null) eb.AddField("Minecraft Username", e.GetMinecraftUsername(), true);
-            if (e.GetSnapchatUsername() != null) eb.AddField("Snapchat", "[" + e.GetSnapchatUsername() + "](https://www.snapchat.com/add/" + e.GetSnapchatUsername() + "/)", true);
-            if (e.GetFooterText() != null) eb.AddField("Footer Text", e.GetFooterText(), true);
+            if (e.GetName() != null)
+            {
+                eb.AddField("Name", e.GetName(), true);
+            }
+            if (e.GetGender() != null)
+            {
+                eb.AddField("Gender", e.GetGender(), true);
+            }
+            if (e.GetPronouns() != null)
+            {
+                eb.AddField("Pronouns", e.GetPronouns(), true);
+            }
+            if (e.GetMinecraftUsername() != null)
+            {
+                eb.AddField("Minecraft Username", e.GetMinecraftUsername(), true);
+            }
+            if (e.GetSnapchatUsername() != null)
+            {
+                eb.AddField("Snapchat",
+                    "[" + e.GetSnapchatUsername() + "](https://www.snapchat.com/add/" + e.GetSnapchatUsername() + "/)",
+                    true);
+            }
+            if (e.GetFooterText() != null)
+            {
+                eb.AddField("Footer Text", e.GetFooterText(), true);
+            }
 
             await Guild.Load(e.Guild.Id).LogChannelID.GetTextChannel().SendMessageAsync("", false, eb.Build());
         }

@@ -165,7 +165,7 @@ namespace DiscordBot.Handlers
 			}
 			
 			SocketGuildChannel gChannel = channel as SocketGuildChannel;
-			await RemoveChannelFromDB(gChannel);
+			await RemoveChannelFromDB(gChannel).ConfigureAwait(false);
 		}
 
 		public static async Task ChannelUpdated(SocketChannel arg1, SocketChannel arg2)

@@ -36,9 +36,9 @@ namespace DiscordBot.Modules.Mod
         [Command("all")]
         public async Task ShowAllConfigs()
         {
-            await ShowBotConfig();
-            await ShowGuildConfig();
-            await ShowStringConfiguration();
+            await ShowBotConfig().ConfigureAwait(false);
+            await ShowGuildConfig().ConfigureAwait(false);
+            await ShowStringConfiguration().ConfigureAwait(false);
         }
 
         [Command("bot")]

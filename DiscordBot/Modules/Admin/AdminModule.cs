@@ -70,7 +70,7 @@ namespace DiscordBot.Modules.Admin
                     sb.Clear();
                 }
 
-                PaginatedMessage message = new PaginatedMessage()
+                PaginatedMessage message = new PaginatedMessage
                 {
                     Title = "**Quote List**",
                     Color = new Color(User.Load(Context.User.Id).AboutR, User.Load(Context.User.Id).AboutG, User.Load(Context.User.Id).AboutB),
@@ -140,7 +140,9 @@ namespace DiscordBot.Modules.Admin
                 QuoteHandler.RequestPageNumber.Add(1);
 
                 if (QuoteHandler.RequestQuoteList.Count > 10)
+                {
                     await msg.AddReactionAsync(Extensions.Extensions.ArrowRight);
+                }
             }
             else
             {
@@ -214,7 +216,7 @@ namespace DiscordBot.Modules.Admin
 
 			await ReplyAsync("", false, eb.Build());
 
-			await ListVotingLinks();
+			await ListVotingLinks().ConfigureAwait(false);
         }
     }
 }

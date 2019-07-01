@@ -90,8 +90,8 @@ namespace DiscordBot.Modules.Mod
 
             await ReplyAsync("", false, eb.Build());
         }
-        
-        public static DateTime ActiveForDateTime = new DateTime();
+
+        internal static DateTime ActiveForDateTime = new DateTime();
         private string CalculateUptime()
         {
             TimeSpan uptime = DateTime.Now - ActiveForDateTime;

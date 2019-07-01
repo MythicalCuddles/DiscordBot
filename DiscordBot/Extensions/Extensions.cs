@@ -245,8 +245,10 @@ namespace DiscordBot.Extensions
             SocketGuildUser u = user as SocketGuildUser;
 
             if (u?.JoinedAt != null)
+            {
                 return u.JoinedAt.Value.Day + " " + u.JoinedAt.Value.Month.GetMonthText() + " " +
                        u.JoinedAt.Value.Year;
+            }
 
             return "Unknown Join Date";
         }
@@ -306,7 +308,10 @@ namespace DiscordBot.Extensions
         {
             try
             {
-                if (!(DiscordBot.Bot.GetChannel(id) is SocketTextChannel channel)) return null;
+                if (!(DiscordBot.Bot.GetChannel(id) is SocketTextChannel channel))
+                {
+                    return null;
+                }
                 return channel;
             }
             catch (Exception)
@@ -316,7 +321,10 @@ namespace DiscordBot.Extensions
         }
         public static SocketVoiceChannel GetVoiceChannel(this ulong id)
         {
-            if (!(DiscordBot.Bot.GetChannel(id) is SocketVoiceChannel channel)) return null;
+            if (!(DiscordBot.Bot.GetChannel(id) is SocketVoiceChannel channel))
+            {
+                return null;
+            }
             return channel;
         }
         #endregion
@@ -324,7 +332,10 @@ namespace DiscordBot.Extensions
         #region SocketGuild Gets
         public static SocketGuild GetGuild(this ulong id)
         {
-            if (!(DiscordBot.Bot.GetGuild(id) is SocketGuild guild)) return null;
+            if (!(DiscordBot.Bot.GetGuild(id) is SocketGuild guild))
+            {
+                return null;
+            }
             return guild;
         }
         public static SocketGuild GetGuild(this ISocketMessageChannel textChannel)

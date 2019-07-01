@@ -21,7 +21,9 @@ namespace DiscordBot.Objects
             while (reader.dr.Read())
             {
                 if ((bool)reader.dr["awardingEXP"])
+                {
                     channel.AwardingEXP = true;
+                }
             }
             
             reader.dr.Close();

@@ -295,13 +295,22 @@ namespace DiscordBot.Modules.Public
             }
             
             EmbedAuthorBuilder eab = new EmbedAuthorBuilder();
-            if(!String.IsNullOrEmpty(userSpecified.Nickname)) eab.WithName("About " + userSpecified.Nickname);
-            else eab.WithName("About " + userSpecified.Username);
+            if(!String.IsNullOrEmpty(userSpecified.Nickname))
+            {
+                eab.WithName("About " + userSpecified.Nickname);
+            }
+            else
+            {
+                eab.WithName("About " + userSpecified.Username);
+            }
             
             eab.WithUrl(Configuration.Load().PROFILE_URL_ID_TAGGED + userSpecified.Id);
 
             EmbedFooterBuilder efb = new EmbedFooterBuilder();
-            if (userSpecified.IsTeamMember()) eab.WithIconUrl(userSpecified.GetEmbedAuthorBuilderIconUrl());
+            if (userSpecified.IsTeamMember())
+            {
+                eab.WithIconUrl(userSpecified.GetEmbedAuthorBuilderIconUrl());
+            }
             if (!String.IsNullOrEmpty(userSpecified.GetFooterText()))
             {
                 efb.WithText(userSpecified.GetFooterText());

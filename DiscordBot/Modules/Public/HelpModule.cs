@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -18,9 +17,6 @@ namespace DiscordBot.Modules.Public
     {
         public CommandService Service;
 
-        public List<IUserMessage> HelpMessages = new List<IUserMessage>();
-        public List<List<string>> HelpList = new List<List<string>>();
-        
         public HelpModule(CommandService service)
         {
             Service = service;

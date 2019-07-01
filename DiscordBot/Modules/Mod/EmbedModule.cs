@@ -165,9 +165,14 @@ namespace DiscordBot.Modules.Mod
                 int index = Users.FindIndex(user => user == Context.User);
 
                 if (channel == null)
+                {
                     channel = Context.Channel as SocketTextChannel;
+                }
 
-                if (channel != null) await channel.SendMessageAsync("", false, UserEmbeds[index].Build());
+                if (channel != null)
+                {
+                    await channel.SendMessageAsync("", false, UserEmbeds[index].Build());
+                }
             }
             else
             {
