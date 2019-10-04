@@ -205,7 +205,7 @@ namespace DiscordBot.Handlers
 			};
 
 			DatabaseActivity.ExecuteNonQueryCommand(
-				"UPDATE guilds SET channelName=@channelName, channelType=@channelType WHERE channelID=@channelID",
+				"UPDATE channels SET channelName=@channelName, channelType=@channelType WHERE channelID=@channelID",
 				queryParams);
 		}
 	}
