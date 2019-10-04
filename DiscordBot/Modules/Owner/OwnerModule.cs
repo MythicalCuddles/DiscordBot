@@ -221,5 +221,53 @@ namespace DiscordBot.Modules.Owner
                 }
             }
         }
+        
+        [Command("editbotchannels")] 
+        public async Task EditBotChannelsAsync(string editing = null, [Remainder] string value = null) 
+        {
+            if (editing == null || value == null)
+            {
+                await ReplyAsync("**Syntax:** " +
+                                 Guild.Load(Context.Guild.Id).Prefix + "editbotchannels [editKey] [value]\n```INI\n" +
+                                 "Available Commands\n" +
+                                 "-----------------------------\n" +
+                                 "[ 1] topic [value]\n" +
+                                 "```");
+                return;
+            }
+            
+            switch (editing.ToUpperInvariant())
+            {
+                case "TOPIC":
+                    foreach (SocketGuild g in DiscordBot.Bot.Guilds)
+                    {
+                        try
+                        {
+                            await Guild.Load(g.Id).BotChannelID.GetTextChannel().ModifyAsync(x => x.Topic = value);
+
+                            LogMessage lm = new LogMessage(LogSeverity.Info, "EditBotChannels",
+                                Context.User.Username + " edited the bot channel in " + g.Name + "!");
+                            await lm.PrintToConsole();
+                        }
+                        catch (Exception e)
+                        {
+                            LogMessage lm = new LogMessage(LogSeverity.Warning, "EditBotChannels", DiscordBot.Bot.CurrentUser.Username + " does not have the required permissions to edit the bot channel in " + g.Name + "!");
+                            await lm.PrintToConsole();
+                        }
+                    }
+
+                    await Configuration.Load().LogChannelId.GetTextChannel().SendMessageAsync(
+                        DiscordBot.Bot.CurrentUser.Username +
+                        " has attempted to update the topic for each Bot Channel, " + Context.User.Mention);
+                    break;
+                default:
+                    EmbedBuilder eb = new EmbedBuilder();
+                    eb.WithColor(Color.Red);
+                    eb.WithTitle("Invalid Edit Key");
+                    eb.WithDescription(Context.User.Mention + ", you have entered an invalid Edit Key. To see a list of valid keys, type: " + Guild.Load(Context.Guild.Id).Prefix + "editbotchannels");
+                    await ReplyAsync("", false, eb.Build());
+                    break;
+            }
+        }
     }
 }
