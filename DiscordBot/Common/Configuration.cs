@@ -59,7 +59,7 @@ namespace DiscordBot.Common
         public string PROFILE_URL_ID_TAGGED { get; } = "https://bot.mythicalcuddles.xyz/profile.php?id=";
         
         
-        public static void EnsureExists()
+        internal static void EnsureExists()
         {
             if (!System.IO.File.Exists(File))
             {
@@ -110,20 +110,20 @@ namespace DiscordBot.Common
             new LogMessage(LogSeverity.Info, "Configuration", FileName + " loaded.").PrintToConsole();
         }
         
-        public void SaveJson()
+        internal void SaveJson()
         {
             System.IO.File.WriteAllText(File, ToJson());
         }
         
-        public static Configuration Load()
+        internal static Configuration Load()
         {
             return JsonConvert.DeserializeObject<Configuration>(System.IO.File.ReadAllText(File));
         }
         
-        public string ToJson()
+        internal string ToJson()
             => JsonConvert.SerializeObject(this, Formatting.Indented);
         
-        public static void UpdateConfiguration(string botToken = null, ulong? developer = null, string statusText = null, string statusLink = null,
+        internal static void UpdateConfiguration(string botToken = null, ulong? developer = null, string statusText = null, string statusLink = null,
             string databaseHost = null, int? databasePort = null, string databaseUser = null, string databasePassword = null, string databaseName = null,
             bool? showAllAwards = null, string awardsIconUrl = null,
             int? statusActivity = null, UserStatus? status = null, bool? unknownCommandEnabled = null, bool? awardingEXPEnabled = null, bool? awardingEXPMentionUser = null,
