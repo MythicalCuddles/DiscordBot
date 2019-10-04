@@ -1,100 +1,127 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Reflection;
-using System.Threading.Tasks;
 using System.Windows.Forms;
+
 using Discord;
 using DiscordBot.Common;
 using DiscordBot.Database;
 using DiscordBot.Extensions;
 using DiscordBot.Other;
 
-using MythicalCore;
-using MelissaNet;
+using MelissaNet.Modules;
 
 namespace DiscordBot
 {
-    public class Program
+    public static class Program
     {
-        private static readonly Version ProgramVersion = Assembly.GetExecutingAssembly().GetName().Version;
+        private static readonly Version
+            ProgramVersion =
+                Assembly.GetExecutingAssembly().GetName()
+                    .Version; // Gets the program version to compare with the update checker.
 
-        public static void Main(string[] args)
+        public static void Main() // Entry point to the program.
         {
-            StartBot();
+            StartBot(); // Run the StartBot method.
         }
 
-        public static void StartBot()
+        private static void StartBot() // Startup Method.
         {
+            // Print Application Information to Console.
             Console.Write(@"DiscordBot: [");
             Console.ForegroundColor = ConsoleColor.Yellow;
-            Console.Write(@"Version " + ProgramVersion.Major + @"." + ProgramVersion.Minor + @"." + ProgramVersion.Build + @"." + ProgramVersion.Revision);
+            Console.Write(@"Version " + ProgramVersion.Major + @"." + ProgramVersion.Minor + @"." +
+                          ProgramVersion.Build + @"." + ProgramVersion.Revision);
             Console.ResetColor();
             Console.WriteLine(@"]    ");
 
+            // Print Developer Information to Console.
             Console.Write(@"Developed by Melissa Brennan (");
             Console.ForegroundColor = ConsoleColor.Magenta;
             Console.Write(@"@MythicalCuddles");
             Console.ResetColor();
             Console.WriteLine(@")");
-            
+
+            // Print Additional Information to the Console.
             Console.WriteLine(@"Web: www.mythicalcuddles.xyz");
-            
             Console.WriteLine(@"Copyright 2017 - 2019 Melissa Brennan | Licensed under the MIT License.");
-            Console.WriteLine(@"-----------------------------------------------------------------");
-            
+
+            // Run the Initializer for MelissaNET.
             MelissaNet.MelissaNet.Initialize();
 
-            /*    Update Checker via MythicalCore    */
-            try
-            {
-                var updateCheck = Updater.CheckForUpdate("DiscordBot", ProgramVersion);
-                if (updateCheck.Item1)
-                {
-                    Console.WriteLine(@"-----------------------------------------------------------------");
-                    LogMessage lm = new LogMessage(LogSeverity.Info, "MythicalCore",
-                        "A new update has been found. Would you like to download?");
-                    lm.PrintToConsole();
-                    Console.WriteLine(@"-----------------------------------------------------------------");
+            // Check for Updates using MelissaNet.
+            CheckForUpdates();
 
-                    DialogResult result = MessageBox.Show("A new update is available. Would you like to update?",
-                        "DiscordBot Update Available", MessageBoxButtons.YesNo, MessageBoxIcon.Information);
-
-                    if (result == DialogResult.Yes)
-                    {
-                        System.Diagnostics.Process.Start(updateCheck.Item2);
-                        Environment.Exit(0);
-                    }
-                }
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(@"-----------------------------------------------------------------");
-                LogMessage lm = new LogMessage(LogSeverity.Error, "MythicalCore",
-                    "Unable to check for new updates.");
-                lm.PrintToConsole();
-                Console.WriteLine(@"-----------------------------------------------------------------");
-            }
-            /*    Update End    */
-            
+            // Check if application configurations exist.
             Configuration.EnsureExists();
             StringConfiguration.EnsureExists();
             QuoteHandler.EnsureExists();
             VoteLinkHandler.EnsureExists();
+            
+            AttemptDataBaseConnection(); // Attempt a connection to the Database.
 
+            PrintConsoleSplitLine();
+
+            DiscordBot.RunBotAsync().GetAwaiter().GetResult(); // Start the Bot.
+        }
+
+        private static async void CheckForUpdates() // Requires MelissaNet to check for the latest version info.
+        {
+            try
+            {
+                var (releaseVersion, releaseUrl) = Updater.CheckForNewVersion("DiscordBot");
+                if (releaseVersion > ProgramVersion)
+                {
+                    var lm = new LogMessage(LogSeverity.Info, "MelissaNet",
+                        "A new update has been found. Would you like to download?");
+                    await lm.PrintToConsole();
+                    PrintConsoleSplitLine();
+
+                    var result = MessageBox.Show("A new update is available. Would you like to update?",
+                        "DiscordBot Update Available", MessageBoxButtons.YesNo, MessageBoxIcon.Information);
+
+                    if (result != DialogResult.Yes) return;
+                    Process.Start(releaseUrl);
+                    Environment.Exit(0);
+                }
+                else
+                {
+                    var lm = new LogMessage(LogSeverity.Info, "MelissaNet",
+                        "DiscordBot Version matched our released version.");
+                    await lm.PrintToConsole();
+                    PrintConsoleSplitLine();
+                }
+            }
+            catch (Exception e)
+            {
+                PrintConsoleSplitLine();
+                await new LogMessage(LogSeverity.Error, "MelissaNet", "Unable to check for new updates.")
+                    .PrintToConsole();
+                await new LogMessage(LogSeverity.Error, "MelissaNet", e.Message).PrintToConsole();
+                PrintConsoleSplitLine();
+            }
+        }
+
+        private static async void AttemptDataBaseConnection()
+        {
             try
             {
                 DatabaseActivity.CheckForDatabase();
             }
             catch (Exception e)
             {
-                LogMessage lm = new LogMessage(LogSeverity.Critical, "MySQL Database", "Unable to connect to database. Is it currently running?", e);
-                lm.PrintToConsole();
+                var lm = new LogMessage(LogSeverity.Critical, "MySQL Database",
+                    "Unable to connect to database. Is it currently running?", e);
+                await lm.PrintToConsole();
+                Console.ReadLine();
                 Environment.Exit(0);
             }
-           
-            
-            Console.WriteLine(@"-----------------------------------------------------------------");
-            
-            new DiscordBot().RunBotAsync().GetAwaiter().GetResult();
+        }
+
+        private static async void PrintConsoleSplitLine()
+        {
+            await new LogMessage(LogSeverity.Info, "",
+                "-----------------------------------------------------------------").PrintToConsole();
         }
     }
 }
