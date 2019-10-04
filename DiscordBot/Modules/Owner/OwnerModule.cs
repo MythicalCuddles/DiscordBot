@@ -189,38 +189,6 @@ namespace DiscordBot.Modules.Owner
             await DiscordBot.Bot.LogoutAsync();
             Environment.Exit(0);
         }
-
-        [Command("addreaction")]
-        public async Task AddReactionAsync(ulong? id = null, string emote = null)
-        {
-            if (id == null || emote == null)
-            {
-                await ReplyAsync("**Syntax:** " +
-                                 Guild.Load(Context.Guild.Id).Prefix + "addreaction [message id] [emote]");
-                return;
-            }
-
-            foreach (var g in DiscordBot.Bot.Guilds)
-            {
-                foreach (var c in g.TextChannels)
-                {
-                    var msgs = c.GetMessagesAsync().GetEnumerator().Current;
-
-                    foreach (var m in msgs)
-                    {
-                        var msg = c.GetMessageAsync(m.Id).GetAwaiter().GetResult() as SocketUserMessage;
-
-                        if (msg.Id == id)
-                        {
-                            await msg.AddReactionAsync(new Emoji(emote));
-                            await ReplyAsync(Context.User.Mention +
-                                             ", if that message exists in my cache, I've added a reaction to it.");
-                            return;
-                        }
-                    }
-                }
-            }
-        }
         
         [Command("editbotchannels")] 
         public async Task EditBotChannelsAsync(string editing = null, [Remainder] string value = null) 
