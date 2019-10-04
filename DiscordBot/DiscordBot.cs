@@ -1,13 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.Linq;
 using System.Net;
 using System.Reflection;
 using System.Security.Cryptography;
-using System.Threading;
 using System.Threading.Tasks;
-using System.Timers;
 using Microsoft.Extensions.DependencyInjection;
 
 using Discord;
@@ -15,7 +12,6 @@ using Discord.Addons.Interactive;
 using Discord.Commands;
 using Discord.Net.Providers.UDPClient;
 using Discord.Net.Providers.WS4Net;
-using Discord.Rest;
 using Discord.WebSocket;
 
 using DiscordBot.Common;
@@ -24,14 +20,16 @@ using DiscordBot.Extensions;
 using DiscordBot.Handlers;
 using DiscordBot.Modules.Mod;
 using DiscordBot.Objects;
+
 using MelissaNet;
+
 using MySql.Data.MySqlClient;
 
 namespace DiscordBot
 {
-    public class DiscordBot
+    public static class DiscordBot
     {
-        public static DiscordSocketClient Bot = new DiscordSocketClient(new DiscordSocketConfig
+	    internal static DiscordSocketClient Bot { get; } = new DiscordSocketClient(new DiscordSocketConfig
         {
 	        LogLevel = LogSeverity.Debug,
 	        MessageCacheSize = 1000,
@@ -39,13 +37,13 @@ namespace DiscordBot
 	        UdpSocketProvider = UDPClientProvider.Instance,
 	        DefaultRetryMode = RetryMode.AlwaysRetry,
 	        AlwaysDownloadUsers = true,
-	        ConnectionTimeout = int.MaxValue,
-
+	        ConnectionTimeout = int.MaxValue
         });
-	    public static CommandService _commandService = new CommandService();
-	    public static IServiceProvider _serviceProvider = ConfigureServices();
 
-        public async Task RunBotAsync()
+	    private static readonly CommandService CommandService = new CommandService();
+        private static readonly IServiceProvider ServiceProvider = ConfigureServices();
+
+        internal static async Task RunBotAsync()
         {
             // Create Tasks for Bot Events
             #region Events
@@ -75,7 +73,7 @@ namespace DiscordBot
             Bot.Disconnected += Disconnected;
             #endregion
 	        
-            await _commandService.AddModulesAsync(Assembly.GetEntryAssembly(), _serviceProvider);
+            await CommandService.AddModulesAsync(Assembly.GetEntryAssembly(), ServiceProvider);
 
             await LoginAndStart().ConfigureAwait(false);
 
@@ -132,7 +130,7 @@ namespace DiscordBot
             Console.ReadLine();
             Console.Clear();
 
-            new DiscordBot().RunBotAsync().GetAwaiter().GetResult();
+            RunBotAsync().GetAwaiter().GetResult();
         }
 
         internal static Task Log(LogMessage logMessage)
@@ -167,7 +165,7 @@ namespace DiscordBot
 	        return Task.CompletedTask;
         }
 	    
-	    private static List<Tuple<SocketGuildUser, SocketGuild>> offlineList = new List<Tuple<SocketGuildUser, SocketGuild>>();
+	    private static readonly List<Tuple<SocketGuildUser, SocketGuild>> OfflineList = new List<Tuple<SocketGuildUser, SocketGuild>>();
         private static async Task Ready()
         {
 			List<ulong> guildsInDatabase = new List<ulong>();
@@ -180,10 +178,10 @@ namespace DiscordBot
 			ModeratorModule.ActiveForDateTime = DateTime.Now;
 
 	        
-	        (MySqlDataReader dr, MySqlConnection conn) reader = DatabaseActivity.ExecuteReader("SELECT * FROM guilds;");
-	        while (reader.dr.Read())
+	        var (dataReader, mySqlConnection) = DatabaseActivity.ExecuteReader("SELECT * FROM guilds;");
+	        while (dataReader.Read())
 	        {
-		        ulong id = reader.dr.GetUInt64("guildID");
+		        ulong id = dataReader.GetUInt64("guildID");
 		        guildsInDatabase.Add(id);
 	        }
 	        
@@ -217,10 +215,10 @@ namespace DiscordBot
 		        Console.WriteLine(id + " has been removed from the database.");
 	        }
 	        
-            if (offlineList.Any())
+            if (OfflineList.Any())
             {
-	            await new LogMessage(LogSeverity.Info, "Startup", offlineList.Count + " new users added.").PrintToConsole();
-                foreach (Tuple<SocketGuildUser, SocketGuild> tupleList in offlineList)
+	            await new LogMessage(LogSeverity.Info, "Startup", OfflineList.Count + " new users added.").PrintToConsole();
+                foreach (Tuple<SocketGuildUser, SocketGuild> tupleList in OfflineList)
                 {
 	                await new LogMessage(LogSeverity.Warning, "Startup", tupleList.Item1.Mention + " (" + tupleList.Item1.Id + ") joined " + tupleList.Item2.Name + " while the Bot was offline.").PrintToConsole();
                 }
@@ -245,16 +243,16 @@ namespace DiscordBot
                     .WithCurrentTimestamp();
 				await Configuration.Load().LogChannelId.GetTextChannel().SendMessageAsync("", false, eb.Build());
 
-            if (offlineList.Any())
+            if (OfflineList.Any())
             {
-                foreach (Tuple<SocketGuildUser, SocketGuild> tupleList in offlineList)
+                foreach (Tuple<SocketGuildUser, SocketGuild> tupleList in OfflineList)
                 {
                     await Configuration.Load().LogChannelId.GetTextChannel().SendMessageAsync("[ALERT] While " + Bot.CurrentUser.Username + " was offline, " + tupleList.Item1.Mention + " (" + tupleList.Item1.Id + ") joined " + tupleList.Item2.Name + ". They have been added to the database.");
                 }
             }
         }
 	    
-	    private static async Task ReadyAddUsersToDatabase(SocketGuild g)
+	    private static Task ReadyAddUsersToDatabase(SocketGuild g)
 	    {
 		    foreach (SocketGuildUser u in g.Users)
 		    {
@@ -274,9 +272,11 @@ namespace DiscordBot
 					
 			    if (rowsUpdated > 0) // If any rows were affected, add the user to the list to be dealt with later.
 			    {
-				    offlineList.Add(new Tuple<SocketGuildUser, SocketGuild>(u, g));
+				    OfflineList.Add(new Tuple<SocketGuildUser, SocketGuild>(u, g));
 			    }
 		    }
+		    
+		    return Task.CompletedTask;
 	    }
 	    private static async Task ReadyAddBansToDatabase(SocketGuild g)
 	    {
@@ -285,36 +285,35 @@ namespace DiscordBot
 				var bans = await g.GetBansAsync();
 				foreach (IBan b in bans)
 				{
-					(MySqlDataReader dr, MySqlConnection conn) reader = DatabaseActivity.ExecuteReader("SELECT * FROM bans WHERE issuedTo=" + b.User.Id + " AND inGuild=" + g.Id + ";");
+					var (dataReader, mysqlConnection) = DatabaseActivity.ExecuteReader("SELECT * FROM bans WHERE issuedTo=" + b.User.Id + " AND inGuild=" + g.Id + ";");
+					
 					int count = 0;
-            
-					while (reader.dr.Read())
+					while (dataReader.Read())
 					{
 						count++;
 					}
             
-					reader.dr.Close();
-					reader.conn.Close();
+					dataReader.Close();
+					mysqlConnection.Close();
 
-					if (count == 0)
+					if (count != 0) continue;
+					
+					//Insert banned users into the database by using INSERT IGNORE
+					List<(string, string)> queryParams = new List<(string id, string value)>()
 					{
-						//Insert banned users into the database by using INSERT IGNORE
-						List<(string, string)> queryParams = new List<(string id, string value)>()
-						{
-							("@issuedTo", b.User.Id.ToString()),
-							("@issuedBy", Bot.CurrentUser.Id.ToString()), // unable to get the issuedBy user ID, so use the Bot's ID instead.
-							("@inGuild", g.Id.ToString()),
-							("@reason", b.Reason),
-							("@date", DateTime.Now.ToString("u"))
-						};
+						("@issuedTo", b.User.Id.ToString()),
+						("@issuedBy", Bot.CurrentUser.Id.ToString()), // unable to get the issuedBy user ID, so use the Bot ID instead.
+						("@inGuild", g.Id.ToString()),
+						("@reason", b.Reason),
+						("@date", DateTime.Now.ToString("u"))
+					};
 					
-						DatabaseActivity.ExecuteNonQueryCommand(
-							"INSERT IGNORE INTO " +
-							"bans(issuedTo,issuedBy,inGuild,banDescription,dateIssued) " +
-							"VALUES (@issuedTo, @issuedBy, @inGuild, @reason, @date);", queryParams);
+					DatabaseActivity.ExecuteNonQueryCommand(
+						"INSERT IGNORE INTO " +
+						"bans(issuedTo,issuedBy,inGuild,banDescription,dateIssued) " +
+						"VALUES (@issuedTo, @issuedBy, @inGuild, @reason, @date);", queryParams);
 					
-						//end.
-					}
+					//end.
 				}
 			}
 			else
@@ -361,7 +360,7 @@ namespace DiscordBot
                 message.HasMentionPrefix(Bot.CurrentUser, ref argPos) || 
                 message.HasStringPrefix(uPrefix, ref argPos)) {
                 var context = new SocketCommandContext(Bot, message);
-                var result = await _commandService.ExecuteAsync(context, argPos, _serviceProvider);
+                var result = await CommandService.ExecuteAsync(context, argPos, ServiceProvider);
 
                 if (!result.IsSuccess && Configuration.Load().UnknownCommandEnabled)
                 {
