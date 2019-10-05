@@ -230,8 +230,15 @@
     <Compile Include="Common\StringConfiguration.cs" />
     <Compile Include="Database\DatabaseActivity.cs" />
     <Compile Include="Extensions\Extensions.cs" />
+    <Compile Include="Extensions\Methods.cs" />
     <Compile Include="Extensions\StringExtensions.cs" />
     <Compile Include="Extensions\UserExtensions.cs" />
+    <Compile Include="frmConfigure.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="frmConfigure.Designer.cs">
+      <DependentUpon>frmConfigure.cs</DependentUpon>
+    </Compile>
     <Compile Include="Handlers\ChannelHandler.cs" />
     <Compile Include="Handlers\ConsoleHandler.cs" />
     <Compile Include="Handlers\GuildHandler.cs" />
@@ -293,6 +300,11 @@
   </ItemGroup>
   <ItemGroup>
     <WCFMetadata Include="Connected Services\" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="frmConfigure.resx">
+      <DependentUpon>frmConfigure.cs</DependentUpon>
+    </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="..\packages\NETStandard.Library.2.0.1\build\NETStandard.Library.targets" Condition="Exists('..\packages\NETStandard.Library.2.0.1\build\NETStandard.Library.targets')" />

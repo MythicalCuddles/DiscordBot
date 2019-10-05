@@ -15,7 +15,7 @@ namespace DiscordBot.Common
         private static string FileName { get; } = "MythicalCuddles/DiscordBot/config/configuration.json";
         [JsonIgnore]
         private static readonly string File = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), FileName);
-
+        
         public string BotToken { get; set; }
 
         public string DatabaseHost { get; set; }
@@ -23,6 +23,8 @@ namespace DiscordBot.Common
         public string DatabaseUser { get; set; }
         public string DatabasePassword { get; set; }
         public string DatabaseName { get; set; }
+
+        public bool FirstTimeRun { get; set; } = true;
         
         public ulong Developer { get; set; } = 149991092337639424;
         public string StatusText { get; set; } = null;
@@ -69,48 +71,15 @@ namespace DiscordBot.Common
                     Directory.CreateDirectory(path);
                 }
 
-                var config = new Configuration();
-
-                new LogMessage(LogSeverity.Warning, "Configuration", "No configuration file was found. Lets set one up now!").PrintToConsole();
-
-                new LogMessage(LogSeverity.Warning, "Configuration", "Please enter the Bot Token:").PrintToConsole();
-                config.BotToken = Cryptography.EncryptString(Console.ReadLine());
-                new LogMessage(LogSeverity.Info, "Configuration", "Token saved to " + FileName + "!").PrintToConsole();
-
-                new LogMessage(LogSeverity.Warning, "Configuration", "Console will now be cleared for security reasons. Press the 'enter' key to continue.").PrintToConsole();
-                Console.ReadLine();
-
-                Console.Clear();
-
-                config.SaveJson();
+                new Configuration().SaveJson();
                 
-                new LogMessage(LogSeverity.Info, "Configuration", FileName + " created.").PrintToConsole();
+                new LogMessage(LogSeverity.Info, "Configuration", FileName + " created.").PrintToConsole().GetAwaiter();
             }
 
-            if (Load().BotToken.IsNullOrEmpty() || Load().BotToken.IsNullOrWhiteSpace())
-            {
-                var config = new Configuration();
-
-                new LogMessage(LogSeverity.Warning, "Configuration", "The Bot Token was not found.").PrintToConsole();
-
-                new LogMessage(LogSeverity.Info, "Configuration", "Please enter the Bot Token:").PrintToConsole();
-                config.BotToken = Cryptography.EncryptString(Console.ReadLine());
-                new LogMessage(LogSeverity.Info, "Configuration", "Token saved to " + FileName + "!").PrintToConsole();
-
-                new LogMessage(LogSeverity.Warning, "Configuration", "Console will now be cleared for security reasons. Press the 'enter' key to continue.").PrintToConsole();
-                Console.ReadLine();
-
-                Console.Clear();
-
-                config.SaveJson();
-                
-                
-            }
-
-            new LogMessage(LogSeverity.Info, "Configuration", FileName + " loaded.").PrintToConsole();
+            new LogMessage(LogSeverity.Info, "Configuration", FileName + " loaded.").PrintToConsole().GetAwaiter();
         }
-        
-        internal void SaveJson()
+
+        private void SaveJson()
         {
             System.IO.File.WriteAllText(File, ToJson());
         }
@@ -119,11 +88,11 @@ namespace DiscordBot.Common
         {
             return JsonConvert.DeserializeObject<Configuration>(System.IO.File.ReadAllText(File));
         }
-        
-        internal string ToJson()
+
+        private string ToJson()
             => JsonConvert.SerializeObject(this, Formatting.Indented);
         
-        internal static void UpdateConfiguration(string botToken = null, ulong? developer = null, string statusText = null, string statusLink = null,
+        internal static void UpdateConfiguration(string botToken = null, ulong? developer = null, string statusText = null, string statusLink = null, bool? firstTimeRun = null,
             string databaseHost = null, int? databasePort = null, string databaseUser = null, string databasePassword = null, string databaseName = null,
             bool? showAllAwards = null, string awardsIconUrl = null,
             int? statusActivity = null, UserStatus? status = null, bool? unknownCommandEnabled = null, bool? awardingEXPEnabled = null, bool? awardingEXPMentionUser = null,
@@ -141,6 +110,8 @@ namespace DiscordBot.Common
                 DatabaseUser = databaseUser ?? Load().DatabaseUser,
                 DatabasePassword = databasePassword ?? Load().DatabasePassword,
                 DatabaseName = databaseName ?? Load().DatabaseName,
+                
+                FirstTimeRun = firstTimeRun ?? Load().FirstTimeRun,
                 
                 StatusText = statusText ?? Load().StatusText,
                 StatusLink = statusLink ?? Load().StatusLink,

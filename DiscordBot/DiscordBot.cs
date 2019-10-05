@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net;
 using System.Reflection;
-using System.Security.Cryptography;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -22,8 +20,6 @@ using DiscordBot.Modules.Mod;
 using DiscordBot.Objects;
 
 using MelissaNet;
-
-using MySql.Data.MySqlClient;
 
 namespace DiscordBot
 {
@@ -75,7 +71,8 @@ namespace DiscordBot
 	        
             await CommandService.AddModulesAsync(Assembly.GetEntryAssembly(), ServiceProvider);
 
-            await LoginAndStart().ConfigureAwait(false);
+            await Bot.LoginAsync(TokenType.Bot, Configuration.Load().BotToken);
+            await Bot.StartAsync();
 
             // Keep the program running.
             await Task.Delay(-1).ConfigureAwait(false);
@@ -87,50 +84,6 @@ namespace DiscordBot
                 .AddSingleton(Bot)
                 .AddSingleton<InteractiveService>();
             return services.BuildServiceProvider();
-        }
-
-        private static async Task LoginAndStart()
-        {
-            try
-            {
-                await Bot.LoginAsync(TokenType.Bot, Cryptography.DecryptString(Configuration.Load().BotToken));
-                await Bot.StartAsync();
-            }
-            catch (CryptographicException exception)
-            {
-	            await new LogMessage(LogSeverity.Warning, "Startup", "Exception Caught: " + exception.Message).PrintToConsole();
-	            await ReEnterToken().ConfigureAwait(false);
-            }
-            catch (Discord.Net.HttpException exception)
-            {
-                if (exception.HttpCode == HttpStatusCode.Unauthorized || exception.HttpCode == HttpStatusCode.Forbidden)
-                {
-	                await ReEnterToken().ConfigureAwait(false);
-                }
-            }
-            catch (FormatException)
-            {
-	            await ReEnterToken().ConfigureAwait(false);
-            }
-            catch (Exception)
-            {
-	            await new LogMessage(LogSeverity.Warning, "Startup", "An error has occured.").PrintToConsole();
-                throw;
-            }
-        }
-
-        private static async Task ReEnterToken(string reasoning = "The token stored on file doesn't seem to be working. Please re-enter the bot token.")
-        {
-	        await new LogMessage(LogSeverity.Warning, "Startup", reasoning).PrintToConsole();
-
-	        await new LogMessage(LogSeverity.Info, "Startup", "Please enter the Bot Token:").PrintToConsole();
-            Configuration.UpdateConfiguration(botToken:Cryptography.EncryptString(Console.ReadLine()));
-
-	        await new LogMessage(LogSeverity.Warning, "Startup", "Token saved successfully. Console will now be cleared for security reasons. Press the 'enter' key to continue.").PrintToConsole();
-            Console.ReadLine();
-            Console.Clear();
-
-            RunBotAsync().GetAwaiter().GetResult();
         }
 
         internal static Task Log(LogMessage logMessage)
@@ -178,7 +131,7 @@ namespace DiscordBot
 			ModeratorModule.ActiveForDateTime = DateTime.Now;
 
 	        
-	        var (dataReader, mySqlConnection) = DatabaseActivity.ExecuteReader("SELECT * FROM guilds;");
+	        var dataReader = DatabaseActivity.ExecuteReader("SELECT * FROM guilds;").Item1;
 	        while (dataReader.Read())
 	        {
 		        ulong id = dataReader.GetUInt64("guildID");
@@ -212,7 +165,7 @@ namespace DiscordBot
 	        {
 		        await GuildHandler.RemoveGuildFromDB(id.GetGuild());
 		        DatabaseActivity.ExecuteNonQueryCommand("DELETE FROM channels WHERE inGuildID=" + id);
-		        Console.WriteLine(id + " has been removed from the database.");
+		        Console.WriteLine(id + @" has been removed from the database.");
 	        }
 	        
             if (OfflineList.Any())
