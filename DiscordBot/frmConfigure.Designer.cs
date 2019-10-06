@@ -41,7 +41,7 @@ namespace DiscordBot
             this.txtBotToken = new System.Windows.Forms.TextBox();
             this.panel2 = new System.Windows.Forms.Panel();
             this.label16 = new System.Windows.Forms.Label();
-            this.label15 = new System.Windows.Forms.Label();
+            this.lblDatabaseName = new System.Windows.Forms.Label();
             this.txtDbPass = new System.Windows.Forms.TextBox();
             this.label12 = new System.Windows.Forms.Label();
             this.txtDbUser = new System.Windows.Forms.TextBox();
@@ -163,7 +163,7 @@ namespace DiscordBot
             this.panel2.BackColor = System.Drawing.Color.LavenderBlush;
             this.panel2.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.panel2.Controls.Add(this.label16);
-            this.panel2.Controls.Add(this.label15);
+            this.panel2.Controls.Add(this.lblDatabaseName);
             this.panel2.Controls.Add(this.txtDbPass);
             this.panel2.Controls.Add(this.label12);
             this.panel2.Controls.Add(this.txtDbUser);
@@ -190,14 +190,14 @@ namespace DiscordBot
                                 "e enter the details to your server below.";
             this.label16.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
-            // label15
+            // lblDatabaseName
             // 
-            this.label15.Location = new System.Drawing.Point(3, 126);
-            this.label15.Name = "label15";
-            this.label15.Size = new System.Drawing.Size(277, 20);
-            this.label15.TabIndex = 17;
-            this.label15.Text = "Database Name:";
-            this.label15.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.lblDatabaseName.Location = new System.Drawing.Point(3, 126);
+            this.lblDatabaseName.Name = "lblDatabaseName";
+            this.lblDatabaseName.Size = new System.Drawing.Size(277, 20);
+            this.lblDatabaseName.TabIndex = 17;
+            this.lblDatabaseName.Text = "Database Name:";
+            this.lblDatabaseName.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
             // txtDbPass
             // 
@@ -456,7 +456,7 @@ namespace DiscordBot
             // toolStripStatusLabel3
             // 
             this.toolStripStatusLabel3.Name = "toolStripStatusLabel3";
-            this.toolStripStatusLabel3.Size = new System.Drawing.Size(31, 17);
+            this.toolStripStatusLabel3.Size = new System.Drawing.Size(46, 17);
             this.toolStripStatusLabel3.Spring = true;
             // 
             // toolStripStatusLabel4
@@ -485,7 +485,7 @@ namespace DiscordBot
             // toolStripStatusLabel6
             // 
             this.toolStripStatusLabel6.Name = "toolStripStatusLabel6";
-            this.toolStripStatusLabel6.Size = new System.Drawing.Size(31, 17);
+            this.toolStripStatusLabel6.Size = new System.Drawing.Size(46, 17);
             this.toolStripStatusLabel6.Spring = true;
             // 
             // tslblDonate
@@ -612,7 +612,7 @@ namespace DiscordBot
             this.label13.Text = "6. Licensing and Terms";
             this.label13.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
-            // frmConfigure
+            // FrmConfigure
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -681,7 +681,6 @@ namespace DiscordBot
         private System.Windows.Forms.TextBox txtDbHost;
         private System.Windows.Forms.Label label8;
         private System.Windows.Forms.Label label16;
-        private System.Windows.Forms.Label label15;
         private System.Windows.Forms.Label label12;
         private System.Windows.Forms.Label label11;
         private System.Windows.Forms.Label label14;
@@ -706,5 +705,6 @@ namespace DiscordBot
         private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel9;
         private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel8;
         private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel2;
+        private System.Windows.Forms.Label lblDatabaseName;
     }
 }

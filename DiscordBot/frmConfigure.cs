@@ -144,31 +144,26 @@ namespace DiscordBot
         #region 3. Database Settings
         private void txtDbHost_TextChanged(object sender, EventArgs e)
         {
-            _validDbSettings = false;
             InvalidateDbValidationLabel();
         }
 
         private void txtDbPort_TextChanged(object sender, EventArgs e)
         {
-            _validDbSettings = false;
             InvalidateDbValidationLabel();
         }
 
         private void txtDbName_TextChanged(object sender, EventArgs e)
         {
-            _validDbSettings = false;
             InvalidateDbValidationLabel();
         }
 
         private void txtDbUser_TextChanged(object sender, EventArgs e)
         {
-            _validDbSettings = false;
             InvalidateDbValidationLabel();
         }
 
         private void txtDbPass_TextChanged(object sender, EventArgs e)
         {
-            _validDbSettings = false;
             InvalidateDbValidationLabel();
         }
 
@@ -179,13 +174,17 @@ namespace DiscordBot
 
         private void InvalidateDbValidationLabel()
         {
+            _validDbSettings = false;
+            
             tslblDbValidation.Text = @"Database Validation Required.";
             tslblDbValidation.ForeColor = Color.Red;
         }
 
         private void TestDatabaseValues()
         {
+            InvalidateDbValidationLabel();
             lblDatabaseSetup.ForeColor = Color.Black;
+            lblDatabaseName.ForeColor = Color.Black;
 
             int port = 3306;
             try
@@ -216,6 +215,7 @@ namespace DiscordBot
 
                 if (result != DialogResult.Yes)
                 {
+                    lblDatabaseName.ForeColor = Color.Red;
                     return;
                 }
             }
