@@ -45,6 +45,11 @@ namespace DiscordBot.Handlers
 
         private static async Task HandleQuoteReactions(Cacheable<IUserMessage, ulong> message, SocketReaction reaction)
         {
+            if (reaction.User.Value.IsBot)
+            {
+                return;
+            }
+            
             // Check to see if the next page or previous page was clicked.
             if (reaction.Emote.Name == Extensions.Extensions.ArrowLeft.Name)
             {
@@ -97,6 +102,11 @@ namespace DiscordBot.Handlers
 
         private static async Task HandleRequestQuoteReactions(Cacheable<IUserMessage, ulong> message, ISocketMessageChannel channel, SocketReaction reaction)
         {
+            if (reaction.User.Value.IsBot)
+            {
+                return;
+            }
+            
             // Check to see if the next page or previous page was clicked.
             if (reaction.Emote.Name == Extensions.Extensions.ArrowLeft.Name)
             {

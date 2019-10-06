@@ -97,6 +97,11 @@ namespace DiscordBot.Extensions
 
         public static void AwardEXPToUser(this IUser user, SocketGuild guild, int exp = 1)
         {
+            if (user.IsBot)
+            {
+                return;
+            }
+            
             try
             {
                 int updatedEXP = user.GetEXP() + exp;
