@@ -104,9 +104,11 @@ namespace DiscordBot.Objects
             int index = Quotes.IndexOf(Quotes.Find(q => q.QId == quoteId));
             quote.QuoteText = quoteText;
             Quotes[index] = quote;
+
+            string formattedText = quoteText.Replace("\"", "\\\"");
             
             int rowsAffected = DatabaseActivity.ExecuteNonQueryCommand(
-                "UPDATE quotes SET `quoteText`=\"" + quoteText + "\" WHERE `quoteId`=" + quoteId +";");
+                "UPDATE quotes SET `quoteText`=\"" + formattedText + "\" WHERE `quoteId`=" + quoteId +";");
 
             return rowsAffected == 1;
         }

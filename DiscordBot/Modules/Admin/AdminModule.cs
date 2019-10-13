@@ -36,7 +36,7 @@ namespace DiscordBot.Modules.Admin
         }
 
         [Command("addquote"), Summary("Add a quote to the list.")]
-        public async Task AddQuote(string quote = null, IUser creator = null)
+        public async Task AddQuote([Remainder]string quote = null)
         {
             EmbedBuilder eb;
             if (quote == null)
@@ -51,13 +51,8 @@ namespace DiscordBot.Modules.Admin
                 await ReplyAsync("", false, eb.Build());
                 return;       
             }
-
-            if (creator == null)
-            {
-                creator = Context.User;
-            }
             
-            Quote.AddQuote(quote, creator.Id, Context.Guild.Id);
+            Quote.AddQuote(quote, Context.User.Id, Context.Guild.Id);
 			
 			eb = new EmbedBuilder()
 				.WithDescription(Context.User.Mention + " Quote Added")
