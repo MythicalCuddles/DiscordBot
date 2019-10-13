@@ -130,7 +130,6 @@ namespace DiscordBot
 
 			ModeratorModule.ActiveForDateTime = DateTime.Now;
 
-	        
 	        var dataReader = DatabaseActivity.ExecuteReader("SELECT * FROM guilds;").Item1;
 	        while (dataReader.Read())
 	        {
@@ -158,7 +157,7 @@ namespace DiscordBot
 				await new LogMessage(LogSeverity.Info, "Startup", "-----------------------------------------------------------------").PrintToConsole();
 
 				await ReadyAddBansToDatabase(g).ConfigureAwait(false);
-				await new LogMessage(LogSeverity.Info, "Startup", "-----------------------------------------------------------------").PrintToConsole();
+				Methods.PrintConsoleSplitLine();
             }
 
 	        foreach (ulong id in guildsInDatabase)
@@ -168,22 +167,14 @@ namespace DiscordBot
 		        Console.WriteLine(id + @" has been removed from the database.");
 	        }
 	        
-            if (OfflineList.Any())
-            {
-	            await new LogMessage(LogSeverity.Info, "Startup", OfflineList.Count + " new users added.").PrintToConsole();
-                foreach (Tuple<SocketGuildUser, SocketGuild> tupleList in OfflineList)
-                {
-	                await new LogMessage(LogSeverity.Warning, "Startup", tupleList.Item1.Mention + " (" + tupleList.Item1.Id + ") joined " + tupleList.Item2.Name + " while the Bot was offline.").PrintToConsole();
-                }
-            }
-            else
-            {
-	            await new LogMessage(LogSeverity.Info, "Startup", "No new users added.").PrintToConsole();
-            }
-
+	        Quote.Quotes = Quote.LoadAll();
+	        await new LogMessage(LogSeverity.Info, "Startup", "Loaded " + Quote.Quotes.Count + " Quotes from Database.").PrintToConsole();
+	        RequestQuote.RequestQuotes = RequestQuote.LoadAll();
+	        await new LogMessage(LogSeverity.Info, "Startup", "Loaded " + RequestQuote.RequestQuotes.Count + " RequestQuotes from Database.").PrintToConsole();
+	        
 	        await new LogMessage(LogSeverity.Info, "Startup", Bot.CurrentUser.Username + " loaded.").PrintToConsole();
-
-			// Send message to log channel to announce bot is up and running.
+			
+	        // Send message to log channel to announce bot is up and running.
 			Version v = Assembly.GetExecutingAssembly().GetName().Version;
 			EmbedBuilder eb = new EmbedBuilder()
 					.WithTitle("Startup Notification")
@@ -193,15 +184,19 @@ namespace DiscordBot
                     .AddField("Version", v.Major + "." + v.Minor + "." + v.Build + "." + v.Revision, true)
                     .AddField("MelissaNet", VersionInfo.Version, true)
 					.AddField("Latency", Bot.Latency + "ms", true)
+					.AddField("Quotes", Quote.Quotes.Count, true)
+					.AddField("Quote Requests", RequestQuote.RequestQuotes.Count, true)
                     .WithCurrentTimestamp();
 				await Configuration.Load().LogChannelId.GetTextChannel().SendMessageAsync("", false, eb.Build());
 
             if (OfflineList.Any())
             {
-                foreach (Tuple<SocketGuildUser, SocketGuild> tupleList in OfflineList)
-                {
-                    await Configuration.Load().LogChannelId.GetTextChannel().SendMessageAsync("[ALERT] While " + Bot.CurrentUser.Username + " was offline, " + tupleList.Item1.Mention + " (" + tupleList.Item1.Id + ") joined " + tupleList.Item2.Name + ". They have been added to the database.");
-                }
+	            await new LogMessage(LogSeverity.Info, "Startup", OfflineList.Count + " new users added.").PrintToConsole();
+				foreach (Tuple<SocketGuildUser, SocketGuild> tupleList in OfflineList)
+				{
+					await new LogMessage(LogSeverity.Warning, "Startup", tupleList.Item1.Username + " (" + tupleList.Item1.Id + ") joined " + tupleList.Item2.Name + " while the Bot was offline.").PrintToConsole();
+					await Configuration.Load().LogChannelId.GetTextChannel().SendMessageAsync("[ALERT] While " + Bot.CurrentUser.Username + " was offline, " + tupleList.Item1.Mention + " (" + tupleList.Item1.Id + ") joined " + tupleList.Item2.Name + ". They have been added to the database.");
+				}
             }
         }
 	    

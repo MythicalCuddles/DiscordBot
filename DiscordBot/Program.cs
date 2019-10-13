@@ -2,7 +2,6 @@
 using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 using Discord;
@@ -61,7 +60,6 @@ namespace DiscordBot
             // Check if application configurations exist.
             Configuration.EnsureExists();
             StringConfiguration.EnsureExists();
-            QuoteHandler.EnsureExists();
             VoteLinkHandler.EnsureExists();
 
             // Verify Settings

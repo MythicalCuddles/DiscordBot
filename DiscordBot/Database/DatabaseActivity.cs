@@ -246,7 +246,27 @@ namespace DiscordBot.Database
                                    "`banDescription` text COLLATE utf8mb4_unicode_ci NOT NULL," +
                                    "`dateIssued` datetime NOT NULL," +
                                    "PRIMARY KEY (`banID`)" +
-                                   ") ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;");
+                                   ") ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;");
+
+            ExecuteNonQueryCommand("CREATE TABLE IF NOT EXISTS `quotes` (" + 
+                                   "`quoteId` INT NOT NULL AUTO_INCREMENT," +
+                                   "`createdBy` BIGINT NOT NULL," +
+                                   "`acceptedBy` BIGINT NOT NULL," +
+                                   "`quoteText` TEXT NOT NULL," +
+                                   "`dateCreated` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP," +
+                                   "`createdIn` BIGINT NOT NULL," +
+                                   "`acceptedIn` BIGINT NOT NULL," +
+                                   "PRIMARY KEY (`quoteId`)" +
+                                   ") ENGINE = InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;");
+
+            ExecuteNonQueryCommand("CREATE TABLE IF NOT EXISTS `requested_quotes` (" + 
+                                   "`requestQuoteId` INT NOT NULL AUTO_INCREMENT," +
+                                   "`requestedBy` BIGINT NOT NULL," +
+                                   "`quoteText` TEXT NOT NULL," +
+                                   "`dateCreated` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP," +
+                                   "`requestedIn` BIGINT NOT NULL," +
+                                   "PRIMARY KEY (`requestQuoteId`)" +
+                                   ") ENGINE = InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;");
         }
     }
 }
