@@ -8,7 +8,6 @@ using DiscordBot.Extensions;
 using DiscordBot.Common.Preconditions;
 using DiscordBot.Common;
 using DiscordBot.Objects;
-using DiscordBot.Other;
 
 namespace DiscordBot.Modules.Public
 {
@@ -88,22 +87,6 @@ namespace DiscordBot.Modules.Public
             public async Task PostEmailAddress()
             {
                 await ReplyAsync("Send complaints to `MogiiCraft.@pizza@gmail.com`");
-            }
-
-            [Command("vote"), Summary("Sends links to the voting websites for Minecraft.")]
-            public async Task SendVotingLinks()
-            {
-                StringBuilder sb = new StringBuilder()
-                    .Append("**Vote Links**\n" + Context.User.Mention + " use the following links to vote and support the server. You'll be given some diamonds in-game to say thanks :D\n");
-
-                foreach (var link in VoteLinkHandler.VoteLinkList)
-                {
-                    sb.Append("<" + link + ">\n");
-                }
-
-                sb.Append("");
-
-                await ReplyAsync(sb.ToString());
             }
         }
     }

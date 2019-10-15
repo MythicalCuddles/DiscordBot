@@ -8,7 +8,6 @@ using Discord;
 using DiscordBot.Common;
 using DiscordBot.Database;
 using DiscordBot.Extensions;
-using DiscordBot.Other;
 using MelissaNet;
 using MelissaNet.Modules;
 
@@ -60,7 +59,6 @@ namespace DiscordBot
             // Check if application configurations exist.
             Configuration.EnsureExists();
             StringConfiguration.EnsureExists();
-            VoteLinkHandler.EnsureExists();
 
             // Verify Settings
             bool invalidToken = false, invalidDbSettings = false;

@@ -12,7 +12,6 @@ using DiscordBot.Common.Preconditions;
 using DiscordBot.Common;
 using DiscordBot.Extensions;
 using DiscordBot.Objects;
-using DiscordBot.Other;
 
 namespace DiscordBot.Modules.Admin
 {
@@ -296,57 +295,6 @@ namespace DiscordBot.Modules.Admin
 
             await ReplyAsync("", false, eb.Build());
             await Configuration.Load().LogChannelId.GetTextChannel().SendMessageAsync("", false, eb.Build());
-        }
-
-        [Command("addvotelink"), Summary("Add a voting link to the list.")]
-        public async Task AddVoteLink([Remainder]string link)
-        {
-            VoteLinkHandler.AddAndUpdateLinks(link);
-
-			EmbedBuilder eb = new EmbedBuilder()
-				.WithDescription(Context.User.Mention + " Link Added")
-				.WithColor(33, 210, 47);
-
-			await ReplyAsync("", false, eb.Build());
-        }
-
-        [Command("listvotelinks"), Summary("Sends a list of all the voting links.")]
-        public async Task ListVotingLinks()
-        {
-            StringBuilder sb = new StringBuilder()
-                .Append("**Voting Link List**\n```");
-
-            for (int i = 0; i < VoteLinkHandler.VoteLinkList.Count; i++)
-            {
-                sb.Append(i + ": " + VoteLinkHandler.VoteLinkList[i] + "\n");
-            }
-
-            sb.Append("```");
-
-            await ReplyAsync(sb.ToString());
-        }
-
-        [Command("editvotelink"), Summary("Edit a voting link from the list.")]
-        public async Task EditVotingLink(int linkId, [Remainder]string link)
-        {
-            string oldLink = VoteLinkHandler.VoteLinkList[linkId];
-            VoteLinkHandler.UpdateLink(linkId, link);
-            await ReplyAsync(Context.User.Mention + " updated vote link id: " + linkId + "\nOld link: `" + oldLink + "`\nUpdated: `" + link + "`");
-        }
-
-        [Command("deletevotelink"), Summary("Delete a voting link from the list. Make sure to `$listvotelinks` to get the ID for the link being removed!")]
-        public async Task RemoveVotingLink(int linkId)
-        {
-            string link = VoteLinkHandler.VoteLinkList[linkId];
-            VoteLinkHandler.RemoveAndUpdateLinks(linkId);
-
-			EmbedBuilder eb = new EmbedBuilder()
-					.WithDescription(Context.User.Mention + " Link Removed\nLink: " + link)
-					.WithColor(210, 47, 33);
-
-			await ReplyAsync("", false, eb.Build());
-
-			await ListVotingLinks().ConfigureAwait(false);
         }
     }
 }
