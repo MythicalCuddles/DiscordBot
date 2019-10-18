@@ -59,35 +59,5 @@ namespace DiscordBot.Modules.Public
 
             await ReplyAsync("", false, eb.Build());
         }
-
-        [Group("mogiicraft")]
-        [RequireGuild(221250721046069249)]
-        public class MogiiCraftCommands : ModuleBase
-        { 
-            [Command("poll"), Summary("Sends a link to the poll for the minecraft server.")]
-            public async Task SendPollLink()
-            {
-                await ReplyAsync("https://docs.google.com/forms/d/e/1FAIpQLSe9CFsWWBlInGqgVqt4SieG6JW1E81zAjtWZeEoDUTH3xPE1w/viewform?c=0&w=1");
-            }
-
-            [Command("website"), Summary("Sends a link to the forums.")]
-            public async Task SendWebsiteLink()
-            {
-                await ReplyAsync("We currently have a forums, but it isn't active. Anyways, you can visit it here: http://mogiicraft.proboards.com/");
-            }
-
-            [Command("minecraftip"), Summary("Posts the Minecraft IP into the chat.")]
-            [Alias("ip")]
-            public async Task SendMinecraftIp()
-            {
-                await ReplyAsync("The Minecraft Server IP is: mogiicraft.ddns.net:25635");
-            }
-
-            [Command("email"), Summary("Posts the email address into the chat.")]
-            public async Task PostEmailAddress()
-            {
-                await ReplyAsync("Send complaints to `MogiiCraft.@pizza@gmail.com`");
-            }
-        }
     }
 }
