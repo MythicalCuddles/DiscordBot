@@ -267,6 +267,16 @@ namespace DiscordBot.Database
                                    "`requestedIn` BIGINT NOT NULL," +
                                    "PRIMARY KEY (`requestQuoteId`)" +
                                    ") ENGINE = InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;");
+
+            ExecuteNonQueryCommand("CREATE TABLE IF NOT EXISTS `admin_log` (" +
+                                   "`logId` INT NOT NULL AUTO_INCREMENT," + 
+                                   "`executedBy` BIGINT NOT NULL," +
+                                   "`action` TEXT NOT NULL," +
+                                   "`executedAt` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP," + 
+                                   "`executedIn` BIGINT NOT NULL," + 
+                                   "`userMentioned` BIGINT NULL," + 
+                                   "PRIMARY KEY (`logId`)" + 
+                                   ") ENGINE = InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;");
         }
     }
 }
