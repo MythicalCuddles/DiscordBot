@@ -7,6 +7,7 @@ using Discord.WebSocket;
 using DiscordBot.Common.Preconditions;
 using DiscordBot.Common;
 using DiscordBot.Extensions;
+using DiscordBot.Logging;
 using DiscordBot.Objects;
 using MelissaNet;
 
@@ -46,6 +47,8 @@ namespace DiscordBot.Modules.Owner
                                  "[16] awardsiconurl [link]\n" +
                                  "[17] toggleawardingexpmention\n" +
                                  "```");
+                
+                AdminLog.Log(Context.User.Id, Context.Message.Content, Context.Guild.Id);
             }
 
             [Command("activity"), Summary("Changes the playing message of the bot, and changes it to streaming mode if twitch link is inserted.")]
@@ -70,6 +73,8 @@ namespace DiscordBot.Modules.Owner
                 {
                     await DiscordBot.Bot.SetGameAsync(activityMessage, activityLink, (ActivityType)activityType);
                 }
+                
+                AdminLog.Log(Context.User.Id, Context.Message.Content, Context.Guild.Id);
 
                 var eb = new EmbedBuilder()
                     .WithDescription(Context.User.Username + " updated " + DiscordBot.Bot.CurrentUser.Mention + "'s activity message.")
@@ -87,6 +92,8 @@ namespace DiscordBot.Modules.Owner
                 {
                     Configuration.UpdateConfiguration(status: UserStatus.Online);
                     await DiscordBot.Bot.SetStatusAsync(UserStatus.Online);
+                    AdminLog.Log(Context.User.Id, Context.Message.Content, Context.Guild.Id);
+                    
                     await ReplyAsync("Status updated to Online, " + Context.User.Mention);
                 }
 
@@ -96,6 +103,8 @@ namespace DiscordBot.Modules.Owner
                 {
                     Configuration.UpdateConfiguration(status: UserStatus.DoNotDisturb);
                     await DiscordBot.Bot.SetStatusAsync(UserStatus.DoNotDisturb);
+                    AdminLog.Log(Context.User.Id, Context.Message.Content, Context.Guild.Id);
+                    
                     await ReplyAsync("Status updated to Do Not Disturb, " + Context.User.Mention);
                 }
 
@@ -105,6 +114,8 @@ namespace DiscordBot.Modules.Owner
                 {
                     Configuration.UpdateConfiguration(status: UserStatus.AFK);
                     await DiscordBot.Bot.SetStatusAsync(UserStatus.AFK);
+                    AdminLog.Log(Context.User.Id, Context.Message.Content, Context.Guild.Id);
+                    
                     await ReplyAsync("Status updated to Idle, " + Context.User.Mention);
                 }
 
@@ -114,6 +125,8 @@ namespace DiscordBot.Modules.Owner
                 {
                     Configuration.UpdateConfiguration(status: UserStatus.Invisible);
                     await DiscordBot.Bot.SetStatusAsync(UserStatus.Invisible);
+                    AdminLog.Log(Context.User.Id, Context.Message.Content, Context.Guild.Id);
+                    
                     await ReplyAsync("Status updated to Invisible, " + Context.User.Mention);
                 }
             }
@@ -122,6 +135,8 @@ namespace DiscordBot.Modules.Owner
             public async Task ToggleUc()
             {
                 Configuration.UpdateConfiguration(unknownCommandEnabled: !Configuration.Load().UnknownCommandEnabled);
+                AdminLog.Log(Context.User.Id, Context.Message.Content, Context.Guild.Id);
+                
                 await Configuration.Load().LogChannelId.GetTextChannel().SendMessageAsync("UnknownCommand has been toggled by " + Context.User.Mention + " (enabled: " + Configuration.Load().UnknownCommandEnabled.ToYesNo() + ")");
             }
 
@@ -130,6 +145,8 @@ namespace DiscordBot.Modules.Owner
             {
                 int oldValue = Configuration.Load().LeaderboardAmount;
                 Configuration.UpdateConfiguration(leaderboardAmount: value);
+                AdminLog.Log(Context.User.Id, Context.Message.Content, Context.Guild.Id);
+                
                 await Configuration.Load().LogChannelId.GetTextChannel().SendMessageAsync(Context.User.Mention + " has updated the Leaderboard amount to: " + value + " (was: " + oldValue + ")");
             }
 
@@ -138,6 +155,8 @@ namespace DiscordBot.Modules.Owner
             {
                 int oldLevel = Configuration.Load().QuoteLevelRequirement;
                 Configuration.UpdateConfiguration(quoteLevelRequirement: levelRequirement);
+                AdminLog.Log(Context.User.Id, Context.Message.Content, Context.Guild.Id);
+                
                 await Configuration.Load().LogChannelId.GetTextChannel().SendMessageAsync("**" + Context.User.Mention + "** has updated the quote level to **" + levelRequirement + "**. (Was: **" + oldLevel + "**)");
             }
 
@@ -146,6 +165,8 @@ namespace DiscordBot.Modules.Owner
             {
                 int oldLevel = Configuration.Load().PrefixLevelRequirement;
                 Configuration.UpdateConfiguration(prefixLevelRequirement: levelRequirement);
+                AdminLog.Log(Context.User.Id, Context.Message.Content, Context.Guild.Id);
+                
                 await Configuration.Load().LogChannelId.GetTextChannel().SendMessageAsync("**" + Context.User.Mention + "** has updated the prefix level to **" + levelRequirement + "** coins. (Was: **" + oldLevel + "**)");
             }
 
@@ -154,6 +175,8 @@ namespace DiscordBot.Modules.Owner
             {
                 int oldLevel = Configuration.Load().RGBLevelRequirement;
                 Configuration.UpdateConfiguration(rgbLevelRequirement: levelRequirement);
+                AdminLog.Log(Context.User.Id, Context.Message.Content, Context.Guild.Id);
+                
                 await Configuration.Load().LogChannelId.GetTextChannel().SendMessageAsync("**" + Context.User.Mention + "** has updated the RGB level to **" + levelRequirement + "** coins. (Was: **" + oldLevel + "**)");
             }
 
@@ -162,6 +185,8 @@ namespace DiscordBot.Modules.Owner
             {
                 int oldChance = Configuration.Load().SenpaiChanceRate;
                 Configuration.UpdateConfiguration(senpaiChanceRate: chanceValue);
+                AdminLog.Log(Context.User.Id, Context.Message.Content, Context.Guild.Id);
+                
                 await Configuration.Load().LogChannelId.GetTextChannel().SendMessageAsync("**" + Context.User.Mention + "** has updated the senpai chance to **" + chanceValue + "%**. (Was: **" + oldChance + "%**)");
             }
 
@@ -169,6 +194,8 @@ namespace DiscordBot.Modules.Owner
             public async Task SetGlobalLogChannel(SocketTextChannel channel)
             {
                 Configuration.UpdateConfiguration(logChannelId: channel.Id);
+                AdminLog.Log(Context.User.Id, Context.Message.Content, Context.Guild.Id);
+                
                 await Configuration.Load().LogChannelId.GetTextChannel().SendMessageAsync(Context.User.Mention + " has updated \"LogChannelID\" to: " + channel.Mention);
             }
 
@@ -177,6 +204,8 @@ namespace DiscordBot.Modules.Owner
             {
                 int oldValue = Configuration.Load().MaxRuleXGamble;
                 Configuration.UpdateConfiguration(maxRuleXGamble: value);
+                AdminLog.Log(Context.User.Id, Context.Message.Content, Context.Guild.Id);
+                
                 await Configuration.Load().LogChannelId.GetTextChannel().SendMessageAsync(Context.User.Mention + " has updated the Rule34 Max to: " + value + " (was: " + oldValue + ")");
             }
 
@@ -185,6 +214,7 @@ namespace DiscordBot.Modules.Owner
             {
                 int oldValue = Configuration.Load().MinLengthForEXP;
                 Configuration.UpdateConfiguration(minLengthForEXP: value);
+                AdminLog.Log(Context.User.Id, Context.Message.Content, Context.Guild.Id);
 
                 await Configuration.Load().LogChannelId.GetTextChannel().SendMessageAsync(Context.User.Mention + " has updated the MinLengthForCoin amount to: " + value + " (was: " + oldValue + ")");
             }
@@ -193,6 +223,8 @@ namespace DiscordBot.Modules.Owner
             public async Task ToggleEXPAwarding()
             {
                 Configuration.UpdateConfiguration(awardingEXPEnabled: !Configuration.Load().AwardingEXPEnabled);
+                AdminLog.Log(Context.User.Id, Context.Message.Content, Context.Guild.Id);
+                
                 await Configuration.Load().LogChannelId.GetTextChannel().SendMessageAsync("EXP awarding has been toggled by " + Context.User.Mention + " (enabled: " + Configuration.Load().AwardingEXPEnabled.ToYesNo() + ")");
             }
 
@@ -201,6 +233,8 @@ namespace DiscordBot.Modules.Owner
             {
                 string oldValue = Configuration.Load().LeaderboardTrophyUrl;
                 Configuration.UpdateConfiguration(leaderboardTrophyUrl: link);
+                AdminLog.Log(Context.User.Id, Context.Message.Content, Context.Guild.Id);
+                
                 await Configuration.Load().LogChannelId.GetTextChannel().SendMessageAsync(Context.User.Mention + " has updated the Leaderboard Trophy URL to: " + link + " (was: " + oldValue + ")");
             }
 
@@ -209,6 +243,8 @@ namespace DiscordBot.Modules.Owner
             {
                 uint oldValue = Configuration.Load().LeaderboardEmbedColor;
                 Configuration.UpdateConfiguration(leaderboardEmbedColor: colorId);
+                AdminLog.Log(Context.User.Id, Context.Message.Content, Context.Guild.Id);
+                
                 await Configuration.Load().LogChannelId.GetTextChannel().SendMessageAsync(Context.User.Mention + " has updated the Leaderboard Embed Color ID to: " + colorId + " (was: " + oldValue + ")");
             }
 
@@ -216,6 +252,8 @@ namespace DiscordBot.Modules.Owner
             public async Task ToggleShowingAllAwards()
             {
                 Configuration.UpdateConfiguration(showAllAwards: !Configuration.Load().ShowAllAwards);
+                AdminLog.Log(Context.User.Id, Context.Message.Content, Context.Guild.Id);
+                
                 await Configuration.Load().LogChannelId.GetTextChannel().SendMessageAsync("Showing All Awards has been toggled by " + Context.User.Mention + " (enabled: " + Configuration.Load().ShowAllAwards.ToYesNo() + ")");
             }
 
@@ -224,6 +262,8 @@ namespace DiscordBot.Modules.Owner
             {
                 string oldValue = Configuration.Load().AwardsIconUrl;
                 Configuration.UpdateConfiguration(awardsIconUrl: link);
+                AdminLog.Log(Context.User.Id, Context.Message.Content, Context.Guild.Id);
+                
                 await Configuration.Load().LogChannelId.GetTextChannel().SendMessageAsync(Context.User.Mention + " has updated the Awards Icon URL to: " + link + " (was: " + oldValue + ")");
             }
 
@@ -231,6 +271,8 @@ namespace DiscordBot.Modules.Owner
             public async Task ToggleAwardingEXPMention()
             {
                 Configuration.UpdateConfiguration(awardingEXPMentionUser: !Configuration.Load().AwardingEXPMentionUser);
+                AdminLog.Log(Context.User.Id, Context.Message.Content, Context.Guild.Id);
+                
                 await Configuration.Load().LogChannelId.GetTextChannel().SendMessageAsync("AwardingEXPMentionUser has been toggled by " + Context.User.Mention + " (enabled: " + Configuration.Load().AwardingEXPMentionUser.ToYesNo() + ")");
             }
         }
@@ -251,12 +293,15 @@ namespace DiscordBot.Modules.Owner
                                  "-> editdatabase password [password]\n" +
                                  "-> editdatabase name [database name]\n" +
                                  "```");
+                AdminLog.Log(Context.User.Id, Context.Message.Content, Context.Guild.Id);
             }
 
             [Command("host")]
             public async Task SetDatabaseAddress([Remainder] string value)
             {
                 Configuration.UpdateConfiguration(databaseHost: value);
+                AdminLog.Log(Context.User.Id, Context.Message.Content, Context.Guild.Id);
+                
                 await Configuration.Load().LogChannelId.GetTextChannel().SendMessageAsync("Database Hostname has been changed by " + Context.User.Mention + " to " + value);
             }
 
@@ -264,6 +309,8 @@ namespace DiscordBot.Modules.Owner
             public async Task SetDatabasePort([Remainder] int value)
             {
                 Configuration.UpdateConfiguration(databasePort: value);
+                AdminLog.Log(Context.User.Id, Context.Message.Content, Context.Guild.Id);
+                
                 await Configuration.Load().LogChannelId.GetTextChannel().SendMessageAsync("Database Port has been changed by " + Context.User.Mention + " to " + value);
             }
 
@@ -271,6 +318,8 @@ namespace DiscordBot.Modules.Owner
             public async Task SetDatabaseUser([Remainder] string value)
             {
                 Configuration.UpdateConfiguration(databaseUser: value);
+                AdminLog.Log(Context.User.Id, Context.Message.Content, Context.Guild.Id);
+                
                 await Configuration.Load().LogChannelId.GetTextChannel().SendMessageAsync("Database User has been changed by " + Context.User.Mention + " to " + value);
             }
 
@@ -278,6 +327,8 @@ namespace DiscordBot.Modules.Owner
             public async Task SetDatabasePassword([Remainder] string value)
             {
                 Configuration.UpdateConfiguration(databasePassword: value);
+                AdminLog.Log(Context.User.Id, Context.Message.Content, Context.Guild.Id);
+                
                 await Configuration.Load().LogChannelId.GetTextChannel().SendMessageAsync("Database Password has been changed by " + Context.User.Mention + " to " + value);
             }
 
@@ -285,6 +336,8 @@ namespace DiscordBot.Modules.Owner
             public async Task SetDatabaseName([Remainder] string value)
             {
                 Configuration.UpdateConfiguration(databaseName: value);
+                AdminLog.Log(Context.User.Id, Context.Message.Content, Context.Guild.Id);
+                
                 await Configuration.Load().LogChannelId.GetTextChannel().SendMessageAsync("Database Name has been changed by " + Context.User.Mention + " to " + value);
             }
         }
@@ -301,12 +354,15 @@ namespace DiscordBot.Modules.Owner
                                  "-----------------------------\n" +
                                  "-> editstring DefaultWebsiteName [name]\n" +
                                  "```");
+                AdminLog.Log(Context.User.Id, Context.Message.Content, Context.Guild.Id);
             }
 
             [Command("defaultwebsitename"), Summary("Sets the default name for users website.")]
             public async Task SetDefaultWebsiteName([Remainder] string name = null)
             {
                 StringConfiguration.UpdateConfiguration(websiteName: name);
+                AdminLog.Log(Context.User.Id, Context.Message.Content, Context.Guild.Id);
+                
                 await Configuration.Load().LogChannelId.GetTextChannel().SendMessageAsync("DefaultWebsiteName has been changed by " + Context.User.Mention + " to " + name);
             }
         }

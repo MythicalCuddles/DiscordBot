@@ -12,6 +12,7 @@ using DiscordBot.Common;
 using DiscordBot.Common.Preconditions;
 using DiscordBot.Database;
 using DiscordBot.Extensions;
+using DiscordBot.Logging;
 using DiscordBot.Objects;
 
 using MelissaNet;
@@ -28,7 +29,8 @@ namespace DiscordBot.Modules.Owner
             if (!User.Load(user.Id).TeamMember)
             {
                 DatabaseActivity.ExecuteNonQueryCommand("UPDATE users SET teamMember='Y' WHERE id='" + user.Id + "';");
-
+                AdminLog.Log(Context.User.Id, Context.Message.Content, Context.Guild.Id, user.Id);
+                
                 await ReplyAsync(user.Mention + " has been added to the team by " + Context.User.Mention);
             }
             else
@@ -43,7 +45,8 @@ namespace DiscordBot.Modules.Owner
             if (User.Load(user.Id).TeamMember)
             {
                 DatabaseActivity.ExecuteNonQueryCommand("UPDATE users SET teamMember='N' WHERE id='" + user.Id + "';");
-
+                AdminLog.Log(Context.User.Id, Context.Message.Content, Context.Guild.Id, user.Id);
+                
                 await ReplyAsync(user.Mention + " has been removed from the team by " + Context.User.Mention);
             }
             else
@@ -67,6 +70,7 @@ namespace DiscordBot.Modules.Owner
             };
             DatabaseActivity.ExecuteNonQueryCommand(
                 "UPDATE users SET footerText=@footerText WHERE id='" + user.Id + "';", queryParams);
+            AdminLog.Log(Context.User.Id, Context.Message.Content, Context.Guild.Id, user.Id);
 
             var eb = new EmbedBuilder()
                 .WithDescription(Context.User.Username + " updated " + user.Mention + "'s footer successfully.")
@@ -108,6 +112,7 @@ namespace DiscordBot.Modules.Owner
                     DatabaseActivity.ExecuteNonQueryCommand(
                         "UPDATE users SET authorIconURL=@embedAuthorBuilderIconUrl WHERE id='" + user.Id + "';",
                         authorQueryParams);
+                    AdminLog.Log(Context.User.Id, Context.Message.Content, Context.Guild.Id, user.Id);
 
                     eb.WithColor(Color.DarkGreen);
                     eb.WithDescription(Context.User.Username + " successfully updated " + user.Mention +
@@ -125,6 +130,7 @@ namespace DiscordBot.Modules.Owner
                     DatabaseActivity.ExecuteNonQueryCommand(
                         "UPDATE users SET footerIconURL=@embedFooterBuilderIconUrl WHERE id='" + user.Id + "';",
                         footerQueryParams);
+                    AdminLog.Log(Context.User.Id, Context.Message.Content, Context.Guild.Id, user.Id);
 
                     eb.WithColor(Color.DarkGreen);
                     eb.WithDescription(Context.User.Username + " successfully updated " + user.Mention +
@@ -150,6 +156,7 @@ namespace DiscordBot.Modules.Owner
             };
             DatabaseActivity.ExecuteNonQueryCommand(
                 "UPDATE users SET isBeingIgnored=@botIgnoringUser WHERE id='" + user.Id + "';", queryParams);
+            AdminLog.Log(Context.User.Id, Context.Message.Content, Context.Guild.Id, user.Id);
 
             if (User.Load(user.Id).IsBotIgnoringUser)
             {
@@ -174,7 +181,7 @@ namespace DiscordBot.Modules.Owner
                 return;
             }
 
-            Context.Message.DeleteAfter(1);
+            AdminLog.Log(Context.User.Id, Context.Message.Content, Context.Guild.Id);
 
             EmbedBuilder eb = new EmbedBuilder
             {
@@ -203,6 +210,8 @@ namespace DiscordBot.Modules.Owner
                                  "```");
                 return;
             }
+            
+            AdminLog.Log(Context.User.Id, Context.Message.Content, Context.Guild.Id);
             
             switch (editing.ToUpperInvariant())
             {

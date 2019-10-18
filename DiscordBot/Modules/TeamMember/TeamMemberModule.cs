@@ -9,6 +9,7 @@ using Discord.WebSocket;
 using DiscordBot.Common;
 using DiscordBot.Common.Preconditions;
 using DiscordBot.Extensions;
+using DiscordBot.Logging;
 using DiscordBot.Objects;
 using MelissaNet;
 
@@ -27,6 +28,8 @@ namespace DiscordBot.Modules.TeamMember
                                  "This will post an embed message to all guilds. It's main purpose is to inform guild owners of updates and changes.");
                 return;
             }
+
+            AdminLog.Log(Context.User.Id, Context.Message.Content, Context.Guild.Id);
             
             EmbedBuilder eb = new EmbedBuilder()
             {

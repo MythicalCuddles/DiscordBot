@@ -11,6 +11,7 @@ using DiscordBot.Common;
 using DiscordBot.Common.Preconditions;
 using DiscordBot.Database;
 using DiscordBot.Extensions;
+using DiscordBot.Logging;
 using DiscordBot.Objects;
 using MelissaNet;
 
@@ -24,6 +25,7 @@ namespace DiscordBot.Modules.SOwner
         public async Task SetPrefix(string prefix)
         {
             Guild.UpdateGuild(Context.Guild.Id, prefix:prefix);
+            AdminLog.Log(Context.User.Id, Context.Message.Content, Context.Guild.Id);
             
             await ReplyAsync(Context.User.Mention + " has updated the Prefix to: " + prefix);
         }
@@ -56,6 +58,7 @@ namespace DiscordBot.Modules.SOwner
 					.Append("```");
 
                 await ReplyAsync(sb.ToString());
+                AdminLog.Log(Context.User.Id, Context.Message.Content, Context.Guild.Id);
                 return;
             }
 
@@ -67,6 +70,7 @@ namespace DiscordBot.Modules.SOwner
         public async Task SetWelcomeChannel(SocketTextChannel channel)
         {
             Guild.UpdateGuild(Context.Guild.Id, welcomeChannelID:channel.Id);
+            AdminLog.Log(Context.User.Id, Context.Message.Content, Context.Guild.Id);
             await ReplyAsync(Context.User.Mention + " has updated the Welcome Channel to: " + channel.Mention);
         }
 
@@ -74,6 +78,7 @@ namespace DiscordBot.Modules.SOwner
         public async Task SetLogChannel(SocketTextChannel channel)
         {
             Guild.UpdateGuild(Context.Guild.Id, logChannelID:channel.Id);
+            AdminLog.Log(Context.User.Id, Context.Message.Content, Context.Guild.Id);
             await ReplyAsync(Context.User.Mention + " has updated the Log Channel to: " + channel.Mention);
         }
 
@@ -81,6 +86,7 @@ namespace DiscordBot.Modules.SOwner
         public async Task SetBotChannel(SocketTextChannel channel)
         {
             Guild.UpdateGuild(Context.Guild.Id, botChannelID:channel.Id);
+            AdminLog.Log(Context.User.Id, Context.Message.Content, Context.Guild.Id);
             await ReplyAsync(Context.User.Mention + " has updated the Bot Channel to: " + channel.Mention);
         }
 
@@ -88,6 +94,7 @@ namespace DiscordBot.Modules.SOwner
         public async Task ToggleSenpai()
         {
             Guild.UpdateGuild(Context.Guild.Id, senpaiEnabled: (!Guild.Load(Context.Guild.Id).SenpaiEnabled));
+            AdminLog.Log(Context.User.Id, Context.Message.Content, Context.Guild.Id);
             await Guild.Load(Context.Guild.Id).LogChannelID.GetTextChannel().SendMessageAsync("Senpai has been toggled by " + Context.User.Mention + " (enabled: " + Guild.Load(Context.Guild.Id).SenpaiEnabled + ")");
         }
 
@@ -95,6 +102,7 @@ namespace DiscordBot.Modules.SOwner
         public async Task ToggleQuotes()
         {
             Guild.UpdateGuild(Context.Guild.Id, quotesEnabled: (!Guild.Load(Context.Guild.Id).QuotesEnabled));
+            AdminLog.Log(Context.User.Id, Context.Message.Content, Context.Guild.Id);
             await Guild.Load(Context.Guild.Id).LogChannelID.GetTextChannel().SendMessageAsync("Quotes have been toggled by " + Context.User.Mention + " (enabled: " + Guild.Load(Context.Guild.Id).QuotesEnabled + ")");
         }
 
@@ -102,6 +110,7 @@ namespace DiscordBot.Modules.SOwner
         public async Task ToggleNsfwStatus()
         {
             Guild.UpdateGuild(Context.Guild.Id, nsfwCommandsEnabled: (!Guild.Load(Context.Guild.Id).NSFWCommandsEnabled));
+            AdminLog.Log(Context.User.Id, Context.Message.Content, Context.Guild.Id);
             await Guild.Load(Context.Guild.Id).LogChannelID.GetTextChannel().SendMessageAsync("NSFW Server Status have been toggled by " + Context.User.Mention + " (NSFW Server? " + Guild.Load(Context.Guild.Id).NSFWCommandsEnabled + ")");
         }
 
@@ -109,6 +118,7 @@ namespace DiscordBot.Modules.SOwner
         public async Task SetNsfwRule34Channel(SocketTextChannel channel)
         {
             Guild.UpdateGuild(Context.Guild.Id, ruleGambleChannelID: channel.Id);
+            AdminLog.Log(Context.User.Id, Context.Message.Content, Context.Guild.Id);
             await ReplyAsync(Context.User.Mention + " has updated the Rule34 Gamble Channel to: " + channel.Mention);
         }
         
@@ -130,7 +140,9 @@ namespace DiscordBot.Modules.SOwner
             {
                 ("@awardingEXP", value.ToOneOrZero().ToString())
             };
+            
             DatabaseActivity.ExecuteNonQueryCommand("UPDATE channels SET awardingEXP=@awardingEXP WHERE channelID='" + workingWithChannel.Id + "';", queryParams);
+            AdminLog.Log(Context.User.Id, Context.Message.Content, Context.Guild.Id);
 
             IUserMessage msg;
             if (value)
@@ -141,9 +153,6 @@ namespace DiscordBot.Modules.SOwner
             {
                 msg = await ReplyAsync(Context.User.Mention + ", this channel will no longer award EXP to the users who's messages are typed here.");
             }
-
-            Context.Message.DeleteAfter(15);
-            msg.DeleteAfter(15);
         }
     }
 }

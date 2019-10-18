@@ -8,7 +8,6 @@ using Discord.WebSocket;
 using DiscordBot.Common;
 using DiscordBot.Extensions;
 using DiscordBot.Objects;
-using DiscordBot.Other;
 
 namespace DiscordBot.Handlers
 {

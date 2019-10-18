@@ -8,6 +8,7 @@ using Discord.WebSocket;
 using DiscordBot.Common.Preconditions;
 using DiscordBot.Common;
 using DiscordBot.Extensions;
+using DiscordBot.Logging;
 
 namespace DiscordBot.Modules.Mod
 {
@@ -88,6 +89,7 @@ namespace DiscordBot.Modules.Mod
                 .WithThumbnailUrl(DiscordBot.Bot.CurrentUser.GetAvatarUrl())
                 .WithColor(new Color(255, 116, 140));
 
+            AdminLog.Log(Context.User.Id, Context.Message.Content, Context.Guild.Id);
             await ReplyAsync("", false, eb.Build());
         }
 

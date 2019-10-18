@@ -11,6 +11,7 @@ using Discord.WebSocket;
 using DiscordBot.Common.Preconditions;
 using DiscordBot.Common;
 using DiscordBot.Extensions;
+using DiscordBot.Logging;
 using DiscordBot.Objects;
 
 namespace DiscordBot.Modules.Admin
@@ -24,6 +25,7 @@ namespace DiscordBot.Modules.Admin
         public async Task Say([Remainder, Summary("The text to echo")] string echo)
         {
             await ReplyAsync(echo);
+            AdminLog.Log(Context.User.Id, Context.Message.Content, Context.Guild.Id);
             await Context.Message.DeleteAsync();
         }
 
@@ -31,6 +33,8 @@ namespace DiscordBot.Modules.Admin
         public async Task SendWelcomeMessage(SocketGuildUser user)
         {
             await Guild.Load(Context.Guild.Id).WelcomeChannelID.GetTextChannel().SendMessageAsync(Guild.Load(Context.Guild.Id).WelcomeMessage.ModifyStringFlags(user));
+            AdminLog.Log(Context.User.Id, Context.Message.Content, Context.Guild.Id, user.Id);
+            
             await Guild.Load(Context.Guild.Id).LogChannelID.GetTextChannel().SendMessageAsync("A welcome message for " + user.Mention + " has been posted. (Forced by: " + Context.User.Mention + ")");
         }
 
@@ -52,6 +56,7 @@ namespace DiscordBot.Modules.Admin
             }
             
             Quote.AddQuote(quote, Context.User.Id, Context.Guild.Id);
+            AdminLog.Log(Context.User.Id, Context.Message.Content, Context.Guild.Id);
 			
 			eb = new EmbedBuilder()
 				.WithDescription(Context.User.Mention + " Quote Added")
@@ -77,6 +82,7 @@ namespace DiscordBot.Modules.Admin
                 return;
             }
             
+            AdminLog.Log(Context.User.Id, Context.Message.Content, Context.Guild.Id);
             //todo: print quotes.
         }
 
@@ -113,6 +119,7 @@ namespace DiscordBot.Modules.Admin
             string oldQuote = Quote.Quotes.Find(q => q.QId == quoteId).QuoteText;
             
             Quote.UpdateQuote(quoteId, quote);
+            AdminLog.Log(Context.User.Id, Context.Message.Content, Context.Guild.Id);
             
             eb = new EmbedBuilder
             {
@@ -160,6 +167,8 @@ namespace DiscordBot.Modules.Admin
             }
             
             Quote.DeleteQuote(quoteId);
+            AdminLog.Log(Context.User.Id, Context.Message.Content, Context.Guild.Id);
+            
             eb = new EmbedBuilder
             {
                 Title = "Quote #" + quoteId + " deleted",
@@ -188,6 +197,8 @@ namespace DiscordBot.Modules.Admin
                 await ReplyAsync("", false, eb.Build());
                 return;
             }
+            
+            AdminLog.Log(Context.User.Id, Context.Message.Content, Context.Guild.Id);
             
             //todo: print quotes.
         }
@@ -222,7 +233,9 @@ namespace DiscordBot.Modules.Admin
                 await ReplyAsync("", false, eb.Build());
                 return;
             }
+            
             RequestQuote.ApproveRequestQuote(quoteId, Context.User.Id, Context.Guild.Id);
+            AdminLog.Log(Context.User.Id, Context.Message.Content, Context.Guild.Id);
             
             eb = new EmbedBuilder
             {
@@ -275,7 +288,9 @@ namespace DiscordBot.Modules.Admin
                 await ReplyAsync("", false, eb.Build());
                 return;
             }
+            
             RequestQuote.RemoveRequestQuote(quoteId);
+            AdminLog.Log(Context.User.Id, Context.Message.Content, Context.Guild.Id);
             
             eb = new EmbedBuilder
             {

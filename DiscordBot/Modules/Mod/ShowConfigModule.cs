@@ -8,6 +8,7 @@ using DiscordBot.Common;
 using DiscordBot.Common.Preconditions;
 using DiscordBot.Extensions;
 using DiscordBot.Handlers;
+using DiscordBot.Logging;
 using DiscordBot.Objects;
 using MelissaNet;
 
@@ -31,11 +32,14 @@ namespace DiscordBot.Modules.Mod
                              "[ 3] showconfig guild\n" +
                              "[ 4] showconfig strings\n" +
                              "```");
+            AdminLog.Log(Context.User.Id, Context.Message.Content, Context.Guild.Id);
         }
 
         [Command("all")]
         public async Task ShowAllConfigs()
         {
+            AdminLog.Log(Context.User.Id, Context.Message.Content, Context.Guild.Id);
+            
             await ShowBotConfig().ConfigureAwait(false);
             await ShowGuildConfig().ConfigureAwait(false);
             await ShowStringConfiguration().ConfigureAwait(false);
@@ -44,6 +48,8 @@ namespace DiscordBot.Modules.Mod
         [Command("bot")]
         public async Task ShowBotConfig()
         {
+            AdminLog.Log(Context.User.Id, Context.Message.Content, Context.Guild.Id);
+            
             EmbedBuilder eb = new EmbedBuilder()
                 .WithTitle("Bot Configuration")
                 .WithFooter("Bot Owner permissions required to change these variables!");
@@ -77,6 +83,8 @@ namespace DiscordBot.Modules.Mod
         [Command("strings")]
         public async Task ShowStringConfiguration()
         {
+            AdminLog.Log(Context.User.Id, Context.Message.Content, Context.Guild.Id);
+            
             EmbedBuilder eb = new EmbedBuilder()
                 .WithTitle("String Configuration")
                 .WithFooter("Bot Owner permissions required to change these variables!");
@@ -91,6 +99,8 @@ namespace DiscordBot.Modules.Mod
         [Command("guild")]
         public async Task ShowGuildConfig()
         {
+            AdminLog.Log(Context.User.Id, Context.Message.Content, Context.Guild.Id);
+            
             try
             {
                 EmbedBuilder eb = new EmbedBuilder()
