@@ -131,7 +131,8 @@ namespace DiscordBot.Database
                     int rows = cmd.ExecuteNonQuery();
                     conn.CloseAsync();
 
-                    new LogMessage(LogSeverity.Debug, "Database Command","Command: " + cmd.CommandText + " | Rows affected: " + rows).PrintToConsole().GetAwaiter();
+                    new LogMessage(LogSeverity.Debug, "Database Command",cmd.CommandText).PrintToConsole().GetAwaiter();
+                    new LogMessage(LogSeverity.Debug, "Database Response", "Rows Updated: " + rows).PrintToConsole().GetAwaiter();
 
                     return rows;
                 }
