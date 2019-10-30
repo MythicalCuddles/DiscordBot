@@ -133,8 +133,6 @@ namespace DiscordBot
 		        IActivity activity = new StreamingGame(Configuration.Load().ActivityName, Configuration.Load().ActivityStream);
 		        await Bot.SetActivityAsync(activity);
 	        }
-//            await Bot.SetGameAsync(Configuration.Load().StatusText, Configuration.Load().StatusLink,
-//                (ActivityType) Configuration.Load().StatusActivity);
 
 	        await Bot.SetStatusAsync(Configuration.Load().Status);
 
