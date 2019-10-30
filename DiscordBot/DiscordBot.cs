@@ -121,12 +121,22 @@ namespace DiscordBot
 	    private static readonly List<Tuple<SocketGuildUser, SocketGuild>> OfflineList = new List<Tuple<SocketGuildUser, SocketGuild>>();
         private static async Task Ready()
         {
-			List<ulong> guildsInDatabase = new List<ulong>();
-	    
-            await Bot.SetGameAsync(Configuration.Load().StatusText, Configuration.Load().StatusLink,
-                (ActivityType) Configuration.Load().StatusActivity);
+	        List<ulong> guildsInDatabase = new List<ulong>();
 
-			await Bot.SetStatusAsync(Configuration.Load().Status);
+	        if (Configuration.Load().ActivityStream == null)
+	        {
+		        IActivity activity = new Game(Configuration.Load().ActivityName, (ActivityType)Configuration.Load().ActivityType);
+		        await Bot.SetActivityAsync(activity);
+	        }
+	        else
+	        {
+		        IActivity activity = new StreamingGame(Configuration.Load().ActivityName, Configuration.Load().ActivityStream);
+		        await Bot.SetActivityAsync(activity);
+	        }
+//            await Bot.SetGameAsync(Configuration.Load().StatusText, Configuration.Load().StatusLink,
+//                (ActivityType) Configuration.Load().StatusActivity);
+
+	        await Bot.SetStatusAsync(Configuration.Load().Status);
 
 			ModeratorModule.ActiveForDateTime = DateTime.Now;
 
@@ -167,10 +177,7 @@ namespace DiscordBot
 		        Console.WriteLine(id + @" has been removed from the database.");
 	        }
 	        
-	        Quote.Quotes = Quote.LoadAll();
-	        await new LogMessage(LogSeverity.Info, "Startup", "Loaded " + Quote.Quotes.Count + " Quotes from Database.").PrintToConsole();
-	        RequestQuote.RequestQuotes = RequestQuote.LoadAll();
-	        await new LogMessage(LogSeverity.Info, "Startup", "Loaded " + RequestQuote.RequestQuotes.Count + " RequestQuotes from Database.").PrintToConsole();
+	        await LoadAllFromDatabase();
 	        
 	        await new LogMessage(LogSeverity.Info, "Startup", Bot.CurrentUser.Username + " loaded.").PrintToConsole();
 			
@@ -184,8 +191,11 @@ namespace DiscordBot
                     .AddField("Version", v.Major + "." + v.Minor + "." + v.Build + "." + v.Revision, true)
                     .AddField("MelissaNet", VersionInfo.Version, true)
 					.AddField("Latency", Bot.Latency + "ms", true)
+					
+					.AddField("Awards", Award.Awards.Count, true)
 					.AddField("Quotes", Quote.Quotes.Count, true)
 					.AddField("Quote Requests", RequestQuote.RequestQuotes.Count, true)
+					
                     .WithCurrentTimestamp();
 				await Configuration.Load().LogChannelId.GetTextChannel().SendMessageAsync("", false, eb.Build());
 
@@ -268,6 +278,15 @@ namespace DiscordBot
 			{
 				await new LogMessage(LogSeverity.Info, "Guild Bans", "Unable to get banned users - Bot doesn't have the required permission(s).").PrintToConsole();
 			}
+	    }
+	    
+	    private static async Task LoadAllFromDatabase() {
+		    Award.Awards = Award.LoadAll();
+		    await new LogMessage(LogSeverity.Info, "Startup", "Loaded " + Award.Awards.Count + " Awards from the Database.").PrintToConsole();
+		    Quote.Quotes = Quote.LoadAll();
+		    await new LogMessage(LogSeverity.Info, "Startup", "Loaded " + Quote.Quotes.Count + " Quotes from the Database.").PrintToConsole();
+		    RequestQuote.RequestQuotes = RequestQuote.LoadAll();
+		    await new LogMessage(LogSeverity.Info, "Startup", "Loaded " + RequestQuote.RequestQuotes.Count + " RequestQuotes from the Database.").PrintToConsole();
 	    }
 
         private static async Task Disconnected(Exception exception)

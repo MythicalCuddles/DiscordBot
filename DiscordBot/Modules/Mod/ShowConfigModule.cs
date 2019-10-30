@@ -57,9 +57,9 @@ namespace DiscordBot.Modules.Mod
             eb.WithDescription("```INI\n" +
                                "[ 1] Developer [ " + (Configuration.Load().Developer.GetUser().Username ?? "Melissa") + " ]\n" +
                                "[ 2] Developer ID [ " + Configuration.Load().Developer + " ]\n" +
-                               "[ 3] Status Text [ " + (Configuration.Load().StatusText ?? "") + " ]\n" +
-                               "[ 4] Status Link [ " + (Configuration.Load().StatusLink ?? "") + " ]\n" +
-                               "[ 5] Status Activity [ " + Configuration.Load().StatusActivity.ToActivityType() + " ]\n" +
+                               "[ 3] Activity Name [ " + (Configuration.Load().ActivityName ?? "") + " ]\n" +
+                               "[ 4] Activity Type [ " + (((ActivityType)Configuration.Load().ActivityType).ToString() ?? "") + " ]\n" +
+                               "[ 5] Activity Stream [ " + Configuration.Load().ActivityStream + " ]\n" +
                                "[ 6] Status [ " + Configuration.Load().Status + " ]\n" +
                                "[ 7] Unknown Command Enabled [ " + Configuration.Load().UnknownCommandEnabled.ToYesNo() + " ]\n" +
                                "[ 8] Awarding EXP Enabled [ " + Configuration.Load().AwardingEXPEnabled.ToYesNo() + " ]\n" +

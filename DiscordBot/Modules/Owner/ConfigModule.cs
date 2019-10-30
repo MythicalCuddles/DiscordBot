@@ -27,62 +27,109 @@ namespace DiscordBot.Modules.Owner
                                  Guild.Load(Context.Guild.Id).Prefix + "editconfig [command] [command syntax]\n```INI\n" +
                                  "Available Commands\n" +
                                  "-----------------------------\n" +
-                                 "[ 1] activity [activity type no] [activity message] [activity link]\n" +
-                                 "[a.] [activity type no] - [-1 Disabled] [0 Playing] [1 Streaming] [2 Listening] [3 Watching]\n" +
-                                 "[ 2] status [status]\n" +
-                                 "[a.] [status] - [online] [donotdisturb] [idle] [invisible]\n" +
-                                 "[ 3] toggleunknowncommand\n" +
-                                 "[ 4] leaderboardamount [number of users to display]\n" +
-                                 "[ 5] quotelevel [level]\n" +
-                                 "[ 6] prefixlevel [level]\n" +
-                                 "[ 7] rgblevel [level]\n" +
-                                 "[ 8] senpaichance [number 1-100]\n" +
-                                 "[ 9] globallogchannel [channel mention / channel id]\n" +
-                                 "[10] rule34 [max number for random to use]\n" +
-                                 "[11] minlengthforexp [string length for exp gain]\n" +
-                                 "[12] leaderboardtrophyurl [link]\n" +
-                                 "[13] leaderboardembedcolor [uint id]\n" +
-                                 "[14] toggleexpawarding\n" +
-                                 "[15] toggleshowallawards\n" +
-                                 "[16] awardsiconurl [link]\n" +
-                                 "[17] toggleawardingexpmention\n" +
+                                 "[ 1] clearactivity\n" +
+                                 "[ 2] setgame [type] [message]\n" +
+                                 "[a.] [type] -> [none] [playing] [listening] [watching]\n" +
+                                 "[ 3] setstreaming [stream url] [message]\n" +
+                                 "[ 4] status [status]\n" +
+                                 "[a.] [status] -> [online] [donotdisturb] [idle] [invisible]\n" +
+                                 "[ 5] toggleunknowncommand\n" +
+                                 "[ 6] leaderboardamount [number of users to display]\n" +
+                                 "[ 7] quotelevel [level]\n" +
+                                 "[ 8] prefixlevel [level]\n" +
+                                 "[ 9] rgblevel [level]\n" +
+                                 "[10] senpaichance [number 1-100]\n" +
+                                 "[11] globallogchannel [channel mention / channel id]\n" +
+                                 "[12] rule34 [max number for random to use]\n" +
+                                 "[13] minlengthforexp [string length for exp gain]\n" +
+                                 "[14] leaderboardtrophyurl [link]\n" +
+                                 "[15] leaderboardembedcolor [uint id]\n" +
+                                 "[16] toggleexpawarding\n" +
+                                 "[17] toggleshowallawards\n" +
+                                 "[18] awardsiconurl [link]\n" +
+                                 "[19] toggleawardingexpmention\n" +
                                  "```");
                 
                 AdminLog.Log(Context.User.Id, Context.Message.Content, Context.Guild.Id);
             }
-
-            [Command("activity"), Summary("Changes the playing message of the bot, and changes it to streaming mode if twitch link is inserted.")]
-            public async Task SetGameActivity(int activityType = -1, string activityMessage = null, string activityLink = null)
+            
+            [Command("clearactivity"), Summary("Changes the game message of the bot.")]
+            public async Task ClearActivity()
             {
-                if (activityType != -1 && activityMessage == null)
+                IActivity activity = new Game("");
+                await DiscordBot.Bot.SetActivityAsync(activity);
+                Configuration.UpdateConfiguration(activityName: activity.Name, activityType: (int)activity.Type);
+                
+                AdminLog.Log(Context.User.Id, Context.Message.Content, Context.Guild.Id);
+                var eb = new EmbedBuilder()
+                    .WithDescription(Context.User.Username + " cleared " + DiscordBot.Bot.CurrentUser.Mention + "'s activity message.")
+                    .WithColor(Color.DarkGreen);
+
+                await ReplyAsync("", false, eb.Build());
+            }
+
+            [Command("setgame"), Summary("Changes the game message of the bot.")]
+            public async Task SetActivityGame(string activityType = null, [Remainder]string activityMessage = null)
+            {
+                if (activityType == null || activityMessage == null)
                 {
-                    await ReplyAsync("**Syntax:** " + Guild.Load(Context.Guild.Id).Prefix + "editconfig activity [activity type no] [activity message] [activity link]\n\n" +
-                                     "```Activity Types: \n-1 - Disabled\n0 - Playing\n1 - Streaming\n2 - Listening\n3 - Watching");
+                    await ReplyAsync("**Syntax:** " + Guild.Load(Context.Guild.Id).Prefix + "editconfig setgame [type] [message]");
                     return;
                 }
 
-                Configuration.UpdateConfiguration(statusText: activityMessage);
-                Configuration.UpdateConfiguration(statusLink: activityLink);
-                Configuration.UpdateConfiguration(statusActivity: activityType);
-
-                if (activityType == -1)
+                IActivity activity = new Game("");
+                switch (activityType.ToUpperInvariant())
                 {
-                    await DiscordBot.Bot.SetGameAsync(activityMessage);
+                    case "PLAYING":
+                        activity = new Game(activityMessage);
+                        break;
+                    case "LISTENING":
+                        activity = new Game(activityMessage, ActivityType.Listening);
+                        break;
+                    case "WATCHING": 
+                        activity = new Game(activityMessage, ActivityType.Watching);
+                        break;
+                    case "STREAMING":
+                        await ReplyAsync(Context.User.Mention +
+                                         ", in order to be streaming, please use 'setstreaming' instead of 'setgame', amending the parameters to fit.");
+                        return;
+                    default:
+                        await ReplyAsync(Context.User.Mention +
+                                         ", there was an error trying to select the ActivityType, please check your parameters and try again.");
+                        return;
                 }
-                else
-                {
-                    await DiscordBot.Bot.SetGameAsync(activityMessage, activityLink, (ActivityType)activityType);
-                }
+                await DiscordBot.Bot.SetActivityAsync(activity);
+                Configuration.UpdateConfiguration(activityName: activity.Name, activityType: (int)activity.Type, activityStream: null);
                 
                 AdminLog.Log(Context.User.Id, Context.Message.Content, Context.Guild.Id);
-
                 var eb = new EmbedBuilder()
                     .WithDescription(Context.User.Username + " updated " + DiscordBot.Bot.CurrentUser.Mention + "'s activity message.")
                     .WithColor(Color.DarkGreen);
 
                 await ReplyAsync("", false, eb.Build());
             }
+            
+            [Command("setstreaming"), Summary("Changes the game message of the bot.")]
+            public async Task SetActivityStream(string streamUrl = null, [Remainder]string activityMessage = null)
+            {
+                if (streamUrl == null || activityMessage == null)
+                {
+                    await ReplyAsync("**Syntax:** " + Guild.Load(Context.Guild.Id).Prefix + "editconfig setstreaming [stream url] [message]");
+                    return;
+                }
 
+                IActivity activity = new StreamingGame(activityMessage, streamUrl);
+                await DiscordBot.Bot.SetActivityAsync(activity);
+                Configuration.UpdateConfiguration(activityName: activity.Name, activityType: (int)activity.Type, activityStream: streamUrl);
+                
+                AdminLog.Log(Context.User.Id, Context.Message.Content, Context.Guild.Id);
+                var eb = new EmbedBuilder()
+                    .WithDescription(Context.User.Username + " updated " + DiscordBot.Bot.CurrentUser.Mention + "'s activity message.")
+                    .WithColor(Color.DarkGreen);
+
+                await ReplyAsync("", false, eb.Build());
+            }
+            
             [Group("status")]
             public class StatusModule : ModuleBase
             {

@@ -27,9 +27,9 @@ namespace DiscordBot.Common
         public bool FirstTimeRun { get; set; } = true;
         
         public ulong Developer { get; set; } = 149991092337639424;
-        public string StatusText { get; set; } = null;
-        public string StatusLink { get; set; } = null;
-        public int StatusActivity { get; set; } = -1;
+        public string ActivityName { get; set; }
+        public int ActivityType { get; set; }
+        public string ActivityStream { get; set; }
         public UserStatus Status { get; set; } = UserStatus.Online;
 
         public bool ShowAllAwards { get; set; } = false;
@@ -92,10 +92,10 @@ namespace DiscordBot.Common
         private string ToJson()
             => JsonConvert.SerializeObject(this, Formatting.Indented);
         
-        internal static void UpdateConfiguration(string botToken = null, ulong? developer = null, string statusText = null, string statusLink = null, bool? firstTimeRun = null,
+        internal static void UpdateConfiguration(string botToken = null, ulong? developer = null, string activityName = null, int? activityType = null, string activityStream = null, bool? firstTimeRun = null,
             string databaseHost = null, int? databasePort = null, string databaseUser = null, string databasePassword = null, string databaseName = null,
             bool? showAllAwards = null, string awardsIconUrl = null,
-            int? statusActivity = null, UserStatus? status = null, bool? unknownCommandEnabled = null, bool? awardingEXPEnabled = null, bool? awardingEXPMentionUser = null,
+            UserStatus? status = null, bool? unknownCommandEnabled = null, bool? awardingEXPEnabled = null, bool? awardingEXPMentionUser = null,
             int? leaderboardAmount = null, string leaderboardTrophyUrl = null, uint? leaderboardEmbedColor = null,
             int? quoteLevelRequirement = null, int? prefixLevelRequirement = null, int? senpaiChanceRate = null, int? rgbLevelRequirement = null,
             ulong? logChannelId = null, int? respects = null, int? minLengthForEXP = null, int? maxRuleXGamble = null)
@@ -113,9 +113,9 @@ namespace DiscordBot.Common
                 
                 FirstTimeRun = firstTimeRun ?? Load().FirstTimeRun,
                 
-                StatusText = statusText ?? Load().StatusText,
-                StatusLink = statusLink ?? Load().StatusLink,
-                StatusActivity = statusActivity ?? Load().StatusActivity,
+                ActivityName = activityName ?? Load().ActivityName,
+                ActivityType = activityType ?? Load().ActivityType,
+                ActivityStream = activityStream ?? Load().ActivityStream,
                 Status = status ?? Load().Status,
                 
                 ShowAllAwards = showAllAwards ?? Load().ShowAllAwards,
