@@ -174,7 +174,7 @@ namespace DiscordBot.Database
         private static void CreateTablesIfNotExists()
         {
             ExecuteNonQueryCommand("CREATE TABLE IF NOT EXISTS `awards` (" +
-                                   "`awardID` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, " +
+                                   "`awardID` INT NOT NULL AUTO_INCREMENT, " +
                                    "`userID` bigint(20) UNSIGNED NOT NULL, " +
                                    "`awardText` text COLLATE utf8mb4_unicode_ci NOT NULL, " +
                                    "`awardType` text COLLATE utf8mb4_unicode_ci NOT NULL, " +
@@ -198,6 +198,7 @@ namespace DiscordBot.Database
                                    "`aboutG` tinyint(3) UNSIGNED NOT NULL DEFAULT '90'," +
                                    "`aboutB` tinyint(3) UNSIGNED NOT NULL DEFAULT '210'," +
                                    "`teamMember` char(1) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'N'," +
+                                   "`patreonSupporter` tinyint(1) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 0," +
                                    "`authorIconURL` text COLLATE utf8mb4_unicode_ci," +
                                    "`footerIconURL` text COLLATE utf8mb4_unicode_ci," +
                                    "`footerText` text COLLATE utf8mb4_unicode_ci," +

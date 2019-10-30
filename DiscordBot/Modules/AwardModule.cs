@@ -48,7 +48,7 @@ namespace DiscordBot.Modules
             {
                 awards.Add(new Award()
                 {
-                    AwardId = (ulong) reader.dr["awardID"],
+                    AwardId = reader.dr.GetInt32("awardID"),
                     UserId = (ulong) reader.dr["userID"],
                     AwardText = reader.dr["awardText"].ToString(),
                     DateAwarded = (DateTime)reader.dr["dateAwarded"]
