@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Threading.Tasks;
 
 using Discord;
@@ -22,39 +23,28 @@ namespace DiscordBot.Modules.Mod
         [Command("stats"), Summary("Sends information about the bot.")]
         public async Task ShowStatistics()
         {
-            int totalUserCount = 0, totalChannelCount = 0, totalTextChannelCount = 0;
-            int totalGuildUserCount = 0, totalGuildChannelCount = 0, totalGuildTextChannelCount = 0;
+            // Bot Counts
+            int bGuildCount = DiscordBot.Bot.Guilds.Count();
+            int tTextChannelCount = 0, tVoiceChannelCount = 0, tCategoryChannelCount = 0;
+            int tChannelCount = 0, tUserCount = 0;
+            
+            // Guild Counts
+            int gTextChannelCount = DiscordBot.Bot.GetGuild(Context.Guild.Id).TextChannels.Count();
+            int gVoiceChannelCount = DiscordBot.Bot.GetGuild(Context.Guild.Id).VoiceChannels.Count();
+            int gCategoryChannelCount = DiscordBot.Bot.GetGuild(Context.Guild.Id).CategoryChannels.Count();
+            int gTotalCount = 0;
+            int gUserCount = DiscordBot.Bot.GetGuild(Context.Guild.Id).MemberCount;
 
-            foreach (SocketGuild g in DiscordBot.Bot.Guilds)
+            foreach(SocketGuild g in DiscordBot.Bot.Guilds)
             {
-                foreach (SocketGuildChannel c in g.Channels)
-                {
-                    totalChannelCount++;
-
-                    if (g.Id == Context.Guild.Id)
-                    {
-                        totalGuildChannelCount++;
-                    }
-                }
-                foreach (SocketTextChannel t in g.TextChannels)
-                {
-                    totalTextChannelCount++;
-
-                    if (g.Id == Context.Guild.Id)
-                    {
-                        totalGuildTextChannelCount++;
-                    }
-                }
-                foreach (SocketGuildUser u in g.Users)
-                {
-                    totalUserCount++;
-
-                    if (g.Id == Context.Guild.Id)
-                    {
-                        totalGuildUserCount++;
-                    }
-                }
+                tTextChannelCount += g.TextChannels.Count();
+                tVoiceChannelCount += g.VoiceChannels.Count();
+                tCategoryChannelCount += g.CategoryChannels.Count();
+                tUserCount += g.Users.Count();
             }
+
+            gTotalCount = gTextChannelCount + gVoiceChannelCount + gCategoryChannelCount;
+            tChannelCount = tTextChannelCount + tVoiceChannelCount + tCategoryChannelCount;
 
             EmbedAuthorBuilder eab = new EmbedAuthorBuilder()
                 .WithName(DiscordBot.Bot.CurrentUser.Username + " Version " + ProgramVersion.Major + "." + ProgramVersion.Minor + "." + ProgramVersion.Build + "." + ProgramVersion.Revision);
@@ -64,26 +54,23 @@ namespace DiscordBot.Modules.Mod
                 .WithAuthor(eab)
 
                 .AddField("Bot Information", 
-                    "**Name:** " + DiscordBot.Bot.CurrentUser.Username + "\n" +
-                    "**Discriminator:** #" + DiscordBot.Bot.CurrentUser.Discriminator + "\n" +
+                    "**Username:** " + DiscordBot.Bot.CurrentUser.Username + "#" + DiscordBot.Bot.CurrentUser.Discriminator + "\n" +
                     "**Id:** " + DiscordBot.Bot.CurrentUser.Id)
                 .AddField("Developer Information", 
-                    "**Name:** " + Configuration.Load().Developer.GetUser().Username + "\n" +
-                    "**Discriminator:** #" + Configuration.Load().Developer.GetUser().Discriminator + "\n" +
+                    "**Username:** " + Configuration.Load().Developer.GetUser().Username + "#" + Configuration.Load().Developer.GetUser().Discriminator + "\n" +
                     "**Id:** " + Configuration.Load().Developer)
                 .AddField("Bot Statistics", 
                     "**Active for:** " + CalculateUptime() + "\n" +
                     "**Latency:** " + DiscordBot.Bot.Latency + "ms" + "\n" +
-                    "**Server Time:** " + DateTime.Now.ToString("h:mm:ss tt") + "\n" +
-                    "**Guild Count:** " + DiscordBot.Bot.Guilds.Count + "\n" +
-                    "**User Count:** " + totalUserCount + "\n" +
-                    "**Channel Count:** " + totalChannelCount + " (T:" + totalTextChannelCount + "/V:" + (totalChannelCount - totalTextChannelCount) + ")" + "\n")
+                    "**Server Time:** " + DateTime.Now.ToString("h:mm:ss tt") + "\n")
+                .AddField("Total Counts", "**Guild Count:** " + bGuildCount + "\n" +
+                      "**User Count:** " + tUserCount + "\n" +
+                      "**Channel Count:** " + tChannelCount + " (T: " + tTextChannelCount + " | V: " + tVoiceChannelCount + " | C: " + tCategoryChannelCount + ")\n")
                 .AddField("Guild Statistics - " + Context.Guild.Name,
-                    "**Owner:** " + ((SocketGuildUser) Context.Guild.GetOwnerAsync().GetAwaiter().GetResult()).Username + "\n" +
-                    "**Owner Discriminator:** #" + ((SocketGuildUser) Context.Guild.GetOwnerAsync().GetAwaiter().GetResult()).Discriminator + "\n" +
+                    "**Owner:** " + ((SocketGuildUser) Context.Guild.GetOwnerAsync().GetAwaiter().GetResult()).Username + "#" + ((SocketGuildUser) Context.Guild.GetOwnerAsync().GetAwaiter().GetResult()).Discriminator + "\n" +
                     "**Owner Id:** " + ((SocketGuildUser) Context.Guild.GetOwnerAsync().GetAwaiter().GetResult()).Id + "\n" +
-                    "**Channel Count:** " + totalGuildChannelCount + " (" + totalGuildTextChannelCount + "/" + (totalGuildChannelCount - totalGuildTextChannelCount) + ")" + "\n" +
-                    "**User Count:** " + totalGuildUserCount + "\n")
+                    "**Channel Count:** " + gTotalCount + " (T: " + gTextChannelCount + " | V: " + gVoiceChannelCount + " | C: " + gCategoryChannelCount + ")\n" +
+                    "**User Count:** " + gUserCount + "\n")
 
                 .WithFooter(efb)
                 .WithThumbnailUrl(DiscordBot.Bot.CurrentUser.GetAvatarUrl())
