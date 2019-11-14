@@ -47,32 +47,38 @@ namespace DiscordBot.Modules.Mod
             tChannelCount = tTextChannelCount + tVoiceChannelCount + tCategoryChannelCount;
 
             EmbedAuthorBuilder eab = new EmbedAuthorBuilder()
-                .WithName(DiscordBot.Bot.CurrentUser.Username + " Version " + ProgramVersion.Major + "." + ProgramVersion.Minor + "." + ProgramVersion.Build + "." + ProgramVersion.Revision);
-            EmbedFooterBuilder efb = new EmbedFooterBuilder()
-                .WithText("MelissaNet Version " + MelissaNet.VersionInfo.Version);
+                .WithName(DiscordBot.Bot.CurrentUser.Username + " - Statistics & Information");
             EmbedBuilder eb = new EmbedBuilder()
                 .WithAuthor(eab)
 
-                .AddField("Bot Information", 
-                    "**Username:** " + DiscordBot.Bot.CurrentUser.Username + "#" + DiscordBot.Bot.CurrentUser.Discriminator + "\n" +
-                    "**Id:** " + DiscordBot.Bot.CurrentUser.Id)
-                .AddField("Developer Information", 
-                    "**Username:** " + Configuration.Load().Developer.GetUser().Username + "#" + Configuration.Load().Developer.GetUser().Discriminator + "\n" +
-                    "**Id:** " + Configuration.Load().Developer)
+                .AddField("Bot Name", DiscordBot.Bot.CurrentUser.Username + "#" + DiscordBot.Bot.CurrentUser.Discriminator, true)
+                .AddField("Developer Name", Configuration.Load().Developer.GetUser().Username + "#" + Configuration.Load().Developer.GetUser().Discriminator, true)
+                .AddField("Developer ID", Configuration.Load().Developer, true)
+                
+                .AddField("DiscordBot Version", "v" + ProgramVersion, true)
+                .AddField("MelissaNET Version", "v" + MelissaNet.VersionInfo.Version, true)
+                .AddField(".NET Version", typeof(string).Assembly.ImageRuntimeVersion, true)
+                
                 .AddField("Bot Statistics", 
                     "**Active for:** " + CalculateUptime() + "\n" +
                     "**Latency:** " + DiscordBot.Bot.Latency + "ms" + "\n" +
                     "**Server Time:** " + DateTime.Now.ToString("h:mm:ss tt") + "\n")
-                .AddField("Total Counts", "**Guild Count:** " + bGuildCount + "\n" +
-                      "**User Count:** " + tUserCount + "\n" +
-                      "**Channel Count:** " + tChannelCount + " (T: " + tTextChannelCount + " | V: " + tVoiceChannelCount + " | C: " + tCategoryChannelCount + ")\n")
-                .AddField("Guild Statistics - " + Context.Guild.Name,
+                
+                .AddField("Guild Count", bGuildCount, true)
+                .AddField("Channel Count", tChannelCount + " (T:" + tTextChannelCount + "|V: " + tVoiceChannelCount + "|C: " + tCategoryChannelCount + ")", true)
+                .AddField("User Count", tUserCount, true)
+                
+                .AddField("Guild Statistics",
                     "**Owner:** " + ((SocketGuildUser) Context.Guild.GetOwnerAsync().GetAwaiter().GetResult()).Username + "#" + ((SocketGuildUser) Context.Guild.GetOwnerAsync().GetAwaiter().GetResult()).Discriminator + "\n" +
                     "**Owner Id:** " + ((SocketGuildUser) Context.Guild.GetOwnerAsync().GetAwaiter().GetResult()).Id + "\n" +
                     "**Channel Count:** " + gTotalCount + " (T: " + gTextChannelCount + " | V: " + gVoiceChannelCount + " | C: " + gCategoryChannelCount + ")\n" +
                     "**User Count:** " + gUserCount + "\n")
+                
+                .AddField("Website", "[MythicalCuddles](https://mythicalcuddles.xyz/)", true)
+                .AddField("GitHub", "[Source Code](https://github.com/MythicalCuddles/DiscordBot)", true)
+                .AddField("Download", "[Latest Version](https://github.com/MythicalCuddles/DiscordBot/releases)", true)
 
-                .WithFooter(efb)
+                .WithCurrentTimestamp()
                 .WithThumbnailUrl(DiscordBot.Bot.CurrentUser.GetAvatarUrl())
                 .WithColor(new Color(255, 116, 140));
 
