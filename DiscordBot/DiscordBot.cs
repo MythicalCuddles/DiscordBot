@@ -185,17 +185,26 @@ namespace DiscordBot
 					.WithTitle("Startup Notification")
 					.WithColor(59, 212, 50)
 					.WithThumbnailUrl(Bot.CurrentUser.GetAvatarUrl())
-					.WithDescription("**" + Bot.CurrentUser.Username + "** : ready event executed.")
-                    .AddField("Version", v.Major + "." + v.Minor + "." + v.Build + "." + v.Revision, true)
-                    .AddField("MelissaNet", VersionInfo.Version, true)
-					.AddField("Latency", Bot.Latency + "ms", true)
+
+					.AddField("Bot Name", Bot.CurrentUser.Username + "#" + Bot.CurrentUser.Discriminator, true)
+					.AddField("Developer Name", Configuration.Load().Developer.GetUser().Username + "#" + Configuration.Load().Developer.GetUser().Discriminator, true)
+					.AddField("Developer ID", Configuration.Load().Developer, true)
+					
+					.AddField("DiscordBot Version", "v" + v, true)
+					.AddField("MelissaNET Version", "v" + VersionInfo.Version, true)
+					.AddField(".NET Version", typeof(string).Assembly.ImageRuntimeVersion, true)
+                
+					.AddField("Connection & Server Information", 
+						"**Latency:** " + Bot.Latency + "ms" + "\n" +
+						"**Server Time:** " + DateTime.Now.ToString("h:mm:ss tt") + "\n")
 					
 					.AddField("Awards", Award.Awards.Count, true)
 					.AddField("Quotes", Quote.Quotes.Count, true)
 					.AddField("Quote Requests", RequestQuote.RequestQuotes.Count, true)
 					
-                    .WithCurrentTimestamp();
-				await Configuration.Load().LogChannelId.GetTextChannel().SendMessageAsync("", false, eb.Build());
+                    .WithCurrentTimestamp()
+					.WithFooter("Ready event executed");
+			await Configuration.Load().LogChannelId.GetTextChannel().SendMessageAsync("", false, eb.Build());
 
             if (OfflineList.Any())
             {
