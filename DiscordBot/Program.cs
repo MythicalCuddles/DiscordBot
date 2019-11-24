@@ -32,7 +32,7 @@ namespace DiscordBot
         private static async void StartBot(string[] args) // Startup Method.
         {
             // Print Application Information to Console.
-            Console.Write(@"DiscordBot: [");
+            Console.Write($@"{DateTime.Now,-19} DiscordBot: [");
             Console.ForegroundColor = ConsoleColor.Yellow;
             Console.Write(@"Version " + ProgramVersion.Major + @"." + ProgramVersion.Minor + @"." +
                           ProgramVersion.Build + @"." + ProgramVersion.Revision);
@@ -40,18 +40,22 @@ namespace DiscordBot
             Console.WriteLine(@"]    ");
 
             // Print Developer Information to Console.
-            Console.Write(@"Developed by Melissa Brennan (");
+            Console.Write($@"{DateTime.Now,-19} DiscordBot: Developed by Melissa Brennan (");
             Console.ForegroundColor = ConsoleColor.Magenta;
             Console.Write(@"@MythicalCuddles");
             Console.ResetColor();
             Console.WriteLine(@")");
 
             // Print Additional Information to the Console.
-            Console.WriteLine(@"Web: www.mythicalcuddles.xyz");
-            Console.WriteLine(@"Copyright 2017 - 2019 Melissa Brennan | Licensed under the MIT License.");
+            Console.WriteLine($@"{DateTime.Now,-19} DiscordBot: Web: www.mythicalcuddles.xyz");
+            Console.WriteLine($@"{DateTime.Now,-19} DiscordBot: Copyright 2017 - 2019 Melissa Brennan | Licensed under the MIT License.");
+            
+            Methods.PrintConsoleSplitLine();
 
             // Run the Initializer for MelissaNET.
             MelissaNet.MelissaNet.Initialize();
+            
+            Methods.PrintConsoleSplitLine();
 
             // Check for Updates using MelissaNet.
             CheckForUpdates();
@@ -75,8 +79,15 @@ namespace DiscordBot
             // Check & Run the configurator form if the configuration has not been setup or the -config arg has been passed.
             bool configArg = args.Contains("-CONFIG");
             await new LogMessage(LogSeverity.Debug, "Configurator",
-                "configArg: " + configArg.ToYesNo() + " | FirstTimeRun: " + Configuration.Load().FirstTimeRun.ToYesNo() + " | invalidToken: " +
-                invalidToken.ToYesNo() + " | invalidDbSettings: " + invalidDbSettings.ToYesNo()).PrintToConsole();
+                "Checking if the Configurator needs to run...").PrintToConsole();
+            await new LogMessage(LogSeverity.Debug, "Configurator",
+                "configArg: " + configArg.ToYesNo()).PrintToConsole();
+            await new LogMessage(LogSeverity.Debug, "Configurator",
+                "FirstTimeRun: " + Configuration.Load().FirstTimeRun.ToYesNo()).PrintToConsole();
+            await new LogMessage(LogSeverity.Debug, "Configurator",
+                "invalidToken: " + invalidToken.ToYesNo()).PrintToConsole();
+            await new LogMessage(LogSeverity.Debug, "Configurator",
+                "invalidDbSettings: " + invalidDbSettings.ToYesNo()).PrintToConsole();
             FrmConfigure.CheckRunConfigurator(configArg || Configuration.Load().FirstTimeRun || invalidToken || invalidDbSettings);
 
             Methods.PrintConsoleSplitLine();
