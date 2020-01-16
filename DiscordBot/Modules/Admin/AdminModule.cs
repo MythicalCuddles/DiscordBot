@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -83,7 +84,13 @@ namespace DiscordBot.Modules.Admin
             }
             
             AdminLog.Log(Context.User.Id, Context.Message.Content, Context.Guild.Id);
-            //todo: print quotes.
+            
+            List<string> quotePages = new List<string>();
+            Quote.Quotes.Select((v, i) => new { Value = v, Index = i / 10 })
+                .GroupBy(x => x.Index).ToList()
+                .ForEach(x => quotePages.Add(String.Join("\n", x.Select(z => z.Value.QuoteText + " (ID: " + z.Value.QId + ")"))));
+
+            await PagedReplyAsync(quotePages);
         }
 
         [Command("editquote"), Summary("Edit a quote from the list.")]
@@ -200,7 +207,12 @@ namespace DiscordBot.Modules.Admin
             
             AdminLog.Log(Context.User.Id, Context.Message.Content, Context.Guild.Id);
             
-            //todo: print quotes.
+            List<string> quotePages = new List<string>();
+            RequestQuote.RequestQuotes.Select((v, i) => new { Value = v, Index = i / 10 })
+                .GroupBy(x => x.Index).ToList()
+                .ForEach(x => quotePages.Add(String.Join("\n", x.Select(z => z.Value.QuoteText + " (ID: " + z.Value.RequestId + " | BY: " + z.Value.CreatedBy.GetUser().Mention + ")"))));
+
+            await PagedReplyAsync(quotePages);
         }
 
         [Command("acceptquote"), Summary("Add a quote to the list.")]
