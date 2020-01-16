@@ -61,7 +61,7 @@ namespace DiscordBot
 	        Bot.UserUnbanned += UserHandler.UserUnbanned;
             
             Bot.ReactionAdded += ReactionHandler.ReactionAdded;
-            
+
             Bot.MessageReceived += MessageReceived;
             
             Bot.Ready += Ready;
@@ -88,6 +88,7 @@ namespace DiscordBot
 
         internal static Task Log(LogMessage logMessage)
         {
+	        // NOTE: The extension .PrintToConsole uses method so do not change it!
 	        var cc = Console.ForegroundColor;
 	        switch (logMessage.Severity)
 	        {
@@ -113,9 +114,10 @@ namespace DiscordBot
 			        Console.ForegroundColor = ConsoleColor.Blue;
 			        break;
 	        }
-	        Console.WriteLine($@"{DateTime.Now,-19} [{logMessage.Severity,8}] {logMessage.Source}: {logMessage.Message}"); // .PrintToConsole uses this Console.WriteLine so do not change it!
+	        Console.WriteLine($@"{DateTime.Now,-19} [{logMessage.Severity,8}] {logMessage.Source}: {logMessage.Message}");
             Console.ForegroundColor = cc;
 	        return Task.CompletedTask;
+	        // EON
         }
 	    
 	    private static readonly List<Tuple<SocketGuildUser, SocketGuild>> OfflineList = new List<Tuple<SocketGuildUser, SocketGuild>>();
