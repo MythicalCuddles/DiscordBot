@@ -41,26 +41,38 @@ namespace DiscordBot.Modules
                 .WithColor(userSpecified.GetCustomRGB());
             
             List<Award> awards = new List<Award>();
-            
-            (MySqlDataReader dr, MySqlConnection conn) reader = DatabaseActivity.ExecuteReader("SELECT * FROM awards WHERE userId=" + userSpecified.Id + ";");
-            
-            while (reader.dr.Read())
+//            
+//            (MySqlDataReader dr, MySqlConnection conn) reader = DatabaseActivity.ExecuteReader("SELECT * FROM awards WHERE userId=" + userSpecified.Id + ";");
+//            
+//            while (reader.dr.Read())
+//            {
+//                awards.Add(new Award()
+//                {
+//                    AwardId = reader.dr.GetInt32("awardID"),
+//                    UserId = (ulong) reader.dr["userID"],
+//                    AwardText = reader.dr["awardText"].ToString(),
+//                    DateAwarded = (DateTime)reader.dr["dateAwarded"]
+//                });
+//            }
+//            
+//            reader.dr.Close();
+//            reader.conn.Close();
+//            
+//            // Swapping variables x and y in comparison will display oldest awards first - y.dateAwarded.CompareTo(x.dateAwarded)
+//            awards.Sort((x, y) => x.DateAwarded.CompareTo(y.DateAwarded));
+
+            foreach (Award a in Award.Awards)
             {
-                awards.Add(new Award()
+                if (a.UserId == userSpecified.Id)
                 {
-                    AwardId = reader.dr.GetInt32("awardID"),
-                    UserId = (ulong) reader.dr["userID"],
-                    AwardText = reader.dr["awardText"].ToString(),
-                    DateAwarded = (DateTime)reader.dr["dateAwarded"]
-                });
+                    awards.Add(a);
+                }
             }
-            
-            reader.dr.Close();
-            reader.conn.Close();
-            
-            // Swapping variables x and y in comparison will display oldest awards first - y.dateAwarded.CompareTo(x.dateAwarded)
             awards.Sort((x, y) => x.DateAwarded.CompareTo(y.DateAwarded));
             
+            
+            
+
             StringBuilder sb = new StringBuilder();
 
             if (awards.Count == 0)
