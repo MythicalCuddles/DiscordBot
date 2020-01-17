@@ -199,7 +199,7 @@ namespace DiscordBot.Modules.Public
             }
         }
 
-        [Command("buyquote"), Summary("Request a quote to be added for a price.")]
+        [Command("requestquote"), Summary("Request a quote to be added for a price."), Alias("buyquote")]
         public async Task RequestToAddQuote([Remainder]string quote = null)
 		{
 		    if (Guild.Load(Context.Guild.Id).QuotesEnabled)
@@ -216,8 +216,9 @@ namespace DiscordBot.Modules.Public
                 if (quote == null)
 		        {
 		            await ReplyAsync("**Syntax:** " +
-		                             Guild.Load(Context.Guild.Id).Prefix + "buyquote [quote]\n```" +
-		                             "**Information:**\n" +
+		                             Guild.Load(Context.Guild.Id).Prefix + "requestquote [quote]\n" +
+                                     "**Alias:** " + Guild.Load(Context.Guild.Id).Prefix + "buyquote [quote]\n```" +
+                                     "**Information:**\n" +
 		                             "-----------------------------\n" +
 		                             "• Your quote will not be added instantly to the list. A staff member must first verify that it is safe to put on the list.\n" +
 		                             "```");
