@@ -14,6 +14,7 @@ using Discord.WebSocket;
 
 using DiscordBot.Common;
 using DiscordBot.Database;
+using DiscordBot.Exceptions;
 using DiscordBot.Extensions;
 using DiscordBot.Handlers;
 using DiscordBot.Modules.Mod;
@@ -183,29 +184,39 @@ namespace DiscordBot
 			
 	        // Send message to log channel to announce bot is up and running.
 			Version v = Assembly.GetExecutingAssembly().GetName().Version;
-			EmbedBuilder eb = new EmbedBuilder()
-					.WithTitle("Startup Notification")
-					.WithColor(59, 212, 50)
-					.WithThumbnailUrl(Bot.CurrentUser.GetAvatarUrl())
+			EmbedBuilder eb = new EmbedBuilder();
+					eb.WithTitle("Startup Notification");
+					eb.WithColor(59, 212, 50);
+					eb.WithThumbnailUrl(Bot.CurrentUser.GetAvatarUrl());
 
-					.AddField("Bot Name", Bot.CurrentUser.Username + "#" + Bot.CurrentUser.Discriminator, true)
-					.AddField("Developer Name", Configuration.Load().Developer.GetUser().Username + "#" + Configuration.Load().Developer.GetUser().Discriminator, true)
-					.AddField("Developer ID", Configuration.Load().Developer, true)
-					
-					.AddField("DiscordBot Version", "v" + v, true)
-					.AddField("MelissaNET Version", "v" + VersionInfo.Version, true)
-					.AddField(".NET Version", typeof(string).Assembly.ImageRuntimeVersion, true)
-                
-					.AddField("Connection & Server Information", 
+					eb.AddField("Bot Name", Bot.CurrentUser.Username + "#" + Bot.CurrentUser.Discriminator, true);
+					try
+					{
+						eb.AddField("Developer Name",
+							Configuration.Load().Developer.GetUser().Username + "#" +
+							Configuration.Load().Developer.GetUser().Discriminator, true);
+					}
+					catch (UserNotFoundException exception)
+					{
+						eb.AddField("Developer Name", "Melissa", true);
+						await new LogMessage(LogSeverity.Warning, "Startup", exception.Message + " - Using \"Melissa\" instead.").PrintToConsole();
+					}
+					eb.AddField("Developer ID", Configuration.Load().Developer, true);
+
+					eb.AddField("DiscordBot Version", "v" + v, true);
+					eb.AddField("MelissaNET Version", "v" + VersionInfo.Version, true);
+					eb.AddField(".NET Version", typeof(string).Assembly.ImageRuntimeVersion, true);
+
+					eb.AddField("Connection & Server Information",
 						"**Latency:** " + Bot.Latency + "ms" + "\n" +
-						"**Server Time:** " + DateTime.Now.ToString("h:mm:ss tt") + "\n")
-					
-					.AddField("Awards", Award.Awards.Count, true)
-					.AddField("Quotes", Quote.Quotes.Count, true)
-					.AddField("Quote Requests", RequestQuote.RequestQuotes.Count, true)
-					
-                    .WithCurrentTimestamp()
-					.WithFooter("Ready event executed");
+						"**Server Time:** " + DateTime.Now.ToString("h:mm:ss tt") + "\n");
+
+					eb.AddField("Awards", Award.Awards.Count, true);
+					eb.AddField("Quotes", Quote.Quotes.Count, true);
+					eb.AddField("Quote Requests", RequestQuote.RequestQuotes.Count, true);
+
+					eb.WithCurrentTimestamp();
+					eb.WithFooter("Ready event executed");
 			await Configuration.Load().LogChannelId.GetTextChannel().SendMessageAsync("", false, eb.Build());
 
             if (OfflineList.Any())
