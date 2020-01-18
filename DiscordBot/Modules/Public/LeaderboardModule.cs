@@ -70,7 +70,6 @@ namespace DiscordBot.Modules.Public
                 }
             }
 
-            Console.WriteLine("1");
             var sortedList =
                 userList.OrderByDescending(intTuple => intTuple.Item1).ToList();
 
@@ -96,7 +95,6 @@ namespace DiscordBot.Modules.Public
                 eb.WithFooter("Did you know? You can do \"" + Guild.Load(context.Guild.Id).Prefix + "leaderboard guild\" to see the guild leaderboard!");
             }
 
-            Console.WriteLine("2");
             var sb = new StringBuilder().Append("```INI\n");
             var shownList = new List<Tuple<int, SocketGuildUser>>();
             for (var i = 0; i < listAmount; i++)
@@ -104,21 +102,17 @@ namespace DiscordBot.Modules.Public
                 sb.Append("[" + (i + 1) + "] @" + sortedList[i].Item2.Username + ": Level " + sortedList[i].Item2.GetLevel() + " (" + sortedList[i].Item1 + " EXP)\n");
                 shownList.Add(new Tuple<int, SocketGuildUser>(sortedList[i].Item1, sortedList[i].Item2));
             }
-            Console.WriteLine("3");
 
             if (shownList.All(i => i.Item2.Id != context.User.Id))
             {
                 sb.Append("...\n");
                 var pos = sortedList.FindIndex(t => t.Item2.Id == context.User.Id);
 
-                Console.WriteLine("3.5");
                 if (sortedList.ElementAtOrDefault(pos - 1) != null)
                 {
                     sb.Append("[" + (pos) + "] @" + sortedList[pos - 1].Item2.Username + ": Level " + User.Load(sortedList[pos - 1].Item2.Id).Level + " (" + sortedList[pos - 1].Item1 + " EXP)\n");   
                 }
-                Console.WriteLine("4");
                 sb.Append("[" + (pos + 1) + "] @" + sortedList[pos].Item2.Username + ": Level " + User.Load(sortedList[pos].Item2.Id).Level + " (" +  sortedList[pos].Item1 + " EXP)\n"); // Shown for User
-                Console.WriteLine("5");
                 if ((pos + 1) < sortedList.Count)
                 {
                     if (sortedList[pos + 1] != null)
@@ -126,7 +120,6 @@ namespace DiscordBot.Modules.Public
                         sb.Append("[" + (pos + 2) + "] @" + sortedList[pos + 1].Item2.Username + ": Level " + User.Load(sortedList[pos + 1].Item2.Id).Level + " (" +  sortedList[pos + 1].Item1 + " EXP)\n");
                     }
                 }
-                Console.WriteLine("6");
             }
             sb.Append("```");
             
