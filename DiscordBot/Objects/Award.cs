@@ -1,6 +1,10 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using Discord;
 using DiscordBot.Database;
+using DiscordBot.Exceptions;
+using DiscordBot.Extensions;
 using MySql.Data.MySqlClient;
 
 namespace DiscordBot.Objects
@@ -9,21 +13,14 @@ namespace DiscordBot.Objects
     {
         private int _awardId;
         private ulong _userId;
-        private string _awardText;//, _awardType;
+        private string _awardText, _awardCategory;
         private DateTime _dateAwarded;
         
         internal static List<Award> Awards = new List<Award>();
 
         public Award() { }
-
-        public Award(int awardId, ulong userId, string awardText)
-        {
-            _awardId = awardId;
-            _userId = userId;
-            _awardText = awardText;
-        }
         
-        public Award(int awardId, ulong userId, string awardText, DateTime dateAwarded)
+        public Award(int awardId, ulong userId, string awardCategory, string awardText, DateTime dateAwarded)
         {
             _awardId = awardId;
             _userId = userId;
@@ -41,6 +38,12 @@ namespace DiscordBot.Objects
         {
             get => _userId;
             set => _userId = value;
+        }
+
+        public string AwardCategory
+        {
+            get => _awardCategory;
+            set => _awardCategory = value;
         }
 
         public string AwardText
@@ -67,6 +70,7 @@ namespace DiscordBot.Objects
                 {
                     _awardId = reader.dr.GetInt32("awardID"),
                     _userId = reader.dr.GetUInt64("userID"),
+                    _awardCategory = reader.dr.GetString("awardCategory"),
                     _awardText = reader.dr.GetString("awardText"),
                     _dateAwarded = reader.dr.GetDateTime("dateAwarded")
                 };
@@ -78,6 +82,56 @@ namespace DiscordBot.Objects
             reader.conn.Close();
 
             return awards;
+        }
+
+        public static Award GetAward(int id)
+        {
+            foreach (var award in Awards.Where(award => award.AwardId == id))
+            {
+                return award;
+            }
+
+            throw new AwardNotFoundException("Unable to find Award with ID " + id);
+        }
+
+        private static void ReloadAll()
+        {
+            try
+            {
+                Awards.Clear();
+                Awards = LoadAll();
+            }
+            catch (Exception e)
+            {
+                new LogMessage(LogSeverity.Critical, "Award Manager", e.ToString()).PrintToConsole();
+            }
+        }
+
+        internal static void AddAward(ulong userId, string awardCategory, string awardText)
+        {
+            List<(string, string)> queryParams = new List<(string id, string value)>()
+            {
+                ("@id", userId.ToString()),
+                ("@aCat", awardCategory),
+                ("@aText", awardText)
+            };
+
+            int rowsUpdated = DatabaseActivity.ExecuteNonQueryCommand(
+                "INSERT IGNORE INTO " +
+                "awards(userId, awardText, awardCategory, dateAwarded) " +
+                "VALUES(@id, @aText, @aCat, CURRENT_TIMESTAMP);", queryParams);
+            
+            ReloadAll();
+        }
+
+        internal static bool DeleteAward(int id)
+        {
+            Awards.Remove(Awards.Find(award => award._awardId == id));
+
+            var rowsAffected = DatabaseActivity.ExecuteNonQueryCommand(
+                "DELETE FROM awards WHERE awardID=" + id + ";");
+
+            return rowsAffected == 1;
         }
     }
 }
