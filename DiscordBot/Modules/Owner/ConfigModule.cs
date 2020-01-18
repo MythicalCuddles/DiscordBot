@@ -48,6 +48,8 @@ namespace DiscordBot.Modules.Owner
                                  "[17] toggleshowallawards\n" +
                                  "[18] awardsiconurl [link]\n" +
                                  "[19] toggleawardingexpmention\n" +
+                                 "[20] toggleexpreactawarding\n" +
+                                 "[21] toggleexpreactpostawarding\n" +
                                  "```");
                 
                 AdminLog.Log(Context.User.Id, Context.Message.Content, Context.Guild.Id);
@@ -274,7 +276,34 @@ namespace DiscordBot.Modules.Owner
                 
                 await Configuration.Load().LogChannelId.GetTextChannel().SendMessageAsync("EXP awarding has been toggled by " + Context.User.Mention + " (enabled: " + Configuration.Load().AwardingEXPEnabled.ToYesNo() + ")");
             }
+            
+            [Command("toggleexpreactawarding"), Summary("Toggles if users receive EXP.")]
+            public async Task ToggleEXPAwardingReactions()
+            {
+                Configuration.UpdateConfiguration(awardingEXPReactionEnabled: !Configuration.Load().AwardingEXPReactionEnabled);
+                AdminLog.Log(Context.User.Id, Context.Message.Content, Context.Guild.Id);
+                
+                await Configuration.Load().LogChannelId.GetTextChannel().SendMessageAsync("EXP awarding via reactions has been toggled by " + Context.User.Mention + " (enabled: " + Configuration.Load().AwardingEXPReactionEnabled.ToYesNo() + ")");
+            }
 
+            [Command("toggleexpreactpostawarding"), Summary("Toggles if users receive EXP.")]
+            public async Task ToggleEXPAwardingReactionsPoster()
+            {
+                Configuration.UpdateConfiguration(awardingEXPReactPostEnabled: !Configuration.Load().AwardingEXPReactPostEnabled);
+                AdminLog.Log(Context.User.Id, Context.Message.Content, Context.Guild.Id);
+                
+                await Configuration.Load().LogChannelId.GetTextChannel().SendMessageAsync("EXP awarding has been toggled by " + Context.User.Mention + " (enabled: " + Configuration.Load().AwardingEXPReactPostEnabled.ToYesNo() + ")");
+            }
+
+            [Command("toggleawardingexpmention"), Summary("Toggles if users get mentioned when they level up.")]
+            public async Task ToggleAwardingEXPMention()
+            {
+                Configuration.UpdateConfiguration(awardingEXPMentionUser: !Configuration.Load().AwardingEXPMentionUser);
+                AdminLog.Log(Context.User.Id, Context.Message.Content, Context.Guild.Id);
+                
+                await Configuration.Load().LogChannelId.GetTextChannel().SendMessageAsync("AwardingEXPMentionUser has been toggled by " + Context.User.Mention + " (enabled: " + Configuration.Load().AwardingEXPMentionUser.ToYesNo() + ")");
+            }
+            
             [Command("leaderboardtrophyurl"), Summary("")]
             public async Task SetLeaderboardTrophyUrl(string link)
             {
@@ -312,15 +341,6 @@ namespace DiscordBot.Modules.Owner
                 AdminLog.Log(Context.User.Id, Context.Message.Content, Context.Guild.Id);
                 
                 await Configuration.Load().LogChannelId.GetTextChannel().SendMessageAsync(Context.User.Mention + " has updated the Awards Icon URL to: " + link + " (was: " + oldValue + ")");
-            }
-
-            [Command("toggleawardingexpmention"), Summary("Toggles if users get mentioned when they level up.")]
-            public async Task ToggleAwardingEXPMention()
-            {
-                Configuration.UpdateConfiguration(awardingEXPMentionUser: !Configuration.Load().AwardingEXPMentionUser);
-                AdminLog.Log(Context.User.Id, Context.Message.Content, Context.Guild.Id);
-                
-                await Configuration.Load().LogChannelId.GetTextChannel().SendMessageAsync("AwardingEXPMentionUser has been toggled by " + Context.User.Mention + " (enabled: " + Configuration.Load().AwardingEXPMentionUser.ToYesNo() + ")");
             }
         }
 
