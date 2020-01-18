@@ -176,8 +176,8 @@ namespace DiscordBot.Database
             ExecuteNonQueryCommand("CREATE TABLE IF NOT EXISTS `awards` (" +
                                    "`awardID` INT NOT NULL AUTO_INCREMENT, " +
                                    "`userID` bigint(20) UNSIGNED NOT NULL, " +
+                                   "`awardCategory` text COLLATE utf8mb4_unicode_ci NOT NULL, " +
                                    "`awardText` text COLLATE utf8mb4_unicode_ci NOT NULL, " +
-                                   "`awardType` text COLLATE utf8mb4_unicode_ci NOT NULL, " +
                                    "`dateAwarded` date NOT NULL," +
                                    "PRIMARY KEY (awardId)" +
                                    ") ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_general_ci;");
