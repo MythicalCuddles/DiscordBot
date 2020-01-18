@@ -168,9 +168,26 @@ namespace DiscordBot.Modules
             List<string> awardPages = new List<string>();
             Award.Awards.Select((v, i) => new { Value = v, Index = i / 10 })
                 .GroupBy(x => x.Index).ToList()
-                .ForEach(x => awardPages.Add(String.Join("\n", x.Select(z => z.Value.AwardText + " (ID: " + z.Value.AwardId + ")"))));
+                .ForEach(x => awardPages.Add(String.Join("\n", x.Select(z =>
+                {
+                    try
+                    {
+                        return z.Value.UserId.GetUser().Mention + " - " + z.Value.AwardText + " (ID: " + z.Value.AwardId + ")";
+                    }
+                    catch (UserNotFoundException)
+                    {
+                        return z.Value.UserId + " - " + z.Value.AwardText + " (ID: " + z.Value.AwardId + ")";
+                    }
+                }))));
+            
+            PaginatedMessage msg = new PaginatedMessage()
+            {
+                Title = "Awards List",
+                Pages = awardPages,
+                Color = new Color(211, 214, 77)
+            };
 
-            await PagedReplyAsync(awardPages);
+            await PagedReplyAsync(msg);
         }
         
         [MinPermissions(PermissionLevel.ServerAdmin)]
