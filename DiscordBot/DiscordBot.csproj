@@ -230,6 +230,8 @@
     <Compile Include="Common\Preconditions\RequireGuildAttribute.cs" />
     <Compile Include="Common\StringConfiguration.cs" />
     <Compile Include="Database\DatabaseActivity.cs" />
+    <Compile Include="Exceptions\AwardNotFoundException.cs" />
+    <Compile Include="Exceptions\UserNotFoundException.cs" />
     <Compile Include="Extensions\Extensions.cs" />
     <Compile Include="Extensions\Methods.cs" />
     <Compile Include="Extensions\StringExtensions.cs" />
