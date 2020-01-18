@@ -8,6 +8,7 @@ using Discord.WebSocket;
 
 using DiscordBot.Common.Preconditions;
 using DiscordBot.Common;
+using DiscordBot.Exceptions;
 using DiscordBot.Extensions;
 using DiscordBot.Logging;
 
@@ -48,39 +49,57 @@ namespace DiscordBot.Modules.Mod
 
             EmbedAuthorBuilder eab = new EmbedAuthorBuilder()
                 .WithName(DiscordBot.Bot.CurrentUser.Username + " - Statistics & Information");
-            EmbedBuilder eb = new EmbedBuilder()
-                .WithAuthor(eab)
+            EmbedBuilder eb = new EmbedBuilder();
+                eb.WithAuthor(eab);
 
-                .AddField("Bot Name", DiscordBot.Bot.CurrentUser.Username + "#" + DiscordBot.Bot.CurrentUser.Discriminator, true)
-                .AddField("Developer Name", Configuration.Load().Developer.GetUser().Username + "#" + Configuration.Load().Developer.GetUser().Discriminator, true)
-                .AddField("Developer ID", Configuration.Load().Developer, true)
-                
-                .AddField("DiscordBot Version", "v" + ProgramVersion, true)
-                .AddField("MelissaNET Version", "v" + MelissaNet.VersionInfo.Version, true)
-                .AddField(".NET Version", typeof(string).Assembly.ImageRuntimeVersion, true)
-                
-                .AddField("Bot Statistics", 
+                eb.AddField("Bot Name",
+                    DiscordBot.Bot.CurrentUser.Username + "#" + DiscordBot.Bot.CurrentUser.Discriminator, true);
+                try
+                {
+                    eb.AddField("Developer Name",
+                        Configuration.Load().Developer.GetUser().Username + "#" +
+                        Configuration.Load().Developer.GetUser().Discriminator, true);
+                }
+                catch (UserNotFoundException exception)
+                {
+                    eb.AddField("Developer Name", "Melissa", true);
+                    await new LogMessage(LogSeverity.Warning, "ModeratorModule", exception.Message + " - Using \"Melissa\" instead.").PrintToConsole();
+                }
+                eb.AddField("Developer ID", Configuration.Load().Developer, true);
+
+                eb.AddField("DiscordBot Version", "v" + ProgramVersion, true);
+                eb.AddField("MelissaNET Version", "v" + MelissaNet.VersionInfo.Version, true);
+                eb.AddField(".NET Version", typeof(string).Assembly.ImageRuntimeVersion, true);
+
+                eb.AddField("Bot Statistics",
                     "**Active for:** " + CalculateUptime() + "\n" +
                     "**Latency:** " + DiscordBot.Bot.Latency + "ms" + "\n" +
-                    "**Server Time:** " + DateTime.Now.ToString("h:mm:ss tt") + "\n")
-                
-                .AddField("Guild Count", bGuildCount, true)
-                .AddField("Channel Count", tChannelCount + " (T:" + tTextChannelCount + "|V: " + tVoiceChannelCount + "|C: " + tCategoryChannelCount + ")", true)
-                .AddField("User Count", tUserCount, true)
-                
-                .AddField("Guild Statistics",
-                    "**Owner:** " + ((SocketGuildUser) Context.Guild.GetOwnerAsync().GetAwaiter().GetResult()).Username + "#" + ((SocketGuildUser) Context.Guild.GetOwnerAsync().GetAwaiter().GetResult()).Discriminator + "\n" +
-                    "**Owner Id:** " + ((SocketGuildUser) Context.Guild.GetOwnerAsync().GetAwaiter().GetResult()).Id + "\n" +
-                    "**Channel Count:** " + gTotalCount + " (T: " + gTextChannelCount + " | V: " + gVoiceChannelCount + " | C: " + gCategoryChannelCount + ")\n" +
-                    "**User Count:** " + gUserCount + "\n")
-                
-                .AddField("Website", "[MythicalCuddles](https://mythicalcuddles.xyz/)", true)
-                .AddField("GitHub", "[Source Code](https://github.com/MythicalCuddles/DiscordBot)", true)
-                .AddField("Download", "[Latest Version](https://github.com/MythicalCuddles/DiscordBot/releases)", true)
+                    "**Server Time:** " + DateTime.Now.ToString("h:mm:ss tt") + "\n");
 
-                .WithCurrentTimestamp()
-                .WithThumbnailUrl(DiscordBot.Bot.CurrentUser.GetAvatarUrl())
-                .WithColor(new Color(255, 116, 140));
+                eb.AddField("Guild Count", bGuildCount, true);
+                eb.AddField("Channel Count",
+                    tChannelCount + " (T:" + tTextChannelCount + " | V: " + tVoiceChannelCount + " | C: " +
+                    tCategoryChannelCount + ")", true);
+                eb.AddField("User Count", tUserCount, true);
+
+                eb.AddField("Guild Statistics",
+                    "**Owner:** " +
+                    ((SocketGuildUser) Context.Guild.GetOwnerAsync().GetAwaiter().GetResult()).Username + "#" +
+                    ((SocketGuildUser) Context.Guild.GetOwnerAsync().GetAwaiter().GetResult()).Discriminator + "\n" +
+                    "**Owner Id:** " + ((SocketGuildUser) Context.Guild.GetOwnerAsync().GetAwaiter().GetResult()).Id +
+                    "\n" +
+                    "**Channel Count:** " + gTotalCount + " (T: " + gTextChannelCount + " | V: " + gVoiceChannelCount +
+                    " | C: " + gCategoryChannelCount + ")\n" +
+                    "**User Count:** " + gUserCount + "\n");
+
+                eb.AddField("Website", "[MythicalCuddles](https://mythicalcuddles.xyz/)", true);
+                eb.AddField("GitHub", "[Source Code](https://github.com/MythicalCuddles/DiscordBot)", true);
+                eb.AddField("Download", "[Latest Version](https://github.com/MythicalCuddles/DiscordBot/releases)",
+                    true);
+
+                eb.WithCurrentTimestamp();
+                eb.WithThumbnailUrl(DiscordBot.Bot.CurrentUser.GetAvatarUrl());
+                eb.WithColor(new Color(255, 116, 140));
 
             AdminLog.Log(Context.User.Id, Context.Message.Content, Context.Guild.Id);
             await ReplyAsync("", false, eb.Build());
