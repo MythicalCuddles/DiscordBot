@@ -200,7 +200,6 @@ namespace DiscordBot.Handlers
                     ("@avatarUrl", user.GetAvatarUrl())
                 };
                 DatabaseActivity.ExecuteNonQueryCommand("UPDATE users SET username=@username, avatarUrl=@avatarUrl WHERE id='" + user.Id + "';", queryParams);
-
             }
         }
 

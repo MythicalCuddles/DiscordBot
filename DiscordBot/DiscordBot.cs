@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
@@ -13,14 +11,8 @@ using Discord.Net.Providers.WS4Net;
 using Discord.WebSocket;
 
 using DiscordBot.Common;
-using DiscordBot.Database;
-using DiscordBot.Exceptions;
 using DiscordBot.Extensions;
 using DiscordBot.Handlers;
-using DiscordBot.Modules.Mod;
-using DiscordBot.Objects;
-
-using MelissaNet;
 
 namespace DiscordBot
 {
@@ -39,11 +31,6 @@ namespace DiscordBot
 
 	    internal static readonly CommandService CommandService = new CommandService();
         internal static readonly IServiceProvider ServiceProvider = ConfigureServices();
-        
-        internal static IServiceProvider provider = new ServiceCollection()
-	        .AddSingleton(Bot)
-	        .AddSingleton<InteractiveService>()
-	        .BuildServiceProvider();
 
         internal static async Task RunBotAsync()
         {
