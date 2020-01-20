@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Discord;
 using DiscordBot.Database;
 using DiscordBot.Exceptions;
@@ -24,6 +25,7 @@ namespace DiscordBot.Objects
         {
             _awardId = awardId;
             _userId = userId;
+            _awardCategory = awardCategory;
             _awardText = awardText;
             _dateAwarded = dateAwarded;
         }
@@ -94,7 +96,7 @@ namespace DiscordBot.Objects
             throw new AwardNotFoundException("Unable to find Award with ID " + id);
         }
 
-        private static void ReloadAll()
+        private static async Task ReloadAll()
         {
             try
             {
@@ -103,7 +105,7 @@ namespace DiscordBot.Objects
             }
             catch (Exception e)
             {
-                new LogMessage(LogSeverity.Critical, "Award Manager", e.ToString()).PrintToConsole();
+                await new LogMessage(LogSeverity.Critical, "Award Manager", e.Message).PrintToConsole();
             }
         }
 
@@ -116,7 +118,7 @@ namespace DiscordBot.Objects
                 ("@aText", awardText)
             };
 
-            int rowsUpdated = DatabaseActivity.ExecuteNonQueryCommand(
+            DatabaseActivity.ExecuteNonQueryCommand(
                 "INSERT IGNORE INTO " +
                 "awards(userId, awardText, awardCategory, dateAwarded) " +
                 "VALUES(@id, @aText, @aCat, CURRENT_TIMESTAMP);", queryParams);

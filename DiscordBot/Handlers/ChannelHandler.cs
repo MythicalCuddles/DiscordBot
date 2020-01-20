@@ -175,7 +175,7 @@ namespace DiscordBot.Handlers
 		}
 		
 		
-		public static async Task InsertChannelToDB(SocketGuildChannel c)
+		public static Task InsertChannelToDB(SocketGuildChannel c)
 		{
 			List<(string, string)> queryParams = new List<(string id, string value)>()
 			{
@@ -187,15 +187,19 @@ namespace DiscordBot.Handlers
 				"INSERT IGNORE INTO " +
 				"channels(channelID,inGuildID,channelName,channelType) " +
 				"VALUES (" + c.Id + ", " + c.Guild.Id + ", @channelName, @channelType);", queryParams);
+			
+			return Task.CompletedTask;
 		}
 
-		public static async Task RemoveChannelFromDB(SocketGuildChannel c)
+		public static Task RemoveChannelFromDB(SocketGuildChannel c)
 		{
 			DatabaseActivity.ExecuteNonQueryCommand(
 				"DELETE FROM channels WHERE channelID=" + c.Id + ";");
+			
+			return Task.CompletedTask;
 		}
 
-		private static async Task UpdateChannelInDB(SocketGuildChannel updatedChannel)
+		private static Task UpdateChannelInDB(SocketGuildChannel updatedChannel)
 		{
 			List<(string, string)> queryParams = new List<(string id, string value)>()
 			{
@@ -207,6 +211,8 @@ namespace DiscordBot.Handlers
 			DatabaseActivity.ExecuteNonQueryCommand(
 				"UPDATE channels SET channelName=@channelName, channelType=@channelType WHERE channelID=@channelID",
 				queryParams);
+			
+			return Task.CompletedTask;
 		}
 	}
 }

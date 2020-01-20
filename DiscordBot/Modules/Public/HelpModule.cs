@@ -77,7 +77,6 @@ namespace DiscordBot.Modules.Public
                     return;
                 }
 
-                string prefix = Guild.Load(Context.Guild.Id).Prefix;
                 var builder = new EmbedBuilder
                 {
                     Color = new Color(114, 137, 218),

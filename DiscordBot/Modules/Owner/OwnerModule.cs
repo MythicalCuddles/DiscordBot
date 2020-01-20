@@ -226,10 +226,13 @@ namespace DiscordBot.Modules.Owner
                                 Context.User.Username + " edited the bot channel in " + g.Name + "!");
                             await lm.PrintToConsole();
                         }
-                        catch (Exception e)
+                        catch (Exception)
                         {
-                            LogMessage lm = new LogMessage(LogSeverity.Warning, "EditBotChannels", DiscordBot.Bot.CurrentUser.Username + " does not have the required permissions to edit the bot channel in " + g.Name + "!");
-                            await lm.PrintToConsole();
+                            await new LogMessage(LogSeverity.Warning, "EditBotChannels",
+                                    DiscordBot.Bot.CurrentUser.Username +
+                                    " does not have the required permissions to edit the bot channel in " + g.Name +
+                                    "!")
+                                .PrintToConsole();
                         }
                     }
 

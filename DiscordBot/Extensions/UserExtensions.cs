@@ -113,7 +113,7 @@ namespace DiscordBot.Extensions
                 
                 DatabaseActivity.ExecuteNonQueryCommand("UPDATE users SET exp=@exp WHERE id='" + user.Id + "';", queryParams);
                 
-                user.AttemptLevelUp(guild);
+                await user.AttemptLevelUp(guild);
             }
             catch (Exception e)
             {
@@ -167,7 +167,7 @@ namespace DiscordBot.Extensions
                                            " more EXP to level up again!");
                     }
                     
-                    var msg = await botChannel.SendMessageAsync("", false, eb.Build());
+                    await botChannel.SendMessageAsync("", false, eb.Build());
                 }
                 catch (Exception e)
                 {

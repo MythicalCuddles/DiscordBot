@@ -70,12 +70,13 @@ namespace DiscordBot.Handlers
             }
         }
 
-        public static async Task RemoveGuildFromDB(SocketGuild g)
+        public static Task RemoveGuildFromDB(SocketGuild g)
         {
             DatabaseActivity.ExecuteNonQueryCommand("DELETE FROM guilds WHERE guildID=" + g.Id + ";");
+            return Task.CompletedTask;
         }
 
-        private static async Task UpdateGuildInDB(SocketGuild g)
+        private static Task UpdateGuildInDB(SocketGuild g)
         {
             List<(string, string)> queryParams = new List<(string id, string value)>()
             {
@@ -88,6 +89,8 @@ namespace DiscordBot.Handlers
             DatabaseActivity.ExecuteNonQueryCommand(
                 "UPDATE guilds SET guildName=@guildName, guildIcon=@guildIcon, ownedBy=@ownedBy WHERE guildID=@guildID",
                 queryParams);
+            
+            return Task.CompletedTask;
         }
 
         private static async Task SendMessageToGuild(SocketGuild socketGuild)

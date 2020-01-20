@@ -53,7 +53,7 @@ namespace DiscordBot.Modules.NSFW
                         {
                             id = _random.Next(1, Configuration.Load().MaxRuleXGamble);
                         }
-                        var url = "https://rule34.xxx/index.php?page=post&s=view&id=" + id.ToString();
+                        var url = "https://rule34.xxx/index.php?page=post&s=view&id=" + id;
                         var html = client.DownloadString(url);
                         doc.LoadHtml(html);
 

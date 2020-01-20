@@ -144,14 +144,13 @@ namespace DiscordBot.Modules.SOwner
             DatabaseActivity.ExecuteNonQueryCommand("UPDATE channels SET awardingEXP=@awardingEXP WHERE channelID='" + workingWithChannel.Id + "';", queryParams);
             AdminLog.Log(Context.User.Id, Context.Message.Content, Context.Guild.Id);
 
-            IUserMessage msg;
             if (value)
             {
-                msg = await ReplyAsync(Context.User.Mention + ", this channel will award EXP to the users who's messages are typed here.");
+                await ReplyAsync(Context.User.Mention + ", this channel will award EXP to the users who's messages are typed here.");
             }
             else
             {
-                msg = await ReplyAsync(Context.User.Mention + ", this channel will no longer award EXP to the users who's messages are typed here.");
+                await ReplyAsync(Context.User.Mention + ", this channel will no longer award EXP to the users who's messages are typed here.");
             }
         }
     }

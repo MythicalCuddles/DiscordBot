@@ -62,7 +62,7 @@ namespace DiscordBot.Objects
 
         private static ulong GetChannelIDOrDefault(MySqlDataReader reader, string columnName)
         {
-            return reader.IsDBNull(reader.GetOrdinal(columnName)) ? Configuration.Load().DefaultUndefinedChannelID : reader.GetUInt64(columnName);;
+            return reader.IsDBNull(reader.GetOrdinal(columnName)) ? Configuration.Load().DefaultUndefinedChannelID : reader.GetUInt64(columnName);
         }
 
         public static void UpdateGuild(ulong guildID, string prefix = null, string welcomeMessage = null,

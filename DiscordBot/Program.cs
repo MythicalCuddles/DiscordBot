@@ -22,8 +22,7 @@ namespace DiscordBot
 
         public static void Main(string[] args) // Entry point to the program.
         {
-            Console.Title = "DiscordBot v" + ProgramVersion.Major + @"." + ProgramVersion.Minor + @"." +
-                            ProgramVersion.Build + @"." + ProgramVersion.Revision + " | Developed by MythicalCuddles";
+            Console.Title = $@"DiscordBot v{ProgramVersion} | Developed by MythicalCuddles";
             
             args = args.Select(s => s.ToUpperInvariant()).ToArray(); // Set everything in args to UPPERCASE.
             StartBot(args); // Run the StartBot method.
@@ -77,7 +76,7 @@ namespace DiscordBot
             Methods.PrintConsoleSplitLine();
             
             // Check & Run the configurator form if the configuration has not been setup or the -config arg has been passed.
-            bool configArg = args.Contains("-CONFIG");
+            var configArg = args.Contains("-CONFIG");
             await new LogMessage(LogSeverity.Debug, "Configurator",
                 "Checking if the Configurator needs to run...").PrintToConsole();
             await new LogMessage(LogSeverity.Debug, "Configurator",
@@ -111,8 +110,8 @@ namespace DiscordBot
                     await lm.PrintToConsole();
                     Methods.PrintConsoleSplitLine();
 
-                    var result = MessageBox.Show("A new update is available. Would you like to update?",
-                        "DiscordBot Update Available", MessageBoxButtons.YesNo, MessageBoxIcon.Information);
+                    var result = MessageBox.Show(@"A new update is available. Would you like to update?",
+                        @"DiscordBot Update Available", MessageBoxButtons.YesNo, MessageBoxIcon.Information);
 
                     if (result != DialogResult.Yes) return;
                     Process.Start(releaseUrl);

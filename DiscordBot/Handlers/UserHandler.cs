@@ -190,7 +190,7 @@ namespace DiscordBot.Handlers
             await Guild.Load(e.Guild.Id).LogChannelID.GetTextChannel().SendMessageAsync("", false, eb.Build());
         }
 
-        public static async Task UserUpdated(SocketUser cachedUser, SocketUser user)
+        public static Task UserUpdated(SocketUser cachedUser, SocketUser user)
         {
             if (user.Username != cachedUser.Username || user.GetAvatarUrl() != cachedUser.GetAvatarUrl()) // If user has updated username or avatar
             {
@@ -201,9 +201,11 @@ namespace DiscordBot.Handlers
                 };
                 DatabaseActivity.ExecuteNonQueryCommand("UPDATE users SET username=@username, avatarUrl=@avatarUrl WHERE id='" + user.Id + "';", queryParams);
             }
+            
+            return Task.CompletedTask;
         }
 
-        public static async Task UserBanned(SocketUser socketUser, SocketGuild socketGuild)
+        public static Task UserBanned(SocketUser socketUser, SocketGuild socketGuild)
         {
             //Insert banned users into the database by using INSERT IGNORE
             List<(string, string)> queryParams = new List<(string id, string value)>()
@@ -221,11 +223,13 @@ namespace DiscordBot.Handlers
                 "VALUES (@issuedTo, @issuedBy, @inGuild, @reason, @date);", queryParams);
 
             //end.
+            return Task.CompletedTask;
         }
 
-        public static async Task UserUnbanned(SocketUser socketUser, SocketGuild socketGuild)
+        public static Task UserUnbanned(SocketUser socketUser, SocketGuild socketGuild)
         {
             DatabaseActivity.ExecuteNonQueryCommand("DELETE FROM bans WHERE issuedTo=" + socketUser.Id + " AND inGuild=" + socketGuild.Id + ";");
+            return Task.CompletedTask;
         }
     }
 }
