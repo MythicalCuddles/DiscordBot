@@ -138,7 +138,7 @@ namespace DiscordBot.Modules.Mod
             }
             catch (Exception e)
             {
-                ConsoleHandler.PrintExceptionToLog("EmbedModule", e);
+                await new LogMessage(LogSeverity.Warning, "EmbedModule", e.Message).PrintToConsole();
                 await ReplyAsync("An unexpected error has happened. Please ensure that you have passed through a byte value! (A number between 0 and 255)");
                 return;
             }

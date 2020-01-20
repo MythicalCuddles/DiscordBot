@@ -95,7 +95,7 @@ namespace DiscordBot.Extensions
             return User.Load(user.Id).IsBotIgnoringUser;
         }
 
-        public static void AwardEXPToUser(this IUser user, SocketGuild guild, int exp = 1)
+        public static async void AwardEXPToUser(this IUser user, SocketGuild guild, int exp = 1)
         {
             if (user.IsBot)
             {
@@ -117,7 +117,7 @@ namespace DiscordBot.Extensions
             }
             catch (Exception e)
             {
-                ConsoleHandler.PrintExceptionToLog("UserExtensions", e);
+                await new LogMessage(LogSeverity.Warning, "UserExtensions", e.Message).PrintToConsole();
             }
         }
         
@@ -171,7 +171,7 @@ namespace DiscordBot.Extensions
                 }
                 catch (Exception e)
                 {
-                    ConsoleHandler.PrintExceptionToLog("UserExtensions", e);
+                    await new LogMessage(LogSeverity.Warning, "UserExtensions", e.Message).PrintToConsole();
                 }
             }
         }

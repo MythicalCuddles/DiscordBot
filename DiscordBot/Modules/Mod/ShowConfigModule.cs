@@ -128,7 +128,7 @@ namespace DiscordBot.Modules.Mod
             {
                 await ReplyAsync(
                     "It appears that your Guild Configuration has not been set-up completely. Please complete all the steps before using this command.");
-                ConsoleHandler.PrintExceptionToLog("ShowConfigModule", e);
+                await new LogMessage(LogSeverity.Warning, "ShowConfigModule", e.Message).PrintToConsole();
             }
         }
     }

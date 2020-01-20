@@ -147,7 +147,7 @@ namespace DiscordBot.Modules.Public
                     }
                     catch (Exception e)
                     {
-                        ConsoleHandler.PrintExceptionToLog("ProfileModule/CustomRGB", e);
+                        await new LogMessage(LogSeverity.Warning, "ProfileModule", e.Message).PrintToConsole();
                         await ReplyAsync("An unexpected error has happened. Please ensure that you have passed through a byte value! (A number between 0 and 255)");
                         return;
                     }

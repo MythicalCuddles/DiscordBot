@@ -10,6 +10,7 @@ using DiscordBot.Common.Preconditions;
 using DiscordBot.Common;
 using DiscordBot.Exceptions;
 using DiscordBot.Extensions;
+using DiscordBot.Handlers;
 using DiscordBot.Logging;
 
 namespace DiscordBot.Modules.Mod
