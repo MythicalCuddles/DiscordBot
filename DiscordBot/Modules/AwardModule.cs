@@ -14,6 +14,7 @@ using DiscordBot.Common;
 using DiscordBot.Common.Preconditions;
 using DiscordBot.Exceptions;
 using DiscordBot.Extensions;
+using DiscordBot.Handlers;
 using DiscordBot.Logging;
 using DiscordBot.Objects;
 
@@ -287,6 +288,83 @@ namespace DiscordBot.Modules
                     {
                         Title = "Invalid Syntax",
                         Description = "**Syntax:** " + Guild.Load(Context.Guild.Id).Prefix + "deleteaward [id]",
+                        Color = new Color(210, 47, 33),
+                        Footer = new EmbedFooterBuilder()
+                        {
+                            Text = "You can use the command listawards to find the ID's of the quotes."
+                        }
+                    }
+                    .WithCurrentTimestamp();
+
+                await ReplyAsync("", false, eb.Build());
+            }
+        }
+        
+        [MinPermissions(PermissionLevel.ServerAdmin)]
+        [Command("awardinfo"), Summary("")]
+        public async Task GetAwardInfo(string id = null)
+        {
+            if (id == null)
+            {
+                EmbedBuilder eb = new EmbedBuilder
+                    {
+                        Title = "Invalid Syntax",
+                        Description = "**Syntax:** " + Guild.Load(Context.Guild.Id).Prefix + "awardinfo [id]",
+                        Color = new Color(210, 47, 33)
+                    }
+                    .WithCurrentTimestamp();
+
+                await ReplyAsync("", false, eb.Build());
+                return;
+            }
+
+            if (int.TryParse(id, out var aId))
+            {
+                Award award;
+
+                try
+                {
+                    award = Award.GetAward(aId);
+                }
+                catch (AwardNotFoundException exception)
+                {
+                    await ReplyAsync(Context.User.Mention + ", I couldn't find an award with that ID. Please try again.");
+                    await new LogMessage(LogSeverity.Warning, "AwardModule", exception.Message).PrintToConsole();
+                    return;
+                }
+                
+                AdminLog.Log(Context.User.Id, Context.Message.Content, Context.Guild.Id);
+
+                EmbedBuilder awardEmbed = new EmbedBuilder()
+                    {
+                        Title = "Award #" + award.AwardId,
+                        Color = new Color(211, 214, 77) 
+                    }
+                    .AddField("Award Category", award.AwardCategory)
+                    .AddField("Award", award.AwardText)
+                    .WithCurrentTimestamp();
+
+                try
+                {
+                    awardEmbed.AddField("Awarded To", award.UserId.GetUser().Mention);
+                }
+                catch (UserNotFoundException exception)
+                {
+                    awardEmbed.AddField("Awarded To", award.UserId.ToString());
+                    await new LogMessage(LogSeverity.Warning, "AwardModule", exception.Message).PrintToConsole();
+                }
+
+                awardEmbed
+                    .AddField("Date Awarded", award.DateAwarded.ToLongDateString());
+
+                await ReplyAsync("", false, awardEmbed.Build());
+            }
+            else
+            {
+                EmbedBuilder eb = new EmbedBuilder
+                    {
+                        Title = "Invalid Syntax",
+                        Description = "**Syntax:** " + Guild.Load(Context.Guild.Id).Prefix + "awardinfo [id]",
                         Color = new Color(210, 47, 33),
                         Footer = new EmbedFooterBuilder()
                         {
