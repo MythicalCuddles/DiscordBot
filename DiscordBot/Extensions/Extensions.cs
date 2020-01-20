@@ -404,7 +404,8 @@ namespace DiscordBot.Extensions
         
         public static async Task PrintToConsole(this LogMessage logMessage)
         {
-            await DiscordBot.Log(logMessage);
+            //await DiscordBot.Log(logMessage);
+            await Handlers.ConsoleHandler.Log(logMessage);
         }
         
         public static async void PrintLogMessage(this string source, string message, LogSeverity logSeverity = LogSeverity.Info)

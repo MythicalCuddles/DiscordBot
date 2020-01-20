@@ -245,7 +245,9 @@
     <Compile Include="Handlers\ChannelHandler.cs" />
     <Compile Include="Handlers\ConsoleHandler.cs" />
     <Compile Include="Handlers\GuildHandler.cs" />
+    <Compile Include="Handlers\MessageHandler.cs" />
     <Compile Include="Handlers\ReactionHandler.cs" />
+    <Compile Include="Handlers\ReadyHandler.cs" />
     <Compile Include="Handlers\UserHandler.cs" />
     <Compile Include="Logging\AdminLog.cs" />
     <Compile Include="Modules\Admin\AdminModule.cs" />
