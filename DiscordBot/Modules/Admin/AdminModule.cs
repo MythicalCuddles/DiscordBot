@@ -76,7 +76,7 @@ namespace DiscordBot.Modules.Admin
                 {
                     Title = "Quotes",
                     Description = "There is no quotes in the database.",
-                    Color = new Color(235, 160, 40)
+                    Color = new Color(235, 160, 40),
                 };
 
                 await ReplyAsync("", false, eb.Build());
@@ -89,8 +89,16 @@ namespace DiscordBot.Modules.Admin
             Quote.Quotes.Select((v, i) => new { Value = v, Index = i / 10 })
                 .GroupBy(x => x.Index).ToList()
                 .ForEach(x => quotePages.Add(String.Join("\n", x.Select(z => z.Value.QuoteText + " (ID: " + z.Value.QId + ")"))));
+            
+            PaginatedMessage msg = new PaginatedMessage
+            {
+                Title = "Quotes",
+                Pages = quotePages,
+                Color = new Color(211, 214, 77),
+                Options = new PaginatedAppearanceOptions() { DisplayInformationIcon = false }
+            };
 
-            await PagedReplyAsync(quotePages);
+            await PagedReplyAsync(msg);
         }
 
         [Command("editquote"), Summary("Edit a quote from the list.")]
@@ -212,7 +220,17 @@ namespace DiscordBot.Modules.Admin
                 .GroupBy(x => x.Index).ToList()
                 .ForEach(x => quotePages.Add(String.Join("\n", x.Select(z => z.Value.QuoteText + " (ID: " + z.Value.RequestId + " | BY: " + z.Value.CreatedBy.GetUser().Mention + ")"))));
 
-            await PagedReplyAsync(quotePages);
+            PaginatedMessage msg = new PaginatedMessage
+            {
+                Title = "Request Quotes",
+                Pages = quotePages,
+                Color = new Color(211, 214, 77),
+                Options = new PaginatedAppearanceOptions() { DisplayInformationIcon = false }
+            };
+
+            await PagedReplyAsync(msg);
+            await ReplyAsync(
+                $"You can accept quotes by using the command `{Guild.Load(Context.Guild.Id).Prefix}acceptquote [id]`, and reject quotes by using the command `{Guild.Load(Context.Guild.Id).Prefix}denyquote [id]`");
         }
 
         [Command("acceptquote"), Summary("Add a quote to the list.")]
