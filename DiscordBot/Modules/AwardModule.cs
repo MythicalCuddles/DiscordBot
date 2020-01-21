@@ -181,11 +181,12 @@ namespace DiscordBot.Modules
                     }
                 }))));
             
-            PaginatedMessage msg = new PaginatedMessage()
+            PaginatedMessage msg = new PaginatedMessage
             {
                 Title = "Awards List",
                 Pages = awardPages,
-                Color = new Color(211, 214, 77)
+                Color = new Color(211, 214, 77),
+                Options = new PaginatedAppearanceOptions() { DisplayInformationIcon = false }
             };
 
             await PagedReplyAsync(msg);
