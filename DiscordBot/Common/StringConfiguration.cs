@@ -31,10 +31,10 @@ namespace DiscordBot.Common
                 var stringConfig = new StringConfiguration();
                 stringConfig.SaveJson();
 
-                new LogMessage(LogSeverity.Info, "Guild Configuration", FileName + " created.").PrintToConsole();
+                new LogMessage(LogSeverity.Info, "String Configuration", FileName + " created.").PrintToConsole();
             }
 
-            new LogMessage(LogSeverity.Info, "Guild Configuration", FileName + " loaded.").PrintToConsole();
+            new LogMessage(LogSeverity.Info, "String Configuration", FileName + " loaded.").PrintToConsole();
         }
 
         public void SaveJson()

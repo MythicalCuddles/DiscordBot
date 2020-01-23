@@ -8,6 +8,7 @@ using Discord.WebSocket;
 using Discord.Addons.EmojiTools;
 
 using DiscordBot.Common;
+using DiscordBot.Exceptions;
 using DiscordBot.Objects;
 
 namespace DiscordBot.Extensions
@@ -298,10 +299,13 @@ namespace DiscordBot.Extensions
         #region SocketUser Gets
         public static SocketUser GetUser(this ulong id)
         {
-            if (!(DiscordBot.Bot.GetUser(id) is SocketUser user))
+            var user = DiscordBot.Bot.GetUser(id);
+            
+            if (user == null)
             {
-                return null;
+                throw new UserNotFoundException("Unable to get the SocketUser assigned to the ID " + id);
             }
+            
             return user;
         }
         #endregion
@@ -400,7 +404,8 @@ namespace DiscordBot.Extensions
         
         public static async Task PrintToConsole(this LogMessage logMessage)
         {
-            await DiscordBot.Log(logMessage);
+            //await DiscordBot.Log(logMessage);
+            await Handlers.ConsoleHandler.Log(logMessage);
         }
         
         public static async void PrintLogMessage(this string source, string message, LogSeverity logSeverity = LogSeverity.Info)

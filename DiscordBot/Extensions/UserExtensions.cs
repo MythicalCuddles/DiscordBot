@@ -95,8 +95,13 @@ namespace DiscordBot.Extensions
             return User.Load(user.Id).IsBotIgnoringUser;
         }
 
-        public static void AwardEXPToUser(this IUser user, SocketGuild guild, int exp = 1)
+        public static async void AwardEXPToUser(this IUser user, SocketGuild guild, int exp = 1)
         {
+            if (user.IsBot)
+            {
+                return;
+            }
+            
             try
             {
                 int updatedEXP = user.GetEXP() + exp;
@@ -108,11 +113,11 @@ namespace DiscordBot.Extensions
                 
                 DatabaseActivity.ExecuteNonQueryCommand("UPDATE users SET exp=@exp WHERE id='" + user.Id + "';", queryParams);
                 
-                user.AttemptLevelUp(guild);
+                await user.AttemptLevelUp(guild);
             }
             catch (Exception e)
             {
-                ConsoleHandler.PrintExceptionToLog("UserExtensions", e);
+                await new LogMessage(LogSeverity.Warning, "UserExtensions", e.Message).PrintToConsole();
             }
         }
         
@@ -162,11 +167,11 @@ namespace DiscordBot.Extensions
                                            " more EXP to level up again!");
                     }
                     
-                    var msg = await botChannel.SendMessageAsync("", false, eb.Build());
+                    await botChannel.SendMessageAsync("", false, eb.Build());
                 }
                 catch (Exception e)
                 {
-                    ConsoleHandler.PrintExceptionToLog("UserExtensions", e);
+                    await new LogMessage(LogSeverity.Warning, "UserExtensions", e.Message).PrintToConsole();
                 }
             }
         }

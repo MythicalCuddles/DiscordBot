@@ -8,7 +8,6 @@ using DiscordBot.Common;
 using DiscordBot.Common.Preconditions;
 using DiscordBot.Extensions;
 using DiscordBot.Objects;
-using DiscordBot.Other;
 
 namespace DiscordBot.Modules.Public
 {
@@ -168,9 +167,31 @@ namespace DiscordBot.Modules.Public
         {
             if (Guild.Load(Context.Guild.Id).QuotesEnabled)
             {
-                int generatedNumber = _random.Next(0, QuoteHandler.QuoteList.Count);
+                int randomNumber = _random.Next(0, Quote.Quotes.Count);
+                Quote q = Quote.Quotes[randomNumber];
+                
+                EmbedBuilder eb = new EmbedBuilder
+                {
+                    Title = "Random Quote",
+                    Description = q.QuoteText,
+                    Color = Context.User.GetCustomRGB()
+                };
 
-                await ReplyAsync(QuoteHandler.QuoteList[generatedNumber]);
+                try
+                {
+                    eb.Footer = new EmbedFooterBuilder
+                    {
+                        Text = "Quote ID: " + q.QId + " | Submitted By: @" + q.CreatorId.GetUser().Username
+                    };
+                }
+                catch (Exception)
+                {
+                    eb.Footer = new EmbedFooterBuilder
+                    {
+                        Text = "Quote ID: " + q.QId + " | Submitted By: " + q.CreatorId
+                    };
+                }
+                await ReplyAsync("", false, eb.Build());
             }
             else
             {
@@ -178,7 +199,7 @@ namespace DiscordBot.Modules.Public
             }
         }
 
-        [Command("buyquote"), Summary("Request a quote to be added for a price.")]
+        [Command("requestquote"), Summary("Request a quote to be added for a price."), Alias("buyquote")]
         public async Task RequestToAddQuote([Remainder]string quote = null)
 		{
 		    if (Guild.Load(Context.Guild.Id).QuotesEnabled)
@@ -186,7 +207,6 @@ namespace DiscordBot.Modules.Public
 		        int userLevel = User.Load(Context.User.Id).Level;
 		        int quoteLevelRequirement = Configuration.Load().QuoteLevelRequirement;
 		        
-                
 		        if(userLevel < quoteLevelRequirement)
 		        {
 		            await ReplyAsync(Context.User.Mention + ", you need to be level " + quoteLevelRequirement + "+ to add a quote request."); 
@@ -196,15 +216,17 @@ namespace DiscordBot.Modules.Public
                 if (quote == null)
 		        {
 		            await ReplyAsync("**Syntax:** " +
-		                             Guild.Load(Context.Guild.Id).Prefix + "buyquote [quote]\n```" +
-		                             "**Information:**\n" +
+		                             Guild.Load(Context.Guild.Id).Prefix + "requestquote [quote]\n" +
+                                     "**Alias:** " + Guild.Load(Context.Guild.Id).Prefix + "buyquote [quote]\n```" +
+                                     "**Information:**\n" +
 		                             "-----------------------------\n" +
 		                             "• Your quote will not be added instantly to the list. A staff member must first verify that it is safe to put on the list.\n" +
 		                             "```");
 		            return;
 		        }
-
-		        QuoteHandler.AddAndUpdateRequestQuotes(quote);
+                
+                RequestQuote.AddRequestQuote(quote, Context.User.Id, Context.Guild.Id);
+                
 		        await ReplyAsync(Context.User.Mention + ", your quote has been added to the list, and should be verified by a staff member shortly.");
 
 		        await Configuration.Load().LogChannelId.GetTextChannel().SendMessageAsync("**New Quote**\nQuote requested by: **" + Context.User.Mention + "**\nQuote: " + quote);

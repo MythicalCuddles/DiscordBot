@@ -6,6 +6,7 @@ using Discord.WebSocket;
 
 using DiscordBot.Common.Preconditions;
 using DiscordBot.Common;
+using DiscordBot.Logging;
 using DiscordBot.Objects;
 
 namespace DiscordBot.Modules.Admin
@@ -34,6 +35,7 @@ namespace DiscordBot.Modules.Admin
                 "[2c] send directmessage [mention/id] [message]\n" +
                 "[2d] send dm [mention/id] [message]\n" +
                 "```");
+            AdminLog.Log(Context.User.Id, Context.Message.Content, Context.Guild.Id);
         }
 
         [Command("channelmessage"), Summary("Sends a message to the channel specified.")]
@@ -47,6 +49,7 @@ namespace DiscordBot.Modules.Admin
             }
             
             await channel.SendMessageAsync(message);
+            AdminLog.Log(Context.User.Id, Context.Message.Content, Context.Guild.Id);
 
             EmbedAuthorBuilder eab = new EmbedAuthorBuilder()
                 .WithName("Log Message");
@@ -75,6 +78,7 @@ namespace DiscordBot.Modules.Admin
             }
 
             await user.GetOrCreateDMChannelAsync().Result.SendMessageAsync(message);
+            AdminLog.Log(Context.User.Id, Context.Message.Content, Context.Guild.Id);
 
             EmbedAuthorBuilder eab = new EmbedAuthorBuilder()
                 .WithName("to: @" + user.Username);

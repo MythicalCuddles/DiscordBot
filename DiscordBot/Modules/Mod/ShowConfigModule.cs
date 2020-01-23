@@ -8,6 +8,7 @@ using DiscordBot.Common;
 using DiscordBot.Common.Preconditions;
 using DiscordBot.Extensions;
 using DiscordBot.Handlers;
+using DiscordBot.Logging;
 using DiscordBot.Objects;
 using MelissaNet;
 
@@ -31,11 +32,14 @@ namespace DiscordBot.Modules.Mod
                              "[ 3] showconfig guild\n" +
                              "[ 4] showconfig strings\n" +
                              "```");
+            AdminLog.Log(Context.User.Id, Context.Message.Content, Context.Guild.Id);
         }
 
         [Command("all")]
         public async Task ShowAllConfigs()
         {
+            AdminLog.Log(Context.User.Id, Context.Message.Content, Context.Guild.Id);
+            
             await ShowBotConfig().ConfigureAwait(false);
             await ShowGuildConfig().ConfigureAwait(false);
             await ShowStringConfiguration().ConfigureAwait(false);
@@ -44,6 +48,8 @@ namespace DiscordBot.Modules.Mod
         [Command("bot")]
         public async Task ShowBotConfig()
         {
+            AdminLog.Log(Context.User.Id, Context.Message.Content, Context.Guild.Id);
+            
             EmbedBuilder eb = new EmbedBuilder()
                 .WithTitle("Bot Configuration")
                 .WithFooter("Bot Owner permissions required to change these variables!");
@@ -51,9 +57,9 @@ namespace DiscordBot.Modules.Mod
             eb.WithDescription("```INI\n" +
                                "[ 1] Developer [ " + (Configuration.Load().Developer.GetUser().Username ?? "Melissa") + " ]\n" +
                                "[ 2] Developer ID [ " + Configuration.Load().Developer + " ]\n" +
-                               "[ 3] Status Text [ " + (Configuration.Load().StatusText ?? "") + " ]\n" +
-                               "[ 4] Status Link [ " + (Configuration.Load().StatusLink ?? "") + " ]\n" +
-                               "[ 5] Status Activity [ " + Configuration.Load().StatusActivity.ToActivityType() + " ]\n" +
+                               "[ 3] Activity Name [ " + (Configuration.Load().ActivityName ?? "") + " ]\n" +
+                               "[ 4] Activity Type [ " + (((ActivityType)Configuration.Load().ActivityType).ToString() ?? "") + " ]\n" +
+                               "[ 5] Activity Stream [ " + Configuration.Load().ActivityStream + " ]\n" +
                                "[ 6] Status [ " + Configuration.Load().Status + " ]\n" +
                                "[ 7] Unknown Command Enabled [ " + Configuration.Load().UnknownCommandEnabled.ToYesNo() + " ]\n" +
                                "[ 8] Awarding EXP Enabled [ " + Configuration.Load().AwardingEXPEnabled.ToYesNo() + " ]\n" +
@@ -77,6 +83,8 @@ namespace DiscordBot.Modules.Mod
         [Command("strings")]
         public async Task ShowStringConfiguration()
         {
+            AdminLog.Log(Context.User.Id, Context.Message.Content, Context.Guild.Id);
+            
             EmbedBuilder eb = new EmbedBuilder()
                 .WithTitle("String Configuration")
                 .WithFooter("Bot Owner permissions required to change these variables!");
@@ -91,6 +99,8 @@ namespace DiscordBot.Modules.Mod
         [Command("guild")]
         public async Task ShowGuildConfig()
         {
+            AdminLog.Log(Context.User.Id, Context.Message.Content, Context.Guild.Id);
+            
             try
             {
                 EmbedBuilder eb = new EmbedBuilder()
@@ -118,7 +128,7 @@ namespace DiscordBot.Modules.Mod
             {
                 await ReplyAsync(
                     "It appears that your Guild Configuration has not been set-up completely. Please complete all the steps before using this command.");
-                ConsoleHandler.PrintExceptionToLog("ShowConfigModule", e);
+                await new LogMessage(LogSeverity.Warning, "ShowConfigModule", e.Message).PrintToConsole();
             }
         }
     }

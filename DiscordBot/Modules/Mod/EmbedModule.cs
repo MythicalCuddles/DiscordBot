@@ -10,6 +10,7 @@ using DiscordBot.Common.Preconditions;
 using DiscordBot.Common;
 using DiscordBot.Extensions;
 using DiscordBot.Handlers;
+using DiscordBot.Logging;
 using DiscordBot.Objects;
 
 namespace DiscordBot.Modules.Mod
@@ -36,6 +37,7 @@ namespace DiscordBot.Modules.Mod
                              "[5] embed withcolor [\"R Value\"] [\"G Value\"] [\"B Value\"]\n" +
                              "[6] embed send [\"#channel = #" + Context.Channel.Name + "\"]\n" +
                              "```");
+            AdminLog.Log(Context.User.Id, Context.Message.Content, Context.Guild.Id);
         }
 
         [Command("new")]
@@ -136,7 +138,7 @@ namespace DiscordBot.Modules.Mod
             }
             catch (Exception e)
             {
-                ConsoleHandler.PrintExceptionToLog("EmbedModule", e);
+                await new LogMessage(LogSeverity.Warning, "EmbedModule", e.Message).PrintToConsole();
                 await ReplyAsync("An unexpected error has happened. Please ensure that you have passed through a byte value! (A number between 0 and 255)");
                 return;
             }

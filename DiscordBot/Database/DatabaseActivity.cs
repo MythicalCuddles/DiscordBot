@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using Discord;
 using DiscordBot.Common;
@@ -11,109 +10,86 @@ namespace DiscordBot.Database
 {
     public static class DatabaseActivity
     {
-        private static bool _databaseExists = false;
+        private static bool _databaseExists, _connectionTested;
         
-        public static void CheckForDatabase()
+        internal static void EnsureExists()
         {
-            #region Database Configuration Checks
+            if(!_connectionTested) {
+                var config = Configuration.Load();
             
-            // Running through the configuration file - checking for database information.
-            if (String.IsNullOrEmpty(Configuration.Load().DatabaseHost))
-            {
-                new LogMessage(LogSeverity.Info, "Database Configuration", "Enter Database Hostname (default: localhost/127.0.0.1):").PrintToConsole();
-                string host = Console.ReadLine();
-
-                if (string.IsNullOrEmpty(host))
-                {
-                    host = "localhost";
-                    new LogMessage(LogSeverity.Warning, "Database Configuration", "No value was entered for the database host. Using default (localhost/127.0.0.1)").PrintToConsole();
-                }
-                
-                Configuration.UpdateConfiguration(databaseHost:host);
+                TestDatabaseSettings(config.DatabaseHost, config.DatabaseUser, config.DatabasePassword,
+                    config.DatabasePort).GetAwaiter().GetResult();
             }
-            
-            if (Configuration.Load().DatabasePort == 0)
-            {
-                new LogMessage(LogSeverity.Info, "Database Configuration", "Enter Database Port (default: 3306):").PrintToConsole();
-                string port = Console.ReadLine();
-                int portN = 0;
-
-                if (string.IsNullOrEmpty(port))
-                {
-                    portN = 3306;
-                    new LogMessage(LogSeverity.Warning, "Database Configuration", "No database port entered. Using default (3306)").PrintToConsole();
-                } 
-                else if (!(Int32.TryParse(port, out portN)))
-                {
-                    new LogMessage(LogSeverity.Warning, "Database Configuration", "Unable to parse database port. Using default (3306)").PrintToConsole();
-                }
-                
-                Configuration.UpdateConfiguration(databasePort:portN);
-            }
-            
-            if (String.IsNullOrEmpty(Configuration.Load().DatabaseUser))
-            {
-                new LogMessage(LogSeverity.Info, "Database Configuration", "Enter Database Username (default: root):").PrintToConsole();
-                string user = Console.ReadLine();
-
-                if (string.IsNullOrEmpty(user))
-                {
-                    user = "root";
-                    new LogMessage(LogSeverity.Warning, "Database Configuration", "No value was entered for the database user. Using default (root)").PrintToConsole();
-                }
-                
-                Configuration.UpdateConfiguration(databaseUser:user);
-            }
-            
-            if ((String.IsNullOrEmpty(Configuration.Load().DatabaseUser) ||
-                 String.IsNullOrEmpty(Configuration.Load().DatabaseName)) &&
-                String.IsNullOrEmpty(Configuration.Load().DatabasePassword))
-            {
-                new LogMessage(LogSeverity.Info, "Database Configuration", "Enter Database Password (default: ):").PrintToConsole();
-                string pass = Console.ReadLine();
-
-                if (string.IsNullOrEmpty(pass))
-                {
-                    pass = "";
-                    new LogMessage(LogSeverity.Warning, "Database Configuration", "No value was entered for the database password. Using default ()").PrintToConsole();
-                }
-                
-                Configuration.UpdateConfiguration(databasePassword:pass);
-            }
-            
-            if (String.IsNullOrEmpty(Configuration.Load().DatabaseName))
-            {
-                new LogMessage(LogSeverity.Info, "Database Configuration", "Enter Database Name (default: discordbot):").PrintToConsole();
-                string name = Console.ReadLine();
-
-                if (string.IsNullOrEmpty(name))
-                {
-                    name = "discordbot";
-                    new LogMessage(LogSeverity.Warning, "Database Configuration", "No value was entered for the database name. Using default (discordbot)").PrintToConsole();
-                }
-                
-                Configuration.UpdateConfiguration(databaseName:name);
-            }
-
-            #endregion
-            
-            new LogMessage(LogSeverity.Info, "Database Configuration", "Database information loaded from Configuration.").PrintToConsole();
-
             CreateDatabaseIfNotExists();
             CreateTablesIfNotExists();
+            
+            Methods.PrintConsoleSplitLine();
+        }
+        
+        internal static async Task<(bool connectionValid, bool databaseExists)> TestDatabaseSettings(string hostname = null, string username = null, string password = null, int? port = null, string database = null)
+        {
+            hostname = hostname ?? Configuration.Load().DatabaseHost;
+            username = username ?? Configuration.Load().DatabaseUser;
+            password = password ?? Configuration.Load().DatabasePassword;
+            port = port ?? Configuration.Load().DatabasePort;
+            database = database ?? Configuration.Load().DatabaseName;
+            
+            string connectionString =
+                $"server={hostname};port={port.ToString()};user id={username}; password={password}";
+            
+            MySqlConnection connection;
+            
+            await new LogMessage(LogSeverity.Info, "Database Validation", "Verifying database settings.").PrintToConsole();
+            
+            // test to see if connection is valid.
+            try
+            {
+                connection = new MySqlConnection(connectionString);
+                connection.Open();
+                connection.Close();
+                _connectionTested = true;
+                await new LogMessage(LogSeverity.Info, "Database Validation", "Connection to database established.").PrintToConsole();
+            }
+            catch (Exception e)
+            {
+                await new LogMessage(LogSeverity.Error, "Database Validation", e.Message).PrintToConsole();
+                return (false, false);
+            }
+            
+            // test to see if database exists - required to be after connection is valid.
+            connectionString = $"server={hostname};port={port.ToString()};user id={username}; password={password}; database={database}; CharSet=utf8mb4";
+            
+            await new LogMessage(LogSeverity.Info, "Database Validation", "Checking for database.").PrintToConsole();
+            
+            try
+            {
+                connection = new MySqlConnection(connectionString);
+                connection.Open();
+                connection.Close();
+                
+                await new LogMessage(LogSeverity.Info, "Database Validation", "Database exists.").PrintToConsole();
+
+                return (true, true);
+            }
+            catch (Exception)
+            {
+                await new LogMessage(LogSeverity.Info, "Database Validation", "Unable to find database.").PrintToConsole();
+                return (true, false);
+            }
         }
 
-        public static MySqlConnection GetDatabaseConnection()
+        private static MySqlConnection GetDatabaseConnection()
         {
-            string connectionString;
-            if (_databaseExists)
-            {
-                connectionString = String.Format("server={0};port={1};user id={2}; password={3}; database={4}; CharSet=utf8mb4", Configuration.Load().DatabaseHost, Configuration.Load().DatabasePort.ToString(), Configuration.Load().DatabaseUser, Configuration.Load().DatabasePassword, Configuration.Load().DatabaseName);
-            }
-            else
-            {
-                connectionString = String.Format("server={0};port={1};user id={2}; password={3}", Configuration.Load().DatabaseHost, Configuration.Load().DatabasePort.ToString(), Configuration.Load().DatabaseUser, Configuration.Load().DatabasePassword);
-            }
+            string connectionString = _databaseExists ? 
+                $"server={Configuration.Load().DatabaseHost};" +
+                $"port={Configuration.Load().DatabasePort.ToString()};" +
+                $"user id={Configuration.Load().DatabaseUser};" +
+                $"password={Configuration.Load().DatabasePassword};" +
+                $"database={Configuration.Load().DatabaseName}; CharSet=utf8mb4"
+                : $"server={Configuration.Load().DatabaseHost};" +
+                  $"port={Configuration.Load().DatabasePort.ToString()};" +
+                  $"user id={Configuration.Load().DatabaseUser};" +
+                  $"password={Configuration.Load().DatabasePassword}";
             
             MySqlConnection connection = new MySqlConnection(connectionString);
             
@@ -126,11 +102,9 @@ namespace DiscordBot.Database
                 Console.WriteLine(e.Message);
                 throw;
             }
-
-            return connection;
         }
 
-        public static int ExecuteNonQueryCommand(string query, List<(string name, string value)> queryParams = null)
+        internal static int ExecuteNonQueryCommand(string query, List<(string name, string value)> queryParams = null)
         {
             using (var conn = GetDatabaseConnection())
             {
@@ -157,7 +131,8 @@ namespace DiscordBot.Database
                     int rows = cmd.ExecuteNonQuery();
                     conn.CloseAsync();
 
-                    new LogMessage(LogSeverity.Info, "Database Command","Command: " + cmd.CommandText + " | Rows affected: " + rows).PrintToConsole();
+                    new LogMessage(LogSeverity.Debug, "Database Command",cmd.CommandText).PrintToConsole().GetAwaiter();
+                    new LogMessage(LogSeverity.Debug, "Database Response", "Rows Updated: " + rows).PrintToConsole().GetAwaiter();
 
                     return rows;
                 }
@@ -169,7 +144,7 @@ namespace DiscordBot.Database
             }
         }
 
-        public static (MySqlDataReader,MySqlConnection) ExecuteReader(string query)
+        internal static (MySqlDataReader,MySqlConnection) ExecuteReader(string query)
         {
             MySqlConnection conn = GetDatabaseConnection();
             MySqlCommand cmd = new MySqlCommand(query, conn);
@@ -190,7 +165,8 @@ namespace DiscordBot.Database
 
         private static void CreateDatabaseIfNotExists()
         {
-            ExecuteNonQueryCommand(string.Format("CREATE DATABASE IF NOT EXISTS {0} CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci;", Configuration.Load().DatabaseName));
+            ExecuteNonQueryCommand(
+                $"CREATE DATABASE IF NOT EXISTS {Configuration.Load().DatabaseName} CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci;");
             
             _databaseExists = true;
         }
@@ -198,10 +174,10 @@ namespace DiscordBot.Database
         private static void CreateTablesIfNotExists()
         {
             ExecuteNonQueryCommand("CREATE TABLE IF NOT EXISTS `awards` (" +
-                                   "`awardID` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, " +
+                                   "`awardID` INT NOT NULL AUTO_INCREMENT, " +
                                    "`userID` bigint(20) UNSIGNED NOT NULL, " +
+                                   "`awardCategory` text COLLATE utf8mb4_unicode_ci NOT NULL, " +
                                    "`awardText` text COLLATE utf8mb4_unicode_ci NOT NULL, " +
-                                   "`awardType` text COLLATE utf8mb4_unicode_ci NOT NULL, " +
                                    "`dateAwarded` date NOT NULL," +
                                    "PRIMARY KEY (awardId)" +
                                    ") ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_general_ci;");
@@ -222,6 +198,7 @@ namespace DiscordBot.Database
                                    "`aboutG` tinyint(3) UNSIGNED NOT NULL DEFAULT '90'," +
                                    "`aboutB` tinyint(3) UNSIGNED NOT NULL DEFAULT '210'," +
                                    "`teamMember` char(1) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'N'," +
+                                   "`patreonSupporter` tinyint(1) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 0," +
                                    "`authorIconURL` text COLLATE utf8mb4_unicode_ci," +
                                    "`footerIconURL` text COLLATE utf8mb4_unicode_ci," +
                                    "`footerText` text COLLATE utf8mb4_unicode_ci," +
@@ -271,7 +248,37 @@ namespace DiscordBot.Database
                                    "`banDescription` text COLLATE utf8mb4_unicode_ci NOT NULL," +
                                    "`dateIssued` datetime NOT NULL," +
                                    "PRIMARY KEY (`banID`)" +
-                                   ") ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;");
+                                   ") ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;");
+
+            ExecuteNonQueryCommand("CREATE TABLE IF NOT EXISTS `quotes` (" + 
+                                   "`quoteId` INT NOT NULL AUTO_INCREMENT," +
+                                   "`createdBy` BIGINT NOT NULL," +
+                                   "`acceptedBy` BIGINT NOT NULL," +
+                                   "`quoteText` TEXT NOT NULL," +
+                                   "`dateCreated` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP," +
+                                   "`createdIn` BIGINT NOT NULL," +
+                                   "`acceptedIn` BIGINT NOT NULL," +
+                                   "PRIMARY KEY (`quoteId`)" +
+                                   ") ENGINE = InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;");
+
+            ExecuteNonQueryCommand("CREATE TABLE IF NOT EXISTS `requested_quotes` (" + 
+                                   "`requestQuoteId` INT NOT NULL AUTO_INCREMENT," +
+                                   "`requestedBy` BIGINT NOT NULL," +
+                                   "`quoteText` TEXT NOT NULL," +
+                                   "`dateCreated` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP," +
+                                   "`requestedIn` BIGINT NOT NULL," +
+                                   "PRIMARY KEY (`requestQuoteId`)" +
+                                   ") ENGINE = InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;");
+
+            ExecuteNonQueryCommand("CREATE TABLE IF NOT EXISTS `admin_log` (" +
+                                   "`logId` INT NOT NULL AUTO_INCREMENT," + 
+                                   "`executedBy` BIGINT NOT NULL," +
+                                   "`action` TEXT NOT NULL," +
+                                   "`executedAt` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP," + 
+                                   "`executedIn` BIGINT NOT NULL," + 
+                                   "`userMentioned` BIGINT NULL," + 
+                                   "PRIMARY KEY (`logId`)" + 
+                                   ") ENGINE = InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;");
         }
     }
 }

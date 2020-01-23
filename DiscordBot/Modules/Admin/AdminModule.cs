@@ -1,18 +1,19 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using System.Windows.Forms;
-using Discord.Addons.Interactive;
+
 using Discord;
+using Discord.Addons.Interactive;
 using Discord.Commands;
 using Discord.WebSocket;
 
 using DiscordBot.Common.Preconditions;
 using DiscordBot.Common;
 using DiscordBot.Extensions;
+using DiscordBot.Logging;
 using DiscordBot.Objects;
-using DiscordBot.Other;
 
 namespace DiscordBot.Modules.Admin
 {
@@ -25,6 +26,7 @@ namespace DiscordBot.Modules.Admin
         public async Task Say([Remainder, Summary("The text to echo")] string echo)
         {
             await ReplyAsync(echo);
+            AdminLog.Log(Context.User.Id, Context.Message.Content, Context.Guild.Id);
             await Context.Message.DeleteAsync();
         }
 
@@ -32,15 +34,32 @@ namespace DiscordBot.Modules.Admin
         public async Task SendWelcomeMessage(SocketGuildUser user)
         {
             await Guild.Load(Context.Guild.Id).WelcomeChannelID.GetTextChannel().SendMessageAsync(Guild.Load(Context.Guild.Id).WelcomeMessage.ModifyStringFlags(user));
+            AdminLog.Log(Context.User.Id, Context.Message.Content, Context.Guild.Id, user.Id);
+            
             await Guild.Load(Context.Guild.Id).LogChannelID.GetTextChannel().SendMessageAsync("A welcome message for " + user.Mention + " has been posted. (Forced by: " + Context.User.Mention + ")");
         }
 
         [Command("addquote"), Summary("Add a quote to the list.")]
-        public async Task AddQuote([Remainder]string quote)
+        public async Task AddQuote([Remainder]string quote = null)
         {
-            QuoteHandler.AddAndUpdateQuotes(quote);
+            EmbedBuilder eb;
+            if (quote == null)
+            {
+                eb = new EmbedBuilder
+                {
+                    Title = "Invalid Syntax",
+                    Description = "**Syntax:** " + Guild.Load(Context.Guild.Id).Prefix + "addquote [quote] (@creator)",
+                    Color = new Color(210, 47, 33)
+                };
+
+                await ReplyAsync("", false, eb.Build());
+                return;       
+            }
+            
+            Quote.AddQuote(quote, Context.User.Id, Context.Guild.Id);
+            AdminLog.Log(Context.User.Id, Context.Message.Content, Context.Guild.Id);
 			
-			EmbedBuilder eb = new EmbedBuilder()
+			eb = new EmbedBuilder()
 				.WithDescription(Context.User.Mention + " Quote Added")
 				.WithColor(33, 210, 47);
 
@@ -50,173 +69,277 @@ namespace DiscordBot.Modules.Admin
         [Command("listquotes"), Summary("Sends a list of all the quotes.")]
         public async Task ListQuotes()
         {
-            if (QuoteHandler.QuoteList.Count > 0)
+            EmbedBuilder eb;
+            if (!Quote.Quotes.Any())
             {
-                StringBuilder sb = new StringBuilder();
-
-                QuoteHandler.SpliceQuotes();
-                List<string> quotesList = new List<string>();
-                int id = 0;
-                for (int i = 0; i < QuoteHandler.GetQuotesListLength; i++)
+                eb = new EmbedBuilder
                 {
-                    List<string> quotes = QuoteHandler.GetQuotes(i + 1);
-
-                    foreach (var quote in quotes)
-                    {
-                        id++;
-                        sb.Append(id + ": " + quote + "\n");
-                    }
-                    quotesList.Add(sb.ToString());
-                    sb.Clear();
-                }
-
-                PaginatedMessage message = new PaginatedMessage
-                {
-                    Title = "**Quote List**",
-                    Color = new Color(User.Load(Context.User.Id).AboutR, User.Load(Context.User.Id).AboutG, User.Load(Context.User.Id).AboutB),
-                    Pages = quotesList,
-                    Options = new PaginatedAppearanceOptions() { DisplayInformationIcon = false }
+                    Title = "Quotes",
+                    Description = "There is no quotes in the database.",
+                    Color = new Color(235, 160, 40),
                 };
-                await PagedReplyAsync(message);
+
+                await ReplyAsync("", false, eb.Build());
+                return;
             }
-            else
+            
+            AdminLog.Log(Context.User.Id, Context.Message.Content, Context.Guild.Id);
+            
+            List<string> quotePages = new List<string>();
+            Quote.Quotes.Select((v, i) => new { Value = v, Index = i / 10 })
+                .GroupBy(x => x.Index).ToList()
+                .ForEach(x => quotePages.Add(String.Join("\n", x.Select(z => z.Value.QuoteText + " (ID: " + z.Value.QId + ")"))));
+            
+            PaginatedMessage msg = new PaginatedMessage
             {
-                await ReplyAsync("There are no quotes in the database.");
-            }
+                Title = "Quotes",
+                Pages = quotePages,
+                Color = new Color(211, 214, 77),
+                Options = new PaginatedAppearanceOptions() { DisplayInformationIcon = false }
+            };
+
+            await PagedReplyAsync(msg);
         }
 
         [Command("editquote"), Summary("Edit a quote from the list.")]
-        public async Task EditQuote(int quoteId, [Remainder]string quote)
+        public async Task EditQuote(int quoteId = 0, [Remainder]string quote = null)
         {
-            string oldQuote = QuoteHandler.QuoteList[quoteId - 1];
-            QuoteHandler.UpdateQuote(quoteId - 1, quote);
-            await ReplyAsync(Context.User.Mention + " updated quote id: " + quoteId + "\nOld quote: `" + oldQuote + "`\nUpdated: `" + quote + "`");
+            EmbedBuilder eb;
+            if (quoteId == 0 && quote == null)
+            {
+                eb = new EmbedBuilder
+                {
+                    Title = "Invalid Syntax",
+                    Description = "**Syntax:** " + Guild.Load(Context.Guild.Id).Prefix + "editquote [quote ID] [quote text]",
+                    Color = new Color(210, 47, 33)
+                };
+
+                await ReplyAsync("", false, eb.Build());
+                return;
+            }
+            
+            if (quoteId > Quote.Quotes.Count || quoteId == 0)
+            {
+                eb = new EmbedBuilder
+                {
+                    Title = "Unknown Quote ID",
+                    Description = "Unknown Quote ID. Please check the quote list for valid IDs.",
+                    Color = new Color(210, 47, 33)
+                };
+
+                await ReplyAsync("", false, eb.Build());
+                return; 
+            }
+            
+            string oldQuote = Quote.Quotes.Find(q => q.QId == quoteId).QuoteText;
+            
+            Quote.UpdateQuote(quoteId, quote);
+            AdminLog.Log(Context.User.Id, Context.Message.Content, Context.Guild.Id);
+            
+            eb = new EmbedBuilder
+            {
+                Title = "Quote #" + quoteId + " edited",
+                Description = "Quote: " + quote,
+                Color = new Color(0, 255, 0),
+                Footer = new EmbedFooterBuilder
+                {
+                    Text = "Old Quote: " + oldQuote
+                }
+            };
+
+            await ReplyAsync("", false, eb.Build());
         }
 
         [Command("deletequote"), Summary("Delete a quote from the list. Make sure to `$listquotes` to get the ID for the quote being removed!")]
-        public async Task RemoveQuote(int quoteId)
+        public async Task RemoveQuote(int quoteId = 0)
         {
-			if(quoteId <= QuoteHandler.QuoteList.Count)
-			{
-				string quote = QuoteHandler.QuoteList[quoteId - 1];
-				QuoteHandler.RemoveAndUpdateQuotes(quoteId - 1);
+            EmbedBuilder eb;
+            if (quoteId == 0)
+            {
+                eb = new EmbedBuilder
+                {
+                    Title = "Invalid Syntax / Invalid ID",
+                    Description = "**Syntax:** " + Guild.Load(Context.Guild.Id).Prefix + "deletequote [id]",
+                    Color = new Color(210, 47, 33)
+                };
 
-				EmbedBuilder eb = new EmbedBuilder()
-					.WithDescription(Context.User.Mention + " Quote Removed\nQuote: " + quote)
-					.WithColor(210, 47, 33);
+                await ReplyAsync("", false, eb.Build());
+                return;
+            }
 
-				await ReplyAsync("", false, eb.Build());
-			} 
-			else
-			{
-				EmbedBuilder eb = new EmbedBuilder()
-					.WithDescription(Context.User.Mention + " There is no quote with that Id")
-					.WithColor(47, 33, 210);
+            Quote q = Quote.Quotes.Find(quote => quote.QId == quoteId);
+            if (q == null)
+            {
+                eb = new EmbedBuilder
+                {
+                    Title = "Unable to find Quote",
+                    Description = "Unable to find a quote with that ID in the database.",
+                    Color = new Color(210, 47, 33)
+                };
 
-				await ReplyAsync("", false, eb.Build());
-			}
+                await ReplyAsync("", false, eb.Build());
+                return;
+            }
+            
+            Quote.DeleteQuote(quoteId);
+            AdminLog.Log(Context.User.Id, Context.Message.Content, Context.Guild.Id);
+            
+            eb = new EmbedBuilder
+            {
+                Title = "Quote #" + quoteId + " deleted",
+                Description = q.QuoteText,
+                Footer = new EmbedFooterBuilder
+                {
+                    Text = "Author: @" + q.CreatorId.GetUser().Username
+                }
+            };
+            await ReplyAsync("", false, eb.Build());
         }
 
         [Command("listrequestquotes"), Summary("Sends a list of all the request quotes.")]
         public async Task ListRequestQuotes()
         {
-            if(QuoteHandler.RequestQuoteList.Any())
+            EmbedBuilder eb;
+            if (!RequestQuote.RequestQuotes.Any())
             {
-                StringBuilder sb = new StringBuilder()
-                .Append("**Request Quote List** : *Page 1*\nTo accept a quote, type **" + Guild.Load(Context.Guild.Id).Prefix + "acceptquote [id]**.\nTo reject a quote, type **" + Guild.Load(Context.Guild.Id).Prefix + "denyquote [id]**.\n```");
-
-                QuoteHandler.SpliceRequestQuotes();
-                List<string> requestQuotes = QuoteHandler.GetRequestQuotes(1);
-
-                for (int i = 0; i < requestQuotes.Count; i++)
+                eb = new EmbedBuilder
                 {
-                    sb.Append((i + 1) + ": " + requestQuotes[i] + "\n");
-                }
+                    Title = "Pending Request Quotes",
+                    Description = "There is currently 0 quotes pending review.",
+                    Color = new Color(235, 160, 40)
+                };
 
-                sb.Append("```");
-
-                IUserMessage msg = await ReplyAsync(sb.ToString());
-                QuoteHandler.RequestQuoteMessages.Add(msg.Id);
-                QuoteHandler.RequestPageNumber.Add(1);
-
-                if (QuoteHandler.RequestQuoteList.Count > 10)
-                {
-                    await msg.AddReactionAsync(Extensions.Extensions.ArrowRight);
-                }
+                await ReplyAsync("", false, eb.Build());
+                return;
             }
-            else
+            
+            AdminLog.Log(Context.User.Id, Context.Message.Content, Context.Guild.Id);
+            
+            List<string> quotePages = new List<string>();
+            RequestQuote.RequestQuotes.Select((v, i) => new { Value = v, Index = i / 10 })
+                .GroupBy(x => x.Index).ToList()
+                .ForEach(x => quotePages.Add(String.Join("\n", x.Select(z => z.Value.QuoteText + " (ID: " + z.Value.RequestId + " | BY: " + z.Value.CreatedBy.GetUser().Mention + ")"))));
+
+            PaginatedMessage msg = new PaginatedMessage
             {
-                await ReplyAsync("There are currently 0 pending request quotes.");
-            }
+                Title = "Request Quotes",
+                Pages = quotePages,
+                Color = new Color(211, 214, 77),
+                Options = new PaginatedAppearanceOptions() { DisplayInformationIcon = false }
+            };
+
+            await PagedReplyAsync(msg);
+            await ReplyAsync(
+                $"You can accept quotes by using the command `{Guild.Load(Context.Guild.Id).Prefix}acceptquote [id]`, and reject quotes by using the command `{Guild.Load(Context.Guild.Id).Prefix}denyquote [id]`");
         }
 
         [Command("acceptquote"), Summary("Add a quote to the list.")]
-        public async Task AcceptQuote(int quoteId)
+        public async Task AcceptQuote(int quoteId = 0)
         {
-            string quote = QuoteHandler.RequestQuoteList[quoteId - 1];
-            QuoteHandler.AddAndUpdateQuotes(quote);
-            QuoteHandler.RemoveAndUpdateRequestQuotes(quoteId - 1);
-            await ReplyAsync(Context.User.Mention + " has accepted Quote " + quoteId + " from the request quote list.\nQuote: " + quote);
+            EmbedBuilder eb;
+            if (quoteId == 0)
+            {
+                eb = new EmbedBuilder
+                {
+                    Title = "Invalid Syntax / Invalid ID",
+                    Description = "**Syntax:** " + Guild.Load(Context.Guild.Id).Prefix + "acceptquote [id]",
+                    Color = new Color(210, 47, 33)
+                };
+
+                await ReplyAsync("", false, eb.Build());
+                return;
+            }
+
+            RequestQuote q = RequestQuote.RequestQuotes.Find(quote => quote.RequestId == quoteId);
+            if (q == null)
+            {
+                eb = new EmbedBuilder
+                {
+                    Title = "Unable to find Quote",
+                    Description = "Unable to find a request quote with that ID in the database.",
+                    Color = new Color(210, 47, 33)
+                };
+
+                await ReplyAsync("", false, eb.Build());
+                return;
+            }
+            
+            RequestQuote.ApproveRequestQuote(quoteId, Context.User.Id, Context.Guild.Id);
+            AdminLog.Log(Context.User.Id, Context.Message.Content, Context.Guild.Id);
+            
+            eb = new EmbedBuilder
+            {
+                Title = "Quote #" + quoteId + " approved",
+                Author = new EmbedAuthorBuilder
+                {
+                    Name = "@" + q.CreatedBy.GetUser().Username,
+                    IconUrl = q.CreatedBy.GetUser().GetAvatarUrl()
+                },
+                Description = q.QuoteText,
+                Footer = new EmbedFooterBuilder
+                {
+                    Text = "Approved by @" + Context.User.Username,
+                    IconUrl = Context.User.GetAvatarUrl()
+                }
+            };
+
+            await ReplyAsync("", false, eb.Build());
+            await Configuration.Load().LogChannelId.GetTextChannel().SendMessageAsync("", false, eb.Build());
         }
 
         [Command("denyquote"), Summary("")]
         [Alias("rejectquote")]
         public async Task DenyQuote(int quoteId)
         {
-            string quote = QuoteHandler.RequestQuoteList[quoteId - 1];
-            QuoteHandler.RemoveAndUpdateRequestQuotes(quoteId - 1);
-            await ReplyAsync(Context.User.Mention + " has denied Quote " + quoteId + " from the request quote list.\nQuote: " + quote);
-        }
-
-        [Command("addvotelink"), Summary("Add a voting link to the list.")]
-        public async Task AddVoteLink([Remainder]string link)
-        {
-            VoteLinkHandler.AddAndUpdateLinks(link);
-
-			EmbedBuilder eb = new EmbedBuilder()
-				.WithDescription(Context.User.Mention + " Link Added")
-				.WithColor(33, 210, 47);
-
-			await ReplyAsync("", false, eb.Build());
-        }
-
-        [Command("listvotelinks"), Summary("Sends a list of all the voting links.")]
-        public async Task ListVotingLinks()
-        {
-            StringBuilder sb = new StringBuilder()
-                .Append("**Voting Link List**\n```");
-
-            for (int i = 0; i < VoteLinkHandler.VoteLinkList.Count; i++)
+            EmbedBuilder eb;
+            if (quoteId == 0)
             {
-                sb.Append(i + ": " + VoteLinkHandler.VoteLinkList[i] + "\n");
+                eb = new EmbedBuilder
+                {
+                    Title = "Invalid Syntax / Invalid ID",
+                    Description = "**Syntax:** " + Guild.Load(Context.Guild.Id).Prefix + "denyquote [id]",
+                    Color = new Color(210, 47, 33)
+                };
+
+                await ReplyAsync("", false, eb.Build());
+                return;
             }
+            
+            RequestQuote q = RequestQuote.RequestQuotes.Find(quote => quote.RequestId == quoteId);
+            if (q == null)
+            {
+                eb = new EmbedBuilder
+                {
+                    Title = "Unable to find Quote",
+                    Description = "Unable to find a request quote with that ID in the database.",
+                    Color = new Color(210, 47, 33)
+                };
 
-            sb.Append("```");
+                await ReplyAsync("", false, eb.Build());
+                return;
+            }
+            
+            RequestQuote.RemoveRequestQuote(quoteId);
+            AdminLog.Log(Context.User.Id, Context.Message.Content, Context.Guild.Id);
+            
+            eb = new EmbedBuilder
+            {
+                Title = "Quote #" + quoteId + " rejected",
+                Author = new EmbedAuthorBuilder
+                {
+                    Name = "@" + q.CreatedBy.GetUser().Username,
+                    IconUrl = q.CreatedBy.GetUser().GetAvatarUrl()
+                },
+                Description = q.QuoteText,
+                Footer = new EmbedFooterBuilder
+                {
+                    Text = "Rejected by @" + Context.User.Username,
+                    IconUrl = Context.User.GetAvatarUrl()
+                }
+            };
 
-            await ReplyAsync(sb.ToString());
-        }
-
-        [Command("editvotelink"), Summary("Edit a voting link from the list.")]
-        public async Task EditVotingLink(int linkId, [Remainder]string link)
-        {
-            string oldLink = VoteLinkHandler.VoteLinkList[linkId];
-            VoteLinkHandler.UpdateLink(linkId, link);
-            await ReplyAsync(Context.User.Mention + " updated vote link id: " + linkId + "\nOld link: `" + oldLink + "`\nUpdated: `" + link + "`");
-        }
-
-        [Command("deletevotelink"), Summary("Delete a voting link from the list. Make sure to `$listvotelinks` to get the ID for the link being removed!")]
-        public async Task RemoveVotingLink(int linkId)
-        {
-            string link = VoteLinkHandler.VoteLinkList[linkId];
-            VoteLinkHandler.RemoveAndUpdateLinks(linkId);
-
-			EmbedBuilder eb = new EmbedBuilder()
-					.WithDescription(Context.User.Mention + " Link Removed\nLink: " + link)
-					.WithColor(210, 47, 33);
-
-			await ReplyAsync("", false, eb.Build());
-
-			await ListVotingLinks().ConfigureAwait(false);
+            await ReplyAsync("", false, eb.Build());
+            await Configuration.Load().LogChannelId.GetTextChannel().SendMessageAsync("", false, eb.Build());
         }
     }
 }

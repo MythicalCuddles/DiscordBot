@@ -15,7 +15,7 @@ namespace DiscordBot.Common
         private static string FileName { get; } = "MythicalCuddles/DiscordBot/config/configuration.json";
         [JsonIgnore]
         private static readonly string File = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), FileName);
-
+        
         public string BotToken { get; set; }
 
         public string DatabaseHost { get; set; }
@@ -23,19 +23,23 @@ namespace DiscordBot.Common
         public string DatabaseUser { get; set; }
         public string DatabasePassword { get; set; }
         public string DatabaseName { get; set; }
+
+        public bool FirstTimeRun { get; set; } = true;
         
         public ulong Developer { get; set; } = 149991092337639424;
-        public string StatusText { get; set; } = null;
-        public string StatusLink { get; set; } = null;
-        public int StatusActivity { get; set; } = -1;
+        public string ActivityName { get; set; }
+        public int ActivityType { get; set; }
+        public string ActivityStream { get; set; }
         public UserStatus Status { get; set; } = UserStatus.Online;
 
         public bool ShowAllAwards { get; set; } = false;
         public string AwardsIconUrl { get; set; } = "https://i.imgur.com/Fancl1L.png";
         
         public bool UnknownCommandEnabled { get; set; } = true;
-        public bool AwardingEXPEnabled { get; set; } = true;
-        public bool AwardingEXPMentionUser { get; set; } = true;
+        public bool AwardingEXPEnabled { get; set; } = true; // If the EXP System is enabled
+        public bool AwardingEXPReactionEnabled { get; set; } = false; // If the user should gain EXP when they react to a message
+        public bool AwardingEXPReactPostEnabled { get; set; } = false; // If the user should gain EXP when they have a message reacted to
+        public bool AwardingEXPMentionUser { get; set; } = true; // If the user should be mentioned when they level up
         
         public int LeaderboardAmount { get; set; } = 5;
         public int QuoteLevelRequirement { get; set; } = 10;
@@ -66,51 +70,18 @@ namespace DiscordBot.Common
                 string path = Path.GetDirectoryName(File);
                 if (!Directory.Exists(path))
                 {
-                    Directory.CreateDirectory(path);
+                    Directory.CreateDirectory(path ?? throw new InvalidOperationException());
                 }
 
-                var config = new Configuration();
-
-                new LogMessage(LogSeverity.Warning, "Configuration", "No configuration file was found. Lets set one up now!").PrintToConsole();
-
-                new LogMessage(LogSeverity.Warning, "Configuration", "Please enter the Bot Token:").PrintToConsole();
-                config.BotToken = Cryptography.EncryptString(Console.ReadLine());
-                new LogMessage(LogSeverity.Info, "Configuration", "Token saved to " + FileName + "!").PrintToConsole();
-
-                new LogMessage(LogSeverity.Warning, "Configuration", "Console will now be cleared for security reasons. Press the 'enter' key to continue.").PrintToConsole();
-                Console.ReadLine();
-
-                Console.Clear();
-
-                config.SaveJson();
+                new Configuration().SaveJson();
                 
-                new LogMessage(LogSeverity.Info, "Configuration", FileName + " created.").PrintToConsole();
+                new LogMessage(LogSeverity.Info, "Configuration", FileName + " created.").PrintToConsole().GetAwaiter();
             }
 
-            if (Load().BotToken.IsNullOrEmpty() || Load().BotToken.IsNullOrWhiteSpace())
-            {
-                var config = new Configuration();
-
-                new LogMessage(LogSeverity.Warning, "Configuration", "The Bot Token was not found.").PrintToConsole();
-
-                new LogMessage(LogSeverity.Info, "Configuration", "Please enter the Bot Token:").PrintToConsole();
-                config.BotToken = Cryptography.EncryptString(Console.ReadLine());
-                new LogMessage(LogSeverity.Info, "Configuration", "Token saved to " + FileName + "!").PrintToConsole();
-
-                new LogMessage(LogSeverity.Warning, "Configuration", "Console will now be cleared for security reasons. Press the 'enter' key to continue.").PrintToConsole();
-                Console.ReadLine();
-
-                Console.Clear();
-
-                config.SaveJson();
-                
-                
-            }
-
-            new LogMessage(LogSeverity.Info, "Configuration", FileName + " loaded.").PrintToConsole();
+            new LogMessage(LogSeverity.Info, "Configuration", FileName + " loaded.").PrintToConsole().GetAwaiter();
         }
-        
-        internal void SaveJson()
+
+        private void SaveJson()
         {
             System.IO.File.WriteAllText(File, ToJson());
         }
@@ -119,14 +90,15 @@ namespace DiscordBot.Common
         {
             return JsonConvert.DeserializeObject<Configuration>(System.IO.File.ReadAllText(File));
         }
-        
-        internal string ToJson()
+
+        private string ToJson()
             => JsonConvert.SerializeObject(this, Formatting.Indented);
         
-        internal static void UpdateConfiguration(string botToken = null, ulong? developer = null, string statusText = null, string statusLink = null,
+        internal static void UpdateConfiguration(string botToken = null, ulong? developer = null, string activityName = null, int? activityType = null, string activityStream = null, bool? firstTimeRun = null,
             string databaseHost = null, int? databasePort = null, string databaseUser = null, string databasePassword = null, string databaseName = null,
             bool? showAllAwards = null, string awardsIconUrl = null,
-            int? statusActivity = null, UserStatus? status = null, bool? unknownCommandEnabled = null, bool? awardingEXPEnabled = null, bool? awardingEXPMentionUser = null,
+            UserStatus? status = null, bool? unknownCommandEnabled = null, 
+            bool? awardingEXPEnabled = null, bool? awardingEXPReactionEnabled = null, bool? awardingEXPReactPostEnabled = null, bool? awardingEXPMentionUser = null,
             int? leaderboardAmount = null, string leaderboardTrophyUrl = null, uint? leaderboardEmbedColor = null,
             int? quoteLevelRequirement = null, int? prefixLevelRequirement = null, int? senpaiChanceRate = null, int? rgbLevelRequirement = null,
             ulong? logChannelId = null, int? respects = null, int? minLengthForEXP = null, int? maxRuleXGamble = null)
@@ -142,9 +114,11 @@ namespace DiscordBot.Common
                 DatabasePassword = databasePassword ?? Load().DatabasePassword,
                 DatabaseName = databaseName ?? Load().DatabaseName,
                 
-                StatusText = statusText ?? Load().StatusText,
-                StatusLink = statusLink ?? Load().StatusLink,
-                StatusActivity = statusActivity ?? Load().StatusActivity,
+                FirstTimeRun = firstTimeRun ?? Load().FirstTimeRun,
+                
+                ActivityName = activityName ?? Load().ActivityName,
+                ActivityType = activityType ?? Load().ActivityType,
+                ActivityStream = activityStream ?? Load().ActivityStream,
                 Status = status ?? Load().Status,
                 
                 ShowAllAwards = showAllAwards ?? Load().ShowAllAwards,
@@ -152,6 +126,8 @@ namespace DiscordBot.Common
 
                 UnknownCommandEnabled = unknownCommandEnabled ?? Load().UnknownCommandEnabled,
                 AwardingEXPEnabled = awardingEXPEnabled ?? Load().AwardingEXPEnabled,
+                AwardingEXPReactionEnabled = awardingEXPReactionEnabled ?? Load().AwardingEXPReactionEnabled,
+                AwardingEXPReactPostEnabled = awardingEXPReactPostEnabled ?? Load().AwardingEXPReactPostEnabled,
                 AwardingEXPMentionUser = awardingEXPMentionUser ?? Load().AwardingEXPMentionUser,
                 
                 LeaderboardAmount = leaderboardAmount ?? Load().LeaderboardAmount,

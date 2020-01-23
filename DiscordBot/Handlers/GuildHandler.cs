@@ -70,12 +70,13 @@ namespace DiscordBot.Handlers
             }
         }
 
-        public static async Task RemoveGuildFromDB(SocketGuild g)
+        public static Task RemoveGuildFromDB(SocketGuild g)
         {
             DatabaseActivity.ExecuteNonQueryCommand("DELETE FROM guilds WHERE guildID=" + g.Id + ";");
+            return Task.CompletedTask;
         }
 
-        private static async Task UpdateGuildInDB(SocketGuild g)
+        private static Task UpdateGuildInDB(SocketGuild g)
         {
             List<(string, string)> queryParams = new List<(string id, string value)>()
             {
@@ -88,6 +89,8 @@ namespace DiscordBot.Handlers
             DatabaseActivity.ExecuteNonQueryCommand(
                 "UPDATE guilds SET guildName=@guildName, guildIcon=@guildIcon, ownedBy=@ownedBy WHERE guildID=@guildID",
                 queryParams);
+            
+            return Task.CompletedTask;
         }
 
         private static async Task SendMessageToGuild(SocketGuild socketGuild)
@@ -99,11 +102,11 @@ namespace DiscordBot.Handlers
             .WithDescription("Congratulations on adding " + DiscordBot.Bot.CurrentUser.Username + " to " + socketGuild.Name + "! Please follow the steps below to configure me!" +
                              "```INI\n" +
                              "-- IMPORTANT! --\n" +
-                             "[1] Prefix: You can change the default prefix by typing \"" + g.Prefix + "guildprefix [prefix]\"\n" +
-                             "[2] Welcome Message: Type \"" + g.Prefix + "setwelcomemessage\" to view flags and see how to set up the welcome message.\n" +
+                             "[1] Log Channel: We need a channel where we can post things for your eyes only! Type \"" + g.Prefix + "logchannel [channel mention]\"\n" +
+                             "[2] Bot Channel: We need a channel where the bot can post things for everyone to see! Type \"" + g.Prefix + "botchannel [channel mention]\"\n" +
                              "[3] Welcome Channel: Set the channel the welcome message is posted by typing \"" + g.Prefix + "welcomechannel [channel mention]\"\n" +
-                             "[4] Log Channel: We now need a channel where we can post things for your eyes only! Type \"" + g.Prefix + "logchannel [channel mention]\"\n" +
-                             "[5] Bot Channel: Finally, we need a channel where the bot can post things for everyone to see! Type \"" + g.Prefix + "botchannel [channel mention]\"\n" +
+                             "[4] Welcome Message: Type \"" + g.Prefix + "setwelcomemessage\" to view flags and see how to set up the welcome message.\n" +
+                             "[5] Prefix: You can change the default prefix by typing \"" + g.Prefix + "guildprefix [prefix]\"\n" +
                              "-- Optional --\n" +
                              "[6] Senpai Command: You can toggle senpai by typing \"" + g.Prefix + "togglesenpai\"\n" +
                              "[7] Quote Command: You can toggle quotes by typing \"" + g.Prefix + "togglequotes\"\n" +

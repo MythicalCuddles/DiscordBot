@@ -8,6 +8,7 @@ using DiscordBot.Common.Preconditions;
 using DiscordBot.Common;
 using DiscordBot.Database;
 using DiscordBot.Extensions;
+using DiscordBot.Logging;
 using DiscordBot.Objects;
 
 namespace DiscordBot.Modules.Admin
@@ -38,6 +39,7 @@ namespace DiscordBot.Modules.Admin
                              "[11] force websitename [mention/id] [value]\n" +
                              "[12] force websiteurl [mention/id] [value]\n" +
                              "```");
+            AdminLog.Log(Context.User.Id, Context.Message.Content, Context.Guild.Id);
         }
 
         [Command("about"), Summary("Force set the about message for the specified user.")]
@@ -49,7 +51,9 @@ namespace DiscordBot.Modules.Admin
                 {
                     ("@about", about)
                 };
+                
                 DatabaseActivity.ExecuteNonQueryCommand("UPDATE users SET about=@about WHERE id='" + user.Id + "';", queryParams);
+                AdminLog.Log(Context.User.Id, Context.Message.Content, Context.Guild.Id, user.Id);
 
                 var eb = new EmbedBuilder()
                     .WithDescription(Context.User.Username + " changed " + user.Mention + "'s about text successfully.")
@@ -72,7 +76,9 @@ namespace DiscordBot.Modules.Admin
                 {
                     ("@name", name)
                 };
+                
                 DatabaseActivity.ExecuteNonQueryCommand("UPDATE users SET name=@name WHERE id='" + user.Id + "';", queryParams);
+                AdminLog.Log(Context.User.Id, Context.Message.Content, Context.Guild.Id, user.Id);
 
                 var eb = new EmbedBuilder()
                     .WithDescription(Context.User.Username + " changed " + user.Mention + "'s name text successfully.")
@@ -95,7 +101,9 @@ namespace DiscordBot.Modules.Admin
                 {
                     ("@gender", gender)
                 };
+                
                 DatabaseActivity.ExecuteNonQueryCommand("UPDATE users SET gender=@gender WHERE id='" + user.Id + "';", queryParams);
+                AdminLog.Log(Context.User.Id, Context.Message.Content, Context.Guild.Id, user.Id);
 
                 var eb = new EmbedBuilder()
                     .WithDescription(Context.User.Username + " changed " + user.Mention + "'s gender text successfully.")
@@ -118,7 +126,9 @@ namespace DiscordBot.Modules.Admin
                 {
                     ("@pronouns", pronouns)
                 };
+                
                 DatabaseActivity.ExecuteNonQueryCommand("UPDATE users SET pronouns=@pronouns WHERE id='" + user.Id + "';", queryParams);
+                AdminLog.Log(Context.User.Id, Context.Message.Content, Context.Guild.Id, user.Id);
 
                 var eb = new EmbedBuilder()
                     .WithDescription(Context.User.Username + " changed " + user.Mention + "'s pronoun text successfully.")
@@ -141,7 +151,9 @@ namespace DiscordBot.Modules.Admin
                 {
                     ("@minecraftUsername", username)
                 };
+                
                 DatabaseActivity.ExecuteNonQueryCommand("UPDATE users SET minecraftUsername=@minecraftUsername WHERE id='" + user.Id + "';", queryParams);
+                AdminLog.Log(Context.User.Id, Context.Message.Content, Context.Guild.Id, user.Id);
 
                 var eb = new EmbedBuilder()
                     .WithDescription(Context.User.Username + " changed " + user.Mention + "'s Minecraft username text successfully.")
@@ -164,7 +176,9 @@ namespace DiscordBot.Modules.Admin
                 {
                     ("@instagramUsername", username)
                 };
+                
                 DatabaseActivity.ExecuteNonQueryCommand("UPDATE users SET instagramUsername=@instagramUsername WHERE id='" + user.Id + "';", queryParams);
+                AdminLog.Log(Context.User.Id, Context.Message.Content, Context.Guild.Id, user.Id);
 
                 var eb = new EmbedBuilder()
                     .WithDescription(Context.User.Username + " changed " + user.Mention + "'s Instagram username text successfully.")
@@ -187,7 +201,9 @@ namespace DiscordBot.Modules.Admin
                 {
                     ("@pokemonGoFriendCode", code)
                 };
+                
                 DatabaseActivity.ExecuteNonQueryCommand("UPDATE users SET pokemonGoFriendCode=@pokemonGoFriendCode WHERE id='" + user.Id + "';", queryParams);
+                AdminLog.Log(Context.User.Id, Context.Message.Content, Context.Guild.Id, user.Id);
 
                 var eb = new EmbedBuilder()
                     .WithDescription(Context.User.Username + " changed " + user.Mention + "'s Pokemon Go Friend Code successfully.")
@@ -210,7 +226,9 @@ namespace DiscordBot.Modules.Admin
                 {
                     ("@snapchatUsername", username)
                 };
+                
                 DatabaseActivity.ExecuteNonQueryCommand("UPDATE users SET snapchatUsername=@snapchatUsername WHERE id='" + user.Id + "';", queryParams);
+                AdminLog.Log(Context.User.Id, Context.Message.Content, Context.Guild.Id, user.Id);
 
                 var eb = new EmbedBuilder()
                     .WithDescription(Context.User.Username + " changed " + user.Mention + "'s Snapchat username text successfully.")
@@ -233,7 +251,9 @@ namespace DiscordBot.Modules.Admin
                 {
                     ("@githubUsername", username)
                 };
+                
                 DatabaseActivity.ExecuteNonQueryCommand("UPDATE users SET githubUsername=@githubUsername WHERE id='" + user.Id + "';", queryParams);
+                AdminLog.Log(Context.User.Id, Context.Message.Content, Context.Guild.Id, user.Id);
 
                 var eb = new EmbedBuilder()
                     .WithDescription(Context.User.Username + " changed " + user.Mention + "'s GitHub username text successfully.")
@@ -256,7 +276,9 @@ namespace DiscordBot.Modules.Admin
                 {
                     ("@customPrefix", prefix)
                 };
+                
                 DatabaseActivity.ExecuteNonQueryCommand("UPDATE users SET customPrefix=@customPrefix WHERE id='" + user.Id + "';", queryParams);
+                AdminLog.Log(Context.User.Id, Context.Message.Content, Context.Guild.Id, user.Id);
 
                 var eb = new EmbedBuilder()
                     .WithDescription(Context.User.Username + " changed " + user.Mention + "'s custom prefix successfully.")
@@ -279,7 +301,9 @@ namespace DiscordBot.Modules.Admin
                 {
                     ("@websiteUrl", url)
                 };
+                
                 DatabaseActivity.ExecuteNonQueryCommand("UPDATE users SET websiteURL=@websiteUrl WHERE id='" + user.Id + "';", queryParams);
+                AdminLog.Log(Context.User.Id, Context.Message.Content, Context.Guild.Id, user.Id);
 
                 var eb = new EmbedBuilder()
                     .WithDescription(Context.User.Username + " changed " + user.Mention + "'s website URL successfully.")
@@ -302,7 +326,9 @@ namespace DiscordBot.Modules.Admin
                 {
                     ("@websiteName", name)
                 };
+                
                 DatabaseActivity.ExecuteNonQueryCommand("UPDATE users SET websiteName=@websiteName WHERE id='" + user.Id + "';", queryParams);
+                AdminLog.Log(Context.User.Id, Context.Message.Content, Context.Guild.Id, user.Id);
 
                 var eb = new EmbedBuilder()
                     .WithDescription(Context.User.Username + " changed " + user.Mention + "'s website name successfully.")

@@ -8,7 +8,6 @@ using DiscordBot.Extensions;
 using DiscordBot.Common.Preconditions;
 using DiscordBot.Common;
 using DiscordBot.Objects;
-using DiscordBot.Other;
 
 namespace DiscordBot.Modules.Public
 {
@@ -59,52 +58,6 @@ namespace DiscordBot.Modules.Public
             eb.WithFooter(new EmbedFooterBuilder().WithText("Interested in a custom prefix or changing your current prefix? " + guildPrefix + "editprofile customprefix"));
 
             await ReplyAsync("", false, eb.Build());
-        }
-
-        [Group("mogiicraft")]
-        [RequireGuild(221250721046069249)]
-        public class MogiiCraftCommands : ModuleBase
-        { 
-            [Command("poll"), Summary("Sends a link to the poll for the minecraft server.")]
-            public async Task SendPollLink()
-            {
-                await ReplyAsync("https://docs.google.com/forms/d/e/1FAIpQLSe9CFsWWBlInGqgVqt4SieG6JW1E81zAjtWZeEoDUTH3xPE1w/viewform?c=0&w=1");
-            }
-
-            [Command("website"), Summary("Sends a link to the forums.")]
-            public async Task SendWebsiteLink()
-            {
-                await ReplyAsync("We currently have a forums, but it isn't active. Anyways, you can visit it here: http://mogiicraft.proboards.com/");
-            }
-
-            [Command("minecraftip"), Summary("Posts the Minecraft IP into the chat.")]
-            [Alias("ip")]
-            public async Task SendMinecraftIp()
-            {
-                await ReplyAsync("The Minecraft Server IP is: mogiicraft.ddns.net:25635");
-            }
-
-            [Command("email"), Summary("Posts the email address into the chat.")]
-            public async Task PostEmailAddress()
-            {
-                await ReplyAsync("Send complaints to `MogiiCraft.@pizza@gmail.com`");
-            }
-
-            [Command("vote"), Summary("Sends links to the voting websites for Minecraft.")]
-            public async Task SendVotingLinks()
-            {
-                StringBuilder sb = new StringBuilder()
-                    .Append("**Vote Links**\n" + Context.User.Mention + " use the following links to vote and support the server. You'll be given some diamonds in-game to say thanks :D\n");
-
-                foreach (var link in VoteLinkHandler.VoteLinkList)
-                {
-                    sb.Append("<" + link + ">\n");
-                }
-
-                sb.Append("");
-
-                await ReplyAsync(sb.ToString());
-            }
         }
     }
 }

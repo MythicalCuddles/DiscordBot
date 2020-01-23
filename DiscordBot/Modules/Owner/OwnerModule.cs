@@ -12,6 +12,7 @@ using DiscordBot.Common;
 using DiscordBot.Common.Preconditions;
 using DiscordBot.Database;
 using DiscordBot.Extensions;
+using DiscordBot.Logging;
 using DiscordBot.Objects;
 
 using MelissaNet;
@@ -28,7 +29,8 @@ namespace DiscordBot.Modules.Owner
             if (!User.Load(user.Id).TeamMember)
             {
                 DatabaseActivity.ExecuteNonQueryCommand("UPDATE users SET teamMember='Y' WHERE id='" + user.Id + "';");
-
+                AdminLog.Log(Context.User.Id, Context.Message.Content, Context.Guild.Id, user.Id);
+                
                 await ReplyAsync(user.Mention + " has been added to the team by " + Context.User.Mention);
             }
             else
@@ -43,7 +45,8 @@ namespace DiscordBot.Modules.Owner
             if (User.Load(user.Id).TeamMember)
             {
                 DatabaseActivity.ExecuteNonQueryCommand("UPDATE users SET teamMember='N' WHERE id='" + user.Id + "';");
-
+                AdminLog.Log(Context.User.Id, Context.Message.Content, Context.Guild.Id, user.Id);
+                
                 await ReplyAsync(user.Mention + " has been removed from the team by " + Context.User.Mention);
             }
             else
@@ -67,6 +70,7 @@ namespace DiscordBot.Modules.Owner
             };
             DatabaseActivity.ExecuteNonQueryCommand(
                 "UPDATE users SET footerText=@footerText WHERE id='" + user.Id + "';", queryParams);
+            AdminLog.Log(Context.User.Id, Context.Message.Content, Context.Guild.Id, user.Id);
 
             var eb = new EmbedBuilder()
                 .WithDescription(Context.User.Username + " updated " + user.Mention + "'s footer successfully.")
@@ -108,6 +112,7 @@ namespace DiscordBot.Modules.Owner
                     DatabaseActivity.ExecuteNonQueryCommand(
                         "UPDATE users SET authorIconURL=@embedAuthorBuilderIconUrl WHERE id='" + user.Id + "';",
                         authorQueryParams);
+                    AdminLog.Log(Context.User.Id, Context.Message.Content, Context.Guild.Id, user.Id);
 
                     eb.WithColor(Color.DarkGreen);
                     eb.WithDescription(Context.User.Username + " successfully updated " + user.Mention +
@@ -125,6 +130,7 @@ namespace DiscordBot.Modules.Owner
                     DatabaseActivity.ExecuteNonQueryCommand(
                         "UPDATE users SET footerIconURL=@embedFooterBuilderIconUrl WHERE id='" + user.Id + "';",
                         footerQueryParams);
+                    AdminLog.Log(Context.User.Id, Context.Message.Content, Context.Guild.Id, user.Id);
 
                     eb.WithColor(Color.DarkGreen);
                     eb.WithDescription(Context.User.Username + " successfully updated " + user.Mention +
@@ -150,6 +156,7 @@ namespace DiscordBot.Modules.Owner
             };
             DatabaseActivity.ExecuteNonQueryCommand(
                 "UPDATE users SET isBeingIgnored=@botIgnoringUser WHERE id='" + user.Id + "';", queryParams);
+            AdminLog.Log(Context.User.Id, Context.Message.Content, Context.Guild.Id, user.Id);
 
             if (User.Load(user.Id).IsBotIgnoringUser)
             {
@@ -174,7 +181,7 @@ namespace DiscordBot.Modules.Owner
                 return;
             }
 
-            Context.Message.DeleteAfter(1);
+            AdminLog.Log(Context.User.Id, Context.Message.Content, Context.Guild.Id);
 
             EmbedBuilder eb = new EmbedBuilder
             {
@@ -189,36 +196,57 @@ namespace DiscordBot.Modules.Owner
             await DiscordBot.Bot.LogoutAsync();
             Environment.Exit(0);
         }
-
-        [Command("addreaction")]
-        public async Task AddReactionAsync(ulong? id = null, string emote = null)
+        
+        [Command("editbotchannels")] 
+        public async Task EditBotChannelsAsync(string editing = null, [Remainder] string value = null) 
         {
-            if (id == null || emote == null)
+            if (editing == null || value == null)
             {
                 await ReplyAsync("**Syntax:** " +
-                                 Guild.Load(Context.Guild.Id).Prefix + "addreaction [message id] [emote]");
+                                 Guild.Load(Context.Guild.Id).Prefix + "editbotchannels [editKey] [value]\n```INI\n" +
+                                 "Available Commands\n" +
+                                 "-----------------------------\n" +
+                                 "[ 1] topic [value]\n" +
+                                 "```");
                 return;
             }
-
-            foreach (var g in DiscordBot.Bot.Guilds)
+            
+            AdminLog.Log(Context.User.Id, Context.Message.Content, Context.Guild.Id);
+            
+            switch (editing.ToUpperInvariant())
             {
-                foreach (var c in g.TextChannels)
-                {
-                    var msgs = c.GetMessagesAsync().GetEnumerator().Current;
-
-                    foreach (var m in msgs)
+                case "TOPIC":
+                    foreach (SocketGuild g in DiscordBot.Bot.Guilds)
                     {
-                        var msg = c.GetMessageAsync(m.Id).GetAwaiter().GetResult() as SocketUserMessage;
-
-                        if (msg.Id == id)
+                        try
                         {
-                            await msg.AddReactionAsync(new Emoji(emote));
-                            await ReplyAsync(Context.User.Mention +
-                                             ", if that message exists in my cache, I've added a reaction to it.");
-                            return;
+                            await Guild.Load(g.Id).BotChannelID.GetTextChannel().ModifyAsync(x => x.Topic = value);
+
+                            LogMessage lm = new LogMessage(LogSeverity.Info, "EditBotChannels",
+                                Context.User.Username + " edited the bot channel in " + g.Name + "!");
+                            await lm.PrintToConsole();
+                        }
+                        catch (Exception)
+                        {
+                            await new LogMessage(LogSeverity.Warning, "EditBotChannels",
+                                    DiscordBot.Bot.CurrentUser.Username +
+                                    " does not have the required permissions to edit the bot channel in " + g.Name +
+                                    "!")
+                                .PrintToConsole();
                         }
                     }
-                }
+
+                    await Configuration.Load().LogChannelId.GetTextChannel().SendMessageAsync(
+                        DiscordBot.Bot.CurrentUser.Username +
+                        " has attempted to update the topic for each Bot Channel, " + Context.User.Mention);
+                    break;
+                default:
+                    EmbedBuilder eb = new EmbedBuilder();
+                    eb.WithColor(Color.Red);
+                    eb.WithTitle("Invalid Edit Key");
+                    eb.WithDescription(Context.User.Mention + ", you have entered an invalid Edit Key. To see a list of valid keys, type: " + Guild.Load(Context.Guild.Id).Prefix + "editbotchannels");
+                    await ReplyAsync("", false, eb.Build());
+                    break;
             }
         }
     }
